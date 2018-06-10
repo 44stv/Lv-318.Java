@@ -17,6 +17,5 @@ public class Stop {
     @Id
     @GeneratedValue
     private Integer id;
-
     private String street;
 }
