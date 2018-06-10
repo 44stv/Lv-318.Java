@@ -30,6 +30,11 @@ public class StopController {
     return new ResponseEntity<>(stopService.getByStreet(street), HttpStatus.OK);
   }
 
+  @GetMapping(params = "transit-id")
+  public ResponseEntity<List<Stop>> getByTransitId(@RequestParam("transit-id") Integer id) {
+    return new ResponseEntity<>(stopService.getByTransitId(id), HttpStatus.OK);
+  }
+
   @DeleteMapping("/{id}")
   public void deleteStop(@PathVariable Integer id) {
     stopService.delete(id);
