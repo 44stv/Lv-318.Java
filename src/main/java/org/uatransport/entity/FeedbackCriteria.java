@@ -38,9 +38,9 @@ public class FeedbackCriteria {
     public enum FeedbackType {
 
         RATING(new RatingConversionStrategy()),
-        ROUTE_BUSY_HOURS(new CapacityBusyHoursConversionStrategy()),
+        ROUTE_BUSY_HOURS(new RouteBusyHoursConversionStrategy()),
         ACCEPTER(new AccepterConversionStrategy()),
-        CAPACITY(new CapacityBusyHoursConversionStrategy());
+        CAPACITY_BUSY_HOURS(new CapacityBusyHoursConversionStrategy());
 
         private final ConversionStrategy<?> conversionStrategy;
 

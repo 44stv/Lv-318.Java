@@ -5,13 +5,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.uatransport.entity.Feedback;
-import org.uatransport.entity.Stop;
 import org.uatransport.entity.dto.FeedbackDTO;
 import org.uatransport.service.FeedbackService;
-import org.uatransport.service.model.AccepterFeedback;
-import org.uatransport.service.model.CapacityFeedback;
+import org.uatransport.service.model.RouteBusyHoursFeedback;
 
-import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
@@ -64,29 +61,22 @@ public class FeedbackController {
         return new ResponseEntity<>(feedbackService.convertRatingFeedBacksByUser(transitId, userId), HttpStatus.OK);
     }
 
+    @GetMapping(value = "/route/{transitId}")
+    public ResponseEntity<List<RouteBusyHoursFeedback>> getRouteBusyHoursFeedBacks(@PathVariable Integer transitId) {
+        return new ResponseEntity<>(feedbackService.convertRouteBusyHoursFeedBacks(transitId), HttpStatus.OK);
+    }
 
+    //    @GetMapping(value = "/capacity/{transitId}")
+//    public ResponseEntity<List<CapacityBusyHoursFeedback>> getCapacityFeedBacks(@PathVariable Integer transitId) {
+//        return new ResponseEntity<>(feedbackService.convertCapacityFeedBacks(transitId), HttpStatus.OK);
+//    }
+//
+//    @GetMapping(value = "/accepter/{transitId}")
+//    public ResponseEntity<List<AccepterFeedback>> getAccepterFeedBacks(@PathVariable Integer transitId) {
+//        return new ResponseEntity<>(feedbackService.convertAccepterFeedBacks(transitId), HttpStatus.OK);
+//    }
     @GetMapping(value = "/capacity/{transitId}")
-    public ResponseEntity<List<CapacityFeedback>> getCapacityFeedBacks(@PathVariable Integer transitId) {
-        return new ResponseEntity<>(feedbackService.convertCapacityFeedBacks(transitId), HttpStatus.OK);
-    }
-
-    @GetMapping(value = "/accepter/{transitId}")
-    public ResponseEntity<List<AccepterFeedback>> getAccepterFeedBacks(@PathVariable Integer transitId) {
-        return new ResponseEntity<>(feedbackService.convertAccepterFeedBacks(transitId), HttpStatus.OK);
-    }
-
-    @GetMapping(value = "/byHour/{transitId}")
-    public ResponseEntity<Map<Integer, Double>> getCapacityHoursMap(@PathVariable Integer transitId) {
-        return new ResponseEntity<>(feedbackService.getDataForCapacityHoursDiagram(transitId), HttpStatus.OK);
-    }
-
-    @GetMapping(value = "/byStop/{transitId}")
-    public ResponseEntity<Map<Stop, Double>> getCapacityStopMap(@PathVariable Integer transitId) {
-        return new ResponseEntity<>(feedbackService.getDataForCapacityStopDiagram(transitId), HttpStatus.OK);
-    }
-
-    @GetMapping(value = "/accepterMap/{transitId}")
-    public ResponseEntity<EnumMap<AccepterFeedback, Double>> getAccepterMap(@PathVariable Integer transitId) {
-        return new ResponseEntity<>(feedbackService.getDataForAccepterDiagram(transitId), HttpStatus.OK);
+    public ResponseEntity<Map<Integer, Double>> getCapacityMap(@PathVariable Integer transitId) {
+        return new ResponseEntity<>(feedbackService.getCapacityMap(transitId), HttpStatus.OK);
     }
 }
