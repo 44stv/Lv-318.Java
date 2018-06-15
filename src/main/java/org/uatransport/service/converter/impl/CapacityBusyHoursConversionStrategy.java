@@ -4,15 +4,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.uatransport.entity.Feedback;
 import org.uatransport.service.converter.ConversionStrategy;
-import org.uatransport.service.model.CapacityFeedback;
+import org.uatransport.service.model.CapacityBusyHoursFeedback;
 
-public class CapacityBusyHoursConversionStrategy implements ConversionStrategy<CapacityFeedback> {
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
+public class CapacityBusyHoursConversionStrategy implements ConversionStrategy<CapacityBusyHoursFeedback> {
 
 
     @Override
     @SneakyThrows
-    public CapacityFeedback convert(Feedback feedback) {
-        return new ObjectMapper().readValue(feedback.getAnswer(), CapacityFeedback.class);
+    public CapacityBusyHoursFeedback convert(Feedback feedback) {
+        return new ObjectMapper().readValue(feedback.getAnswer(), CapacityBusyHoursFeedback.class);
     }
 
 }

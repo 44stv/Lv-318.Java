@@ -1,6 +1,5 @@
 package org.uatransport.config;
 
-import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -13,7 +12,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import org.uatransport.exception.ResourceNotFoundException;
 
 @ControllerAdvice
-@Slf4j
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
     private static final HttpHeaders HTTP_HEADERS = new HttpHeaders();
@@ -21,7 +19,6 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     @ExceptionHandler(value = ResourceNotFoundException.class)
     protected ResponseEntity<Object> handleConflict(ResourceNotFoundException ex,
                                                     WebRequest request) {
-        logger.error("Unable to parse data {}", ex);
         final ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex);
         return handleExceptionInternal(ex, apiError, HTTP_HEADERS, apiError.getStatus(), request);
     }
@@ -29,7 +26,6 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     @ExceptionHandler(value = ConstraintViolationException.class)
     protected ResponseEntity<Object> handleConstraintViolation(ConstraintViolationException ex,
                                                                WebRequest request) {
-        logger.error("Unable to parse data {}", ex);
         final ApiError apiError = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, ex);
         apiError.setMessage("Validation error occurred: " + ex.getCause());
         return handleExceptionInternal(ex, apiError, HTTP_HEADERS, apiError.getStatus(), request);
@@ -38,7 +34,6 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     @ExceptionHandler(value = MethodArgumentTypeMismatchException.class)
     protected ResponseEntity<Object> handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException ex,
                                                                       WebRequest request) {
-        logger.error("Unable to parse data {}", ex);
         Class<?> requiredType = ex.getRequiredType();
         final ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex);
         apiError.setMessage(String.format("The parameter '%s' of value '%s' could not be converted to type '%s'",
@@ -48,7 +43,6 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 
     @ExceptionHandler(value = {IllegalArgumentException.class, IllegalStateException.class})
     protected ResponseEntity<Object> handleConflict(RuntimeException ex, WebRequest request) {
-        logger.error("Unable to parse data {}", ex);
         final ApiError apiError = new ApiError(HttpStatus.CONFLICT, ex);
         apiError.setMessage("This should be application specific");
         return handleExceptionInternal(ex, apiError, HTTP_HEADERS, apiError.getStatus(), request);
