@@ -1,6 +1,6 @@
 .demo-grid-list {
-  width: 1100px;
-  margin: 100px auto;
+  width: auto;
+  margin: 100px 100px;
 }
 
 .mat-card {

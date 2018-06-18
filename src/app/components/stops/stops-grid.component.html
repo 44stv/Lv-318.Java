@@ -1,8 +1,10 @@
 <div class="demo-grid-list">
   <mat-grid-list cols="7" rowHeight="50px">
     <mat-grid-tile
-      *ngFor="let tile of stopsList | async">
-      <input type="checkbox" [id]="tile.id" [name]="tile" [value]="tile.street" aria-labelledby="ariaid">
+      *ngFor="let i=index; let tile of stopsList | async">
+      <input type="checkbox" [(ngModel)]="checkedItems[i]" [id]="tile.id" [name]="tile" [value]="tile.street"
+             aria-labelledby="ariaid"
+             (change)='selectStops()'>
       <div><label id="ariaid">{{tile.street}}</label></div>
     </mat-grid-tile>
   </mat-grid-list>
