@@ -2,7 +2,6 @@ package org.uatransport.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,33 +23,14 @@ import java.util.List;
 public class CategoryController {
     private final CategoryService categoryService;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ExtendableCategory> getCategoryById(@PathVariable Integer id) {
-
-        ExtendableCategory category = categoryService.getById(id);
-
-        return new ResponseEntity<>(category, HttpStatus.OK);
-    }
-
     @GetMapping(value = "/top/")
     public ResponseEntity<List<ExtendableCategory>> getTopCategories() {
         return new ResponseEntity<>(categoryService.getListTopExtendableCategories(), HttpStatus.OK);
     }
 
-    @GetMapping("/nextLevel/")
-    public ResponseEntity<List<ExtendableCategory>> getCategoriesByNextLevel(@RequestParam String nextLevel) {
-        return new ResponseEntity<>(categoryService.getByNextLevelCategoryId(categoryService.getByName(nextLevel).getId()), HttpStatus.OK);
-    }
-
-    @GetMapping("/get")
-    public ResponseEntity<List<NonExtendableCategory>> getCategoryByNames(@RequestParam String name, @RequestParam String next) {
-        List<NonExtendableCategory> categories = categoryService.getByNames(name, next);
-        return new ResponseEntity<>(categories, HttpStatus.OK);
-    }
-
     @GetMapping
     public ResponseEntity<List<ExtendableCategory>> search(SearchCategoryParam searchCategoryParam) {
-        SearchSpecification specification = new SearchSpecification(searchCategoryParam);
+        SearchSpecification specification = new SearchSpecification(searchCategoryParam, categoryService);
 
         return new ResponseEntity<>(categoryService.getAll(specification), HttpStatus.OK);
     }
