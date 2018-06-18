@@ -50,7 +50,7 @@ public class CategoryController {
 
     @GetMapping
     public ResponseEntity<List<ExtendableCategory>> search(SearchCategoryParam searchCategoryParam) {
-        SearchSpecification specification = new SearchSpecification(searchCategoryParam);
+        SearchSpecification specification = new SearchSpecification(searchCategoryParam, categoryService);
 
         return new ResponseEntity<>(categoryService.getAll(specification), HttpStatus.OK);
     }
