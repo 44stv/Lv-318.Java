@@ -2,7 +2,6 @@ package org.uatransport.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -50,7 +49,7 @@ public class CategoryController {
 
     @GetMapping
     public ResponseEntity<List<ExtendableCategory>> search(SearchCategoryParam searchCategoryParam) {
-        SearchSpecification specification = new SearchSpecification(searchCategoryParam);
+        SearchSpecification specification = new SearchSpecification(searchCategoryParam, categoryService);
 
         return new ResponseEntity<>(categoryService.getAll(specification), HttpStatus.OK);
     }
