@@ -3,6 +3,7 @@ package org.uatransport.entity;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 
 import javax.persistence.*;
@@ -32,5 +33,15 @@ public class Transit {
     @JoinTable(name = "transit_stop", joinColumns = { @JoinColumn(name = "transit_id") }, inverseJoinColumns = {
             @JoinColumn(name = "stop_id") })
     @OrderColumn(name = "stop_index")
-    private List<Stop> stops;
+    private List<Point> points;
+
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "type", updatable = false)
+    private Transit.DIRECTION direction;
+
+    @RequiredArgsConstructor
+    public enum DIRECTION {
+      FORWARD,
+      BACKWARD
+    }
 }
