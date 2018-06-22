@@ -1,0 +1,11 @@
+agm-map {
+  height: 400px;
+  width: 600px;
+  box-shadow: 1px 5px 6px 2px rgba(217, 214, 217, 1);
+}
+#wrapper{
+  position: absolute;
+  top: 300px;
+  right: 400px;
+}
+

@@ -1,0 +1,12 @@
+<div id="wrapper">
+  <button type="button" (click)="getDirection()">Get</button>
+
+  <agm-map [latitude]="lat" [longitude]="lng">
+    <agm-direction *ngIf="dir"
+                   [origin]="dir.origin" [destination]="dir.destination"
+                   [waypoints]="waypoints"
+                   (onChange)="change($event)"
+    >
+    </agm-direction>
+  </agm-map>
+</div>

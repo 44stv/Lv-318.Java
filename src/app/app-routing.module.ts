@@ -11,6 +11,7 @@ import {StopsGridComponent} from './components/stops/stops-grid.component';
 import { QuestionComponent} from './components/question/question.component';
 import { AddQuestionComponent } from './components/question/add-question/add-question.component';
 import { OneQuestionComponent } from './components/question/one-question/one-question.component';
+import {DirectionComponent} from './components/direction/direction.component';
 const routes: Routes = [
   {
     path: 'category/:top/:city', component: NonExCategoryComponent
@@ -39,7 +40,8 @@ const routes: Routes = [
   {
     path: 'user/add', component: AddUserComponent
   },
-  {path: 'show-transit-scheme/:id', component: StopsGridComponent}
+  {path: 'show-transit-scheme/:id', component: StopsGridComponent},
+  {path: 'direction', component: DirectionComponent}
 
 
 

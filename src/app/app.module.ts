@@ -75,6 +75,9 @@ import { DiagramService } from './services/diagram.service';
 import { CallbackComponent } from './components/callback/callback.component';
 import { OneQuestionComponent } from './components/question/one-question/one-question.component';
 import { BusyStopsDiagramComponent } from './components/stops/components/busy-stops-diagram/busy-stops-diagram.component';
+import { AgmCoreModule } from '@agm/core';
+import { AgmDirectionModule } from 'agm-direction';
+import {DirectionComponent} from './components/direction/direction.component';
 
 
 export function HttpLoaderFactory(http: HttpClient) {
@@ -105,7 +108,8 @@ export function createTranslateLoader(http: HttpClient) {
     CallbackComponent,
     BusyHoursDiagramComponent,
     OneQuestionComponent,
-    BusyStopsDiagramComponent
+    BusyStopsDiagramComponent,
+    DirectionComponent
   ],
   exports: [
     MatAutocompleteModule,
@@ -170,13 +174,14 @@ export function createTranslateLoader(http: HttpClient) {
     MatIconModule,
     MatCheckboxModule,
     MatPaginatorModule,
+    AgmDirectionModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
         useFactory: HttpLoaderFactory,
         deps: [HttpClient]
       }
-    })
+    }), AgmCoreModule.forRoot({ apiKey: 'AIzaSyBMbh1BuDtFteF5bxb03EKe2-hpKYre79g',}),
   ],
   providers: [ExcategoryService, UserService, DiagramService, AuthService],
   bootstrap: [AppComponent]
