@@ -77,7 +77,7 @@ import { OneQuestionComponent } from './components/question/one-question/one-que
 import { BusyStopsDiagramComponent } from './components/stops/components/busy-stops-diagram/busy-stops-diagram.component';
 import { AgmCoreModule } from '@agm/core';
 import { AgmDirectionModule } from 'agm-direction';
-import {DirectionComponent} from './components/direction/direction.component';
+import { MapsComponent } from './components/maps/maps.component';
 
 
 export function HttpLoaderFactory(http: HttpClient) {
@@ -109,7 +109,7 @@ export function createTranslateLoader(http: HttpClient) {
     BusyHoursDiagramComponent,
     OneQuestionComponent,
     BusyStopsDiagramComponent,
-    DirectionComponent
+    MapsComponent
   ],
   exports: [
     MatAutocompleteModule,

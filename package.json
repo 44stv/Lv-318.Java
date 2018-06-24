@@ -11,6 +11,7 @@
   },
   "private": true,
   "dependencies": {
+    "@agm/core": "^1.0.0-beta.3",
     "@angular/animations": "^6.0.5",
     "@angular/cdk": "^6.2.0",
     "@angular/common": "^6.0.5",
@@ -24,6 +25,7 @@
     "@angular/router": "^6.0.5",
     "@ngx-translate/core": "^10.0.2",
     "@ngx-translate/http-loader": "^3.0.1",
+    "agm-direction": "^0.5.9",
     "angular-in-memory-web-api": "^0.6.0",
     "angular-simple-slideshow": "0.0.3",
     "angular2-jwt": "^0.2.3",

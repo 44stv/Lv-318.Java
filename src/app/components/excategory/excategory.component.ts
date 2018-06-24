@@ -25,5 +25,4 @@ export class ExcategoryComponent implements OnInit {
   getCities(nextLevel: String) {
     this.cities = this.service.getCategoriesByNextLevel(nextLevel);
   }
-
 }
