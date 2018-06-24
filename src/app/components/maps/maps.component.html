@@ -1,0 +1,40 @@
+<div id="wrapper">
+  Зупинка : <strong>{{markerOneName}}</strong> Координати:{{markerOneLat}} - {{markerOneLng}} <br/>
+  Зупинка : <strong>{{markerTwoName}}</strong> Координати:{{markerTwoLat}} - {{markerTwoLng}}
+
+  <agm-map [latitude]="latStatic"
+           [longitude]="lngStatic"
+           [zoom]="zoom"
+  >
+    <agm-direction *ngIf="direction"
+                   [origin]="direction.origin" [destination]="direction.destination"
+                   [renderOptions]="renderOptions"
+                   [markerOptions]="markerOptions"
+                   [travelMode]="travelMode"
+                   [waypoints]="waypoints"
+
+    >
+    </agm-direction>
+    [waypoints]="waypoints"
+    <agm-marker *ngFor="let m of markers"
+    (markerClick)="clickedMarker(m)"
+    [latitude]="m.lat"
+    [longitude]="m.lng"
+    [markerDraggable]="m.draggable"
+    [iconUrl]="icon"
+    >
+    <agm-info-window>
+    {{m.name}} <br/>
+    {{m.lat}} <br/>
+    {{m.lng}}
+    </agm-info-window>
+
+    </agm-marker>
+  </agm-map>
+  <button mat-button (click)="setDirectionAndRefresh('forward')">
+    Forward
+  </button>
+  <button mat-button (click)="setDirectionAndRefresh('backward')">
+    Backward
+  </button>
+</div>
