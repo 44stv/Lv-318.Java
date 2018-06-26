@@ -12,7 +12,7 @@ import org.uatransport.entity.dto.FeedbackDTO;
 import org.uatransport.exception.ResourceNotFoundException;
 import org.uatransport.repository.FeedbackRepository;
 import org.uatransport.service.FeedbackService;
-import org.uatransport.service.StopService;
+import org.uatransport.service.PointService;
 import org.uatransport.service.converter.impl.FeedbackTypeConverter;
 import org.uatransport.service.converter.impl.RatingConversionStrategy;
 import org.uatransport.service.converter.model.AccepterFeedback;
@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 public class FeedbackServiceImpl implements FeedbackService {
 
     private final FeedbackRepository feedbackRepository;
-    private final StopService stopService;
+    private final PointService pointService;
 
     @Override
     public Feedback addFeedback(FeedbackDTO feedbackDTO) {
@@ -102,9 +102,9 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Override
     @Transactional(readOnly = true)
     public Map<Stop, Double> getStopCapacityMap(Integer transitId, Stop... stops) {
-        List<Stop> stopList = stops.length > 0 ? Arrays.asList(stops) : stopService.getByTransitId(transitId);
+        List<Stop> stopList = stops.length > 0 ? Arrays.asList(stops) : pointService.getStopsByTransitId(transitId);
         Map<Stop, Double> capacityMap = new TreeMap<>(Comparator
-                .comparingInt(stop -> stopService.getIndexByTransitIdAndStopName(transitId, stop.getStreet())));
+                .comparingInt(stop -> pointService.getIndexByTransitIdAndStopName(transitId, stop.getStreet())));
         for (Stop stop : stopList) {
             capacityMap.put(stop, getCapacityByTransitAndStops(transitId, stop));
         }
@@ -152,9 +152,9 @@ public class FeedbackServiceImpl implements FeedbackService {
     }
 
     private boolean existInStopIndexesRange(Integer transitId, Stop stop, String fromStop, String toStop) {
-        Integer fromStopIndex = stopService.getIndexByTransitIdAndStopName(transitId, fromStop);
-        Integer toStopIndex = stopService.getIndexByTransitIdAndStopName(transitId, toStop);
-        Integer stopIndex = stopService.getIndexByTransitIdAndStopName(transitId, stop.getStreet());
+        Integer fromStopIndex = pointService.getIndexByTransitIdAndStopName(transitId, fromStop);
+        Integer toStopIndex = pointService.getIndexByTransitIdAndStopName(transitId, toStop);
+        Integer stopIndex = pointService.getIndexByTransitIdAndStopName(transitId, stop.getStreet());
 
         return Range.closed(fromStopIndex, toStopIndex).contains(stopIndex);
     }
