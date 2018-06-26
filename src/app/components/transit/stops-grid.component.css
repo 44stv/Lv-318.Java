@@ -1,5 +1,4 @@
 .demo-grid-list {
-  position: relative;
   top: 50px;
   width: auto;
   margin: 100px 100px;
@@ -15,7 +14,8 @@ p {
 
 .demo-basic-list .mat-grid-tile {
   background: rgba(0, 0, 0, 0.32);
-  text-align: start;
+  text-align: center;
+
 }
 
 .example-radio-group {
@@ -32,9 +32,17 @@ p {
 }
 
 mat-tab-group {
-  position: relative;
-  right: 50px;
-  width: 550px;
+  width: 1200px;
   height: auto;
+}
+
+.tile{
+  text-align:center;
+  font-size: 14px;
+
+}
+
+.grid-list {
+  min-width: 1200px;
 }
 

@@ -7,7 +7,7 @@ import {environment} from '../../environments/environment';
 @Injectable({
   providedIn: 'root'
 })
-export class StopService {
+export class BusyStopsDiagramService {
 
   private serviceUrl = environment.serverURL + '/stop/';
 
@@ -20,10 +20,6 @@ export class StopService {
 
   addStop(stop: Stop, id: number): Observable<Stop> {
     return this.http.post<Stop>(this.serviceUrl + '/' + id, stop);
-  }
-
-  getResults(url: string) {
-    return this.http.get(url);
   }
 
 

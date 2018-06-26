@@ -9,5 +9,8 @@
   "Average-Rate" : "Загальний рейтинг",
   "Route" : "Маршрут",
   "Raiting-Diagram" : "Відгуки",
-  "Back" : "Повернутись"
+  "Back" : "Повернутись",
+  "Forward direction": "Прямий напрямок",
+  "Backward direction": "Зворотній напрямок"
+
   }

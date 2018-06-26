@@ -1,8 +1,9 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {Stop} from '../../models/stop.model';
 import {ActivatedRoute} from '@angular/router';
 import {StopService} from '../../services/stop.service';
 import {Observable} from 'rxjs';
+import {BusyStopsDiagramComponent} from "./components/busy-stops-diagram/busy-stops-diagram.component";
 
 @Component({
   selector: 'app-stops-grid',
@@ -19,6 +20,8 @@ export class StopsGridComponent implements OnInit {
   public selectedStops: Stop[] = [];
   categoryId: number;
 
+  @ViewChild(BusyStopsDiagramComponent) child : BusyStopsDiagramComponent;
+
   constructor(private stopService: StopService, private route: ActivatedRoute) {
   }
 
@@ -29,9 +32,12 @@ export class StopsGridComponent implements OnInit {
       this.categoryId = params['city'];
     });
     this.stopsList = this.stopService.getStopsByTransitId(this.idTransit);
-    this.stopsList.subscribe(stopArray =>
-      this.stopArray = stopArray);
-    this.checkedItems = new Array(this.stopArray.length);
+    this.stopsList.subscribe(stopArray =>{
+        this.stopArray = stopArray;
+        this.checkedItems = new Array(this.stopArray.length);
+      }
+      );
+
     console.log(this.selectedStops);
     console.log(this.categoryId);
   }
@@ -46,9 +52,8 @@ export class StopsGridComponent implements OnInit {
       }
     }
 
+    this.child.updateChartData(this.selectedStops);
 
-    console.log(this.selectedStops);
-    console.log(this.categoryId);
   }
 
 }
