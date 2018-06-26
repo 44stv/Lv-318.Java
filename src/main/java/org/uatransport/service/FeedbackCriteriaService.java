@@ -27,5 +27,5 @@ public interface FeedbackCriteriaService {
 
     List<FeedbackCriteria> getByQuestionsGroupId(Integer groupId);
 
-    List<FeedbackCriteria> getByTypeAndCategoryId(Integer categoryId,String type);
+    List<FeedbackCriteria> getByTypeAndCategoryId(Integer categoryId, String type);
 }
