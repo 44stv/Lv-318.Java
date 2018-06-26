@@ -29,9 +29,9 @@ public class Transit {
     private NonExtendableCategory category;
 
     @ManyToMany
-    @JoinTable(name = "transit_stop", joinColumns = { @JoinColumn(name = "transit_id") }, inverseJoinColumns = {
-            @JoinColumn(name = "stop_id") })
-    @OrderColumn(name = "stop_index")
-    private List<Stop> stops;
+    @JoinTable(name = "transit_point", joinColumns = { @JoinColumn(name = "transit_id") }, inverseJoinColumns = {
+            @JoinColumn(name = "point_id") })
+    @OrderColumn(name = "point_index")
+    private List<Point> points;
 
 }
