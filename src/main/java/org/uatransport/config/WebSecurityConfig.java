@@ -33,8 +33,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/feedback-criteria/**", "/question/**", "/actuator/health")
                 .permitAll().anyRequest().authenticated();
 
-        // http.exceptionHandling().accessDeniedPage("/login");
-
         http.apply(new JwtTokenFilterConfigurer(jwtTokenProvider));
     }
 

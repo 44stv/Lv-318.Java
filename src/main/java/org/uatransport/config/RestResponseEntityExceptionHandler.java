@@ -41,7 +41,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         Class<?> requiredType = ex.getRequiredType();
         final ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex);
         apiError.setMessage(String.format("The parameter '%s' of value '%s' could not be converted to type '%s'",
-                ex.getName(), ex.getValue(), requiredType != null ? requiredType.getName() : "of the argument"));
+                ex.getName(), ex.getValue(), requiredType.getName()));
         return handleExceptionInternal(ex, apiError, HTTP_HEADERS, apiError.getStatus(), request);
     }
 
