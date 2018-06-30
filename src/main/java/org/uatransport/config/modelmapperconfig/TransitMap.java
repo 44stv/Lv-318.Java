@@ -23,6 +23,7 @@ public class TransitMap implements Converter<Transit, TransitDTO> {
         destination.setId(source.getId());
         destination.setName(source.getName());
         destination.setCategoryId(source.getCategory().getId());
+        destination.setCategoryIconURL(source.getCategory().getIconURL());
 
         if (!stops.isEmpty()) {
             destination.setRouteName(stops.get(0).getStreet() + " - " + stops.get((stops.size() - 1) / 2).getStreet());
