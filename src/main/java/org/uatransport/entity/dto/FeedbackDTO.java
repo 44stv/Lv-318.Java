@@ -30,10 +30,4 @@ public class FeedbackDTO {
         return feedbackDTOList.stream().map(FeedbackDTO::convertToEntity).collect(Collectors.toList());
     }
 
-    private FeedbackDTO convertToDto(Feedback feedback) {
-        FeedbackDTO feedbackDTO = modelMapper.map(this, FeedbackDTO.class);
-        return feedbackDTO.setAnswer(feedback.getAnswer()).setUserId(feedback.getUser().getId())
-                .setCriteriaId(feedback.getFeedbackCriteria().getId())
-                .setTransitId(feedback.getFeedbackCriteria().getId());
-    }
 }
