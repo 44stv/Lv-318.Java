@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { MapsService } from '../../../../services/maps.service';
-import { ActivatedRoute } from '@angular/router';
-import { environment } from '../../../../../environments/environment';
-import { Location, WaypointModel } from '../../../../models/waypoint.model';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {Component, OnInit} from '@angular/core';
+import {MapsService} from '../../../../services/maps.service';
+import {ActivatedRoute} from '@angular/router';
+import {environment} from '../../../../../environments/environment';
+import {Location, WaypointModel} from '../../../../models/waypoint.model';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 
 @Component({
   selector: 'app-maps',
@@ -135,6 +135,7 @@ export class MapsComponent implements OnInit {
   public secondStopMarker: MarkerModel = new MarkerModel();
   public icon = environment.serverURL + '/category/img?link=static/bus-stop.png';
   public direction = undefined;
+  public directionSecond = undefined;
   public travelMode = 'DRIVING';
   private serviceUrl = environment.serverURL + '/stop';
   public points: any = undefined;
@@ -148,7 +149,15 @@ export class MapsComponent implements OnInit {
       strokeColor: '#1c7bdb'
     }
   };
+  public renderOptions2 = {
+    draggable: false,
+    suppressMarkers: true,
+    polylineOptions: {
+      strokeColor: '#6aab2d'
+    }
+  };
   public waypoints;
+  public waypointsSecond;
 
   public markerOptions = {
     origin: {
@@ -183,33 +192,89 @@ export class MapsComponent implements OnInit {
     this.clearStopSecond();
   }
 
+  initMarkers() {
+    this.markers = new Array(this.points.length);
+    for (let i = 0; i < this.points.length; i++) {
+      const marker: MarkerModel = new MarkerModel();
+      marker.name = this.points[i].street;
+      marker.lat = this.points[i].lat;
+      marker.lng = this.points[i].lng;
+      marker.draggable = false;
+      marker.order = i;
+      this.markers[i] = marker;
+    }
+  }
+
+  initSingleDirection() {
+    this.direction = {
+      origin: {lat: this.points[0].lat, lng: this.points[0].lng},
+      destination: {lat: this.points[this.points.length - 1].lat, lng: this.points[this.points.length - 1].lng}
+    };
+  }
+
+  initMultipleDirection() {
+    this.direction = {
+      origin: {lat: this.points[0].lat, lng: this.points[0].lng},
+      destination: {lat: this.points[24].lat, lng: this.points[24].lng}
+    };
+    this.directionSecond = {
+      origin: {lat: this.points[24].lat, lng: this.points[24].lng},
+      destination: {lat: this.points[this.points.length - 1].lat, lng: this.points[this.points.length - 1].lng}
+    };
+  }
+
+  initSingleWaypoints() {
+    this.waypoints = new Array(this.points.length - 2);
+    for (let i = 1; i < this.points.length - 1; i++) {
+      const waypoint: WaypointModel = new WaypointModel();
+      const location: Location = new Location();
+      location.lat = this.points[i].lat;
+      location.lng = this.points[i].lng;
+      waypoint.location = location;
+      waypoint.stopover = true;
+      this.waypoints[i - 1] = waypoint;
+    }
+  }
+
+  initMultipleWaypoints() {
+    this.waypoints = new Array(23);
+    for (let i = 1; i < 24; i++) {
+      const waypoint: WaypointModel = new WaypointModel();
+      const location: Location = new Location();
+      location.lat = this.points[i].lat;
+      location.lng = this.points[i].lng;
+      waypoint.location = location;
+      waypoint.stopover = true;
+      this.waypoints[i - 1] = waypoint;
+    }
+    console.log('FIRST' + this.waypoints.length);
+    if (this.points.length === 26) {
+      return;
+    }
+    this.waypointsSecond = new Array(this.points.length - 26);
+    for (let i = 25; i < this.points.length - 1; i++) {
+      const waypoint: WaypointModel = new WaypointModel();
+      const location: Location = new Location();
+      location.lat = this.points[i].lat;
+      location.lng = this.points[i].lng;
+      waypoint.location = location;
+      waypoint.stopover = true;
+      this.waypointsSecond[i - 25] = waypoint;
+    }
+    console.log('SECOND' + this.waypointsSecond.length);
+  }
+
   initPoints() {
     this.service.getForwardDirection(this.transitId, this.routeDirection).subscribe(points => {
         this.points = points;
         console.log(points);
-        this.markers = new Array(points.length);
-        for (let i = 0; i < points.length; i++) {
-          const marker: MarkerModel = new MarkerModel();
-          marker.name = points[i].street;
-          marker.lat = points[i].lat;
-          marker.lng = points[i].lng;
-          marker.draggable = false;
-          marker.order = i;
-          this.markers[i] = marker;
-        }
-        this.direction = {
-          origin: {lat: points[0].lat, lng: points[0].lng},
-          destination: {lat: points[points.length - 1].lat, lng: points[points.length - 1].lng}
-        };
-        this.waypoints = new Array(this.points.length - 2);
-        for (let i = 1; i < points.length - 1; i++) {
-          const waypoint: WaypointModel = new WaypointModel();
-          const location: Location = new Location();
-          location.lat = points[i].lat;
-          location.lng = points[i].lng;
-          waypoint.location = location;
-          waypoint.stopover = true;
-          this.waypoints[i - 1] = waypoint;
+        this.initMarkers();
+        if (this.points.length < 25) {
+          this.initSingleWaypoints();
+          this.initSingleDirection();
+        } else {
+          this.initMultipleWaypoints();
+          this.initMultipleDirection();
         }
       }
     )
@@ -228,8 +293,6 @@ export class MapsComponent implements OnInit {
         this.secondStopMarker.lat = marker.lat;
         this.secondStopMarker.lng = marker.lng;
         this.secondStopMarker.order = marker.order;
-        console.log(this.secondStopMarker.order);
-        console.log(this.firstStopMarker.order);
         this.stopList = new Array(this.secondStopMarker.order - this.firstStopMarker.order - 1);
         for (let i = this.firstStopMarker.order + 1, j = 0; i < this.secondStopMarker.order; i++, j++) {
           this.stopList[j] = this.markers[i];

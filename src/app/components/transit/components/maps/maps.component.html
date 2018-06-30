@@ -45,6 +45,14 @@
                      [waypoints]="waypoints"
       >
       </agm-direction>
+      <agm-direction *ngIf="directionSecond"
+                     [origin]="directionSecond.origin" [destination]="directionSecond.destination"
+                     [renderOptions]="renderOptions2"
+                     [markerOptions]="markerOptions"
+                     [travelMode]="travelMode"
+                     [waypoints]="waypointsSecond"
+      >
+      </agm-direction>
       <agm-marker *ngFor="let m of markers"
                   (markerClick)="clickedMarker(m)"
                   [latitude]="m.lat"
