@@ -2,12 +2,17 @@
   <div class="non-category-wrapper">
     <div class="non-category" *ngFor="let category of list | async">
       <div class="name-and-icon"
-           [routerLink]="['/category', category.nextLevelCategory.nextLevelCategory.name, category.nextLevelCategory.name,category.id]">
+           [routerLink]="['/category',
+              category.nextLevelCategory.nextLevelCategory.name,
+              category.nextLevelCategory.name,
+              category.id]">
         <!--<div class="name-and-icon">-->
         <img src="{{serverURL}}{{category.iconURL}}"/><br/>
         {{category.name}}
       </div>
     </div>
   </div>
-  <!--<app-transits></app-transits>-->
+  <div class="cityTransits">
+    <app-transits></app-transits>
+  </div>
 </div>

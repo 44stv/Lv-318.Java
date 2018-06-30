@@ -4,6 +4,7 @@
   left: 100px;
   top: 0;
   height: 100px;
+  width: 1200px;
   background-color: white;
   box-shadow: 1px 5px 6px 2px rgba(217, 214, 217, 1);
 }
@@ -43,12 +44,17 @@ a:active {
 
 .criteriaButton {
   position: relative;
-  left: 400px;
+  left: 200px;
 }
 
 .NewUser {
   position: relative;
-  left: 500px;
+  left: 210px;
+}
+
+.LoginUser {
+  position: relative;
+  left: 220px;
 }
 
 .container {
@@ -62,6 +68,39 @@ a:active {
 
 .lang {
   margin: 0 0 0 8px;
+}
+
+.Search {
+  position: relative;
+  left: 150px;
+  font-size: 10.5px;
+  font-family: sans-serif;
+  color: darkgray;
+  font-weight: bold;
+  padding-bottom: 2px;
+}
+
+input {
+  font-size: 14px;
+  line-height: 29px;
+  letter-spacing: .3px;
+  font-weight: 400;
+  color: #333;
+  border: 1px solid rgb(168, 166, 170);
+  border-radius: 100px;
+  background-color: #ffffff;
+  padding: 9px 16px;
+  margin: 1px 0 0 8px;
+  width: 180px;
+  height: 100%;
+  /* -webkit-appearance: none; */
+}
+
+:focus {
+  outline: -webkit-focus-ring-color auto 0;
+  outline-color: -webkit-focus-ring-color;
+  outline-style: auto;
+  outline-width: 0;
 }
 
 

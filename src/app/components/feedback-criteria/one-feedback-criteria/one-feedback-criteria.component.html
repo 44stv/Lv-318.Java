@@ -1,0 +1,16 @@
+<div *ngIf= "feedbackCriteria" class="onefeedbackCriteria">  
+  <mat-card>{{feedbackCriteria.type}}</mat-card>
+    <mat-form-field appearance="standard" *ngFor="let question of feedbackCriteria.questions" >
+      <mat-label>{{question.name}}</mat-label>
+        <input matInput placeholder="question" [(ngModel)]="question.name" >
+           <mat-hint align="end">question</mat-hint>
+          </mat-form-field>
+       <mat-form-field appearance="standard" *ngFor="let question of feedbackCriteria.questions" >
+      <mat-label >{{question.weight}}</mat-label>
+     <input [readonly]="isReadOnly" matInput placeholder="weight" [(ngModel)]="question.weight" >
+    <mat-hint align="end">Only RATING can have weight</mat-hint>
+       </mat-form-field>  
+       <button mat-raised-button (click)="openDialog()">Add Questions</button>
+    <button mat-raised-button (click) = "updateFeedbackCriteria()"> Update </button>
+    <button mat-stroked-button (click) = "deleteFeedbackCriteria(feedbackCriteria.id)" > DELETE </button>
+</div>

@@ -22,16 +22,10 @@ export class UserService {
   }
 
   public createUser(user) {
-    return this.http.post<User>(this.userUrl, user);
+    return this.http.post<User>(this.userUrl + '/', user);
   }
 
-  getUser(login) {
-    return this.http.get<User>(this.userUrl + '/in', {
-      params: {
-        email: login.email.toString(),
-        password: login.password.toString(),
-
-      }
-    });
+  public logIn(login) {
+    return this.http.post<User>(this.userUrl + '/', login);
   }
 }

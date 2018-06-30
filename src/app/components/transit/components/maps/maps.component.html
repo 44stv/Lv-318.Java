@@ -1,0 +1,76 @@
+<div id="wrapper">
+  <mat-vertical-stepper #stepper>
+    <mat-step [stepControl]="firstFormGroup" label="Step 1">
+      <ng-template matStepLabel>{{firstStopMarker.name ? firstStopMarker.name : "Choose a stop" | translate }}</ng-template>
+      <div>
+        <button mat-button matStepperNext>{{'Next' | translate}}</button>
+        <button mat-button (click)="clearStopFirst()">
+          {{'Clear'| translate}}
+        </button>
+      </div>
+    </mat-step>
+    <mat-step [stepControl]="firstFormGroup" label="Step 2">
+      <ng-template matStepLabel>{{secondStopMarker.name ? secondStopMarker.name : "Choose a stop" | translate }}</ng-template>
+      <div>
+        <button mat-button matStepperPrevious>{{'Back' | translate}}</button>
+        <button mat-button matStepperNext>{{'Next' | translate}}</button>
+        <button mat-button (click)="clearStopSecond()">
+          {{'Clear'| translate}}
+        </button>
+      </div>
+    </mat-step>
+    <mat-step [stepControl]="firstFormGroup" label="Step 3">
+      <ng-template matStepLabel>{{(secondStopMarker.name && firstStopMarker.name) ? firstStopMarker.name +" - " +  secondStopMarker.name : "Choose a stop" | translate }}</ng-template>
+      <div>
+        <div class="stop-list" *ngFor="let s of stopList">
+          {{s.name}}
+        </div>
+        <button mat-button matStepperNext>Make Feedback</button>
+        <button mat-button matStepperPrevious>{{'Back' | translate}}</button>
+        <button mat-button (click)="stepper.reset(); clearStopSecond(); clearStopFirst()">Reset</button>
+      </div>
+    </mat-step>
+  </mat-vertical-stepper>
+  <div id="map-wrapper">
+    <agm-map [latitude]="latStatic"
+             [longitude]="lngStatic"
+             [zoom]="zoom"
+             [styles]="styles"
+    >
+      <agm-direction *ngIf="direction"
+                     [origin]="direction.origin" [destination]="direction.destination"
+                     [renderOptions]="renderOptions"
+                     [markerOptions]="markerOptions"
+                     [travelMode]="travelMode"
+                     [waypoints]="waypoints"
+      >
+      </agm-direction>
+      <agm-direction *ngIf="directionSecond"
+                     [origin]="directionSecond.origin" [destination]="directionSecond.destination"
+                     [renderOptions]="renderOptions2"
+                     [markerOptions]="markerOptions"
+                     [travelMode]="travelMode"
+                     [waypoints]="waypointsSecond"
+      >
+      </agm-direction>
+      <agm-marker *ngFor="let m of markers"
+                  (markerClick)="clickedMarker(m)"
+                  [latitude]="m.lat"
+                  [longitude]="m.lng"
+                  [markerDraggable]="m.draggable"
+                  [iconUrl]="icon"
+      >
+        <agm-info-window [disableAutoPan]="true">
+          <strong>{{m.name}}</strong>
+        </agm-info-window>
+
+      </agm-marker>
+    </agm-map>
+  </div>
+  <button mat-button (click)="setDirectionAndRefresh('forward')">
+    {{'Forward'| translate}}
+  </button>
+  <button mat-button (click)="setDirectionAndRefresh('backward')">
+    {{'Backward'| translate}}
+  </button>
+</div>

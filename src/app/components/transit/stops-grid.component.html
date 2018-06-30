@@ -1,0 +1,20 @@
+
+<div class="demo-grid-list">
+  <button mat-raised-button color="primary" (click)="openModal()">{{ 'Feedback' | translate}}</button>
+  <p style="text-align: center">{{"Route" | translate}}</p>
+  <mat-grid-list cols="7" rowHeight="50px">
+    <mat-grid-tile
+      *ngFor="let i=index; let tile of stopsList | async">
+      <input type="checkbox" [(ngModel)]="checkedItems[i]" [id]="tile.id" [value]="tile.street"
+             (change)='selectStops()'>
+      <div><label [for]="tile.id">{{tile.street}}</label></div>
+    </mat-grid-tile>
+  </mat-grid-list>
+
+  <app-average-rate [id]="idTransit"></app-average-rate>
+      <app-raiting-diagram [id]="idTransit"></app-raiting-diagram>
+      <app-busy-stops-diagram [id]="idTransit"></app-busy-stops-diagram>
+      <app-busy-hours-diagram [id]="idTransit"></app-busy-hours-diagram>
+</div>
+<app-back-to-previous-page-btn></app-back-to-previous-page-btn>
+

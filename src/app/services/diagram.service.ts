@@ -1,5 +1,13 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+
+const httpOptions = {
+  headers: new HttpHeaders(({
+    // 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' ,
+    'Accept': 'application/json',
+    'Content-Type': 'application/json'
+      })),
+};
 
 @Injectable()
 export class DiagramService {
@@ -7,7 +15,8 @@ export class DiagramService {
   }
 
   getResults(url: string) {
-    return this.http.get(url);
+    return this.http.get(url, httpOptions);
   }
+
 
 }

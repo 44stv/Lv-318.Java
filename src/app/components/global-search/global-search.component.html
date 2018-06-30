@@ -1,0 +1,41 @@
+<div class="search">
+    <mat-card *ngIf="empty">I`m sorry but we can`t find information</mat-card>
+    <button  mat-stroked-button (click)="gotBack()">Go back</button>
+
+  <div class="transit" *ngIf="emptyTransit">
+    <mat-form-field>
+      <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+    </mat-form-field>
+    <mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+      <ng-container matColumnDef="id">
+        <mat-header-cell *matHeaderCellDef> Id </mat-header-cell>
+        <mat-cell *matCellDef="let transit"> {{ transit.id }} </mat-cell>
+      </ng-container>
+
+
+      <ng-container matColumnDef="name">
+        <mat-header-cell *matHeaderCellDef> Name</mat-header-cell>
+        <mat-cell *matCellDef="let transit"> {{transit.name}}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="categoryId">
+        <mat-header-cell *matHeaderCellDef> Category Id </mat-header-cell>
+        <mat-cell *matCellDef="let transit"> {{ transit.categoryId }} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="routeName">
+        <mat-header-cell *matHeaderCellDef> Route </mat-header-cell>
+        <mat-cell *matCellDef="let transit"> {{ transit.routeName }} </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;">
+               <!--a routerLink='/show-transit-scheme/{categoryId}/{id}/{name}'>-->
+               <!--[routerLink]="['/show-transit-scheme', transit.categoryId,-->
+               <!--transit.id, transit.name]">-->
+               </mat-row>
+    </mat-table>
+    <mat-paginator [pageSizeOptions]="[5, 10, 15]" showFirstLastButtons></mat-paginator>
+  </div>
+</div>

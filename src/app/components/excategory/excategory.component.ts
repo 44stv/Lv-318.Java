@@ -14,7 +14,6 @@ export class ExcategoryComponent implements OnInit {
   private cities: Observable<ExcategoryModel[]>;
   private serverURL = environment.serverURL + '/category/img?link=';
 
-
   constructor(public service: ExcategoryService) {
   }
 

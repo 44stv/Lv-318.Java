@@ -1,0 +1,16 @@
+<div class="LoginUserForm">
+  <div class="col-md-7">
+    <form class="example-form">
+      <mat-form-field class="email">
+        <textarea matInput [(ngModel)]="login.email" placeholder="Email" name="email"></textarea>
+      </mat-form-field>
+
+      <mat-form-field class="password">
+        <textarea matInput [(ngModel)]="login.password" placeholder="Password" name="password"></textarea>
+      </mat-form-field>
+
+      <button class="Button" mat-fab (click)="logIn()">Login</button>
+
+    </form>
+  </div>
+</div>

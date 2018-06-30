@@ -1,19 +1,21 @@
 <div class="feedbackCriteria">
-    <mat-form-field>
-        <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
-        </mat-form-field>
+  <button  mat-stroked-button a routerLink="./add-feedback-criteria">Add new</button>
+  <mat-form-field>
+    <input matInput (keyup)="search($event.target.value)" placeholder="Filter">
+  </mat-form-field>
   <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-    <ng-container matColumnDef="id">
-      <mat-header-cell *matHeaderCellDef> Id </mat-header-cell>
-      <mat-cell *matCellDef="let feedbackCriteria"> {{feedbackCriteria.id}}</mat-cell>
-    </ng-container>
     <ng-container matColumnDef="type">
       <mat-header-cell *matHeaderCellDef> Type </mat-header-cell>
-      <mat-cell *matCellDef="let feedbackCriteria"> {{feedbackCriteria.type | lowercase}}</mat-cell>
+      <mat-cell *matCellDef="let feedbackCriteria" a routerLink="./{{feedbackCriteria.id}}"> {{feedbackCriteria.type}}</mat-cell>
     </ng-container>
-    <ng-container matColumnDef="weight">
-      <mat-header-cell *matHeaderCellDef> Weight </mat-header-cell>
-      <mat-cell *matCellDef="let feedbackCriteria"> {{ feedbackCriteria.weight }}</mat-cell>
+    <ng-container matColumnDef="questions">
+      <mat-header-cell *matHeaderCellDef> Questions </mat-header-cell>
+      <mat-cell *matCellDef="let feedbackCriteria">
+        <mat-list role="list" *ngFor="let questions of feedbackCriteria.questions ">
+          <mat-list-item role="listitem">{{questions.name}}</mat-list-item>
+          <mat-list-item role="listitem">weight: {{questions.weight}}</mat-list-item>
+        </mat-list>
+      </mat-cell>
     </ng-container>
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
@@ -21,5 +23,5 @@
   <mat-paginator [pageSizeOptions]="[3, 5, 10]" showFirstLastButtons></mat-paginator>
 </div>
 
- 
+
 

@@ -1,0 +1,20 @@
+<div class="addfeedbackcriteria">
+  <mat-form-field appearance="standard">
+    <mat-select placeholder="Type" [(ngModel)]="feedbackCriteria.type" name="type">
+      <mat-option *ngFor="let enumType of enumTypes" [value]="enumType" (click) = "ifRatingType(feedbackCriteria.type)">
+        {{ enumType }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <div class="questionadd" *ngIf="questions">
+    <mat-list *ngFor="let question of questions">
+      <mat-list-item >Question: {{question.name}}</mat-list-item>
+      <mat-list-item *ngIf="question.weight">Weight: {{question.weight}}</mat-list-item>
+      <mat-divider></mat-divider>
+    </mat-list>
+  </div>
+  <div class="button">
+    <button mat-raised-button (click)="openDialog()">Add Questions</button></div>
+  <button mat-stroked-button (click) = "addFeedbackCriteria()" > SAVE </button>
+
+</div>

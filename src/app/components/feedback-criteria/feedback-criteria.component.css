@@ -7,3 +7,6 @@
 .mat-elevation-z8{
   width: 100%; 
 }
+.mat-stroked-button{
+  float: right;
+}

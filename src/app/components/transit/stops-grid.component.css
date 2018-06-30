@@ -1,0 +1,29 @@
+
+.demo-grid-list {
+  top: 50px;
+  width: auto;
+  margin: 100px 100px;
+}
+
+p {
+  margin: 16px;
+}
+
+.mat-grid-tile-class {
+  background: rgba(0, 0, 0, 0.32);
+  text-align: center;
+  text-align:center;
+  font-size: 14px;
+  max-width: 40px;
+}
+
+.example-selected-value {
+  margin: 15px 0;
+}
+
+
+
+.grid-list {
+  width: 1200px;
+}
+

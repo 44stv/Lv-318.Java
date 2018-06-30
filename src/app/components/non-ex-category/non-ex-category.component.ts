@@ -26,7 +26,8 @@ export class NonExCategoryComponent implements OnInit {
   @ViewChild(TransitsComponent)
   private transitChild: TransitsComponent;
 
-  constructor(private service: NonExCategoryService, private route: ActivatedRoute) {
+  constructor(private service: NonExCategoryService,
+              private route: ActivatedRoute) {
   }
 
   ngOnInit() {

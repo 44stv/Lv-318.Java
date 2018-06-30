@@ -1,4 +1,4 @@
- export class WaypointModel {
+export class WaypointModel {
   location: Location;
   stopover: boolean;
 }

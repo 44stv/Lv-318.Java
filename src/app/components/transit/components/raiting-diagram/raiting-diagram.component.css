@@ -1,0 +1,7 @@
+.container {
+  position: absolute;
+  top: 25%;
+  left: 100px;
+  width: 300px;
+  margin: 100px auto;
+}
