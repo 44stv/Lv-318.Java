@@ -20,16 +20,31 @@ public class TransitMap implements Converter<Transit, TransitDTO> {
         TransitDTO destination = mappingContext.getDestination();
         List<Stop> stops = source.getStops();
 
+        String firstStop;
+        String lastStop = "";
+        boolean found = false;
+
+        //TODO: rewrite search
+        if (!stops.isEmpty()) {
+            firstStop = stops.get(0).getStreet();
+            for (int i = 0; i < stops.size(); i++) {
+                if (stops.get(i).getStreet().equals(stops.get(i+1).getStreet())
+                    && stops.get(i).getDirection() != stops.get(i+1).getDirection()) {
+                    lastStop = stops.get(i).getStreet();
+                    found = true;
+                }
+                if (found) break;
+            }
+            destination.setRouteName(firstStop + " - " + lastStop);
+        } else {
+            destination.setRouteName("Empty");
+        }
+
+
         destination.setId(source.getId());
         destination.setName(source.getName());
         destination.setCategoryId(source.getCategory().getId());
         destination.setCategoryIconURL(source.getCategory().getIconURL());
-
-        if (!stops.isEmpty()) {
-            destination.setRouteName(stops.get(0).getStreet() + " - " + stops.get((stops.size() - 1) / 2).getStreet());
-        } else {
-            destination.setRouteName("Empty");
-        }
 
         return destination;
     }
