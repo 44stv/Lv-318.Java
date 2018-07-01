@@ -5,6 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.uatransport.service.ewayutil.EwayRoutesListSaver;
 
 @SpringBootApplication
 @EnableCaching
@@ -15,7 +16,7 @@ public class UaTransportApplication {
         ConfigurableApplicationContext context = SpringApplication.run(UaTransportApplication.class, args);
         log.debug("--Application Started--");
 
-        // EwayScheduleUpdate scheduleUpdate = (EwayScheduleUpdate) context.getBean(EwayScheduleUpdate.class);
-        // scheduleUpdate.updateTransitData();
+        EwayRoutesListSaver saver = (EwayRoutesListSaver) context.getBean(EwayRoutesListSaver.class);
+        saver.convertAndSaveEwayRoutes();
     }
 }
