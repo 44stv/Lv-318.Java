@@ -1,5 +1,7 @@
 package org.uatransport.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.uatransport.entity.Transit;
 
@@ -19,11 +21,11 @@ public interface TransitService {
 
     Transit getByName(String name);
 
-    List<Transit> getAllByCategoryId(Integer id);
+    Page<Transit> getAllByCategoryIdByPage(Integer id, Pageable pageable);
 
     List<Transit> getAllByNextLevelCategoryId(Integer id);
 
-    List<Transit> getAllByNextLevelCategoryName(String categoryName);
+    Page<Transit> getAllByNextLevelCategoryNameByPage(String categoryName, Pageable pageable);
 
     List<Transit> getAll();
 
