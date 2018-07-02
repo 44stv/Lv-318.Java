@@ -20,6 +20,16 @@ public class StopServiceImpl implements StopService {
     private final StopRepository stopRepository;
 
     @Override
+    public boolean existByCoordinatesAndDirection(Double lat, Double lng, Stop.DIRECTION direction) {
+        return stopRepository.existsByLatAndLngAndDirection(lat, lng, direction);
+    }
+
+    @Override
+    public Stop getByLatAndLngAndDirection(Double lat, Double lng, Stop.DIRECTION direction) {
+        return stopRepository.findByLatAndLngAndDirection(lat, lng, direction);
+    }
+
+    @Override
     @Transactional
     public Stop save(Stop point) {
         if (point == null) {
@@ -32,7 +42,7 @@ public class StopServiceImpl implements StopService {
     @Transactional(readOnly = true)
     public Stop getById(Integer id) {
         return stopRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(String.format("Stop with id '%s' not found", id)));
+            .orElseThrow(() -> new ResourceNotFoundException(String.format("Stop with id '%s' not found", id)));
     }
 
     @Override

@@ -10,6 +10,8 @@ public interface TransitRepository extends CrudRepository<Transit, Integer>, Jpa
 
     Transit findByName(String name);
 
+    Transit findByNameAndCategoryName(String name, String categoryName);
+
     List<Transit> findByNameContaining(String name);
 
     List<Transit> findByCategoryName(String name);

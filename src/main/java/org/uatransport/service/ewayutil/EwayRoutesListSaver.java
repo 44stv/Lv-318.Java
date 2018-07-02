@@ -2,31 +2,22 @@ package org.uatransport.service.ewayutil;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.util.concurrent.RateLimiter;
-import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.http.client.utils.URIBuilder;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.uatransport.config.SearchCategoryParam;
-import org.uatransport.entity.ExtendableCategory;
 import org.uatransport.entity.NonExtendableCategory;
 import org.uatransport.entity.Stop;
 import org.uatransport.entity.Transit;
-import org.uatransport.exception.ResourceNotFoundException;
-import org.uatransport.repository.CategoryRepository;
-import org.uatransport.repository.StopRepository;
-import org.uatransport.repository.TransitRepository;
+import org.uatransport.exception.ResourceNotFoundException;;
 import org.uatransport.service.CategoryService;
 import org.uatransport.service.StopService;
 import org.uatransport.service.TransitService;
 import org.uatransport.service.ewayutil.ewayentity.EwayResponseObject;
 import org.uatransport.service.ewayutil.ewayentity.EwayRoute;
-import org.uatransport.service.ewayutil.ewayentity.EwayRouteList;
 import org.uatransport.service.ewayutil.ewaystopentity.EwayPoint;
-import org.uatransport.service.ewayutil.ewaystopentity.EwayPoints;
-import org.uatransport.service.ewayutil.ewaystopentity.EwayRouteWithPoints;
 import org.uatransport.service.ewayutil.ewaystopentity.EwayStopResponse;
 
 import java.io.IOException;
@@ -42,56 +33,64 @@ public class EwayRoutesListSaver {
     private final StopService stopService;
 
     public void convertAndSaveEwayRoutes() {
-        RateLimiter rateLimiter = RateLimiter.create(5.0);
-        EwayResponseObject object = object = getTransitsObject();
-        for (EwayRoute route : object.getRoutesList().getRoute()) {
+        RateLimiter rateLimiter = RateLimiter.create(15.0);
+        for (EwayRoute route : getTransitsObject().getRoutesList().getRoute()) {
             rateLimiter.acquire();
             Transit transit = new Transit();
-            NonExtendableCategory category;
-            switch (route.getTransport()) {
-                case "bus":
-                    category = categoryService.getAll(new SearchCategoryParam()).stream()
-                        .findFirst()
-                        .orElseThrow(() -> new ...);
-                    break;
-                case "trol":
-                    categoryId = 5;
-                    break;
-                case "tram":
-                    categoryId = 4;
-                    break;
-            }
-            transit.setCategory(category);
+            transit.setCategory(getCategoryByTransportType(route.getTransport()));
             transit.setName(route.getTitle());
-            EwayStopResponse ewayStopResponse = null;
-            try {
-                ewayStopResponse = getStopsObject(route.getId().toString());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            List<Stop> stops = new ArrayList<>();
-            for (EwayPoint point : ewayStopResponse.getRoute().getPoints().getPoint()) {
-                if (point.getTitle() != null) {
-                    Stop transitStop = new Stop();
-                    transitStop.setLng(point.getLng());
-                    transitStop.setLat(point.getLat());
-                    transitStop.setStreet(point.getTitle());
-                    if (point.getDirection() == 1) {
-                        transitStop.setDirection(Stop.DIRECTION.FORWARD);
-                    } else {
-                        transitStop.setDirection(Stop.DIRECTION.BACKWARD);
-                    }
-                    stops.add(transitStop);
-                    stopService.save(transitStop);
-                }
-            }
-            if (transitService.existsInCategory(transit.getName(), category)) {
+            transit.setStops(convertAndSaveStops(route.getId().toString()));
+            if (transitService.getByNameAndCategoryName(transit.getName(), transit.getCategory().getName()) == null) {
                 transitService.add(transit);
             } else {
+                transit.setId(transitService.getByNameAndCategoryName(transit.getName(), transit.getCategory().getName()).getId());
                 transitService.update(transit);
             }
-            transit.setStops(stops);
         }
+    }
+
+    private List<Stop> convertAndSaveStops(String routeId){
+        List<Stop> stops = new ArrayList<>();
+        for (EwayPoint point : getStopsObject(routeId).getRoute().getPoints().getPoint()) {
+            if (point.getTitle() != null) {
+                Stop transitStop = new Stop();
+                transitStop.setLng(point.getLng());
+                transitStop.setLat(point.getLat());
+                transitStop.setStreet(point.getTitle());
+                if (point.getDirection() == 1) {
+                    transitStop.setDirection(Stop.DIRECTION.FORWARD);
+                } else {
+                    transitStop.setDirection(Stop.DIRECTION.BACKWARD);
+                }
+                if (stopService.existByCoordinatesAndDirection(transitStop.getLat(), transitStop.getLng(), transitStop.getDirection())) {
+                    transitStop.setId(stopService.getByLatAndLngAndDirection(transitStop.getLat(),
+                        transitStop.getLng(), transitStop.getDirection()).getId());
+                } else {
+                    stopService.save(transitStop);
+                }
+                stops.add(transitStop);
+            }
+        }
+        return stops;
+    }
+
+    private NonExtendableCategory getCategoryByTransportType(String transportType) {
+        SearchCategoryParam searchCategoryParam = new SearchCategoryParam();
+        searchCategoryParam.setFirstNestedCategoryName(EwayConfig.getProperty("extendCategory"));
+        switch (transportType) {
+            case "bus":
+                searchCategoryParam.setName(EwayConfig.getProperty("busCategoryName"));
+                break;
+            case "trol":
+                searchCategoryParam.setName(EwayConfig.getProperty("trolCategoryName"));
+                break;
+            case "tram":
+                searchCategoryParam.setName(EwayConfig.getProperty("tramCategoryName"));
+                break;
+        }
+        return (NonExtendableCategory) categoryService.getAll(searchCategoryParam).stream()
+            .findFirst()
+            .orElseThrow(() -> new ResourceNotFoundException("There no category with such parameters"));
     }
 
     private String getTransitsUrl() {
@@ -121,6 +120,6 @@ public class EwayRoutesListSaver {
 
     @SneakyThrows
     private EwayStopResponse getStopsObject(String transitId) {
-        return new Gson().fromJson(new RestTemplate().getForEntity(getStopsUrl(transitId), String.class).getBody(), EwayStopResponse.class);
+        return new ObjectMapper().readValue(new RestTemplate().getForEntity(getStopsUrl(transitId), String.class).getBody(), EwayStopResponse.class);
     }
 }

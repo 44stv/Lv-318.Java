@@ -22,6 +22,8 @@ public interface TransitService {
 
     Transit getByName(String name);
 
+    Transit getByNameAndCategoryName(String name, String categoryName);
+
     List<Transit> getAllByCategoryId(Integer id);
 
     List<Transit> getAllByNextLevelCategoryId(Integer id);

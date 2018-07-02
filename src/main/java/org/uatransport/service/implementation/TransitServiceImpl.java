@@ -25,6 +25,7 @@ public class TransitServiceImpl implements TransitService {
     private final CategoryRepository nonExtendableCategoryRepository;
 
     @Override
+    @Transactional
     public boolean existsInCategory(String name, NonExtendableCategory category) {
         return transitRepository.findByCategoryName(name)
             .stream()
@@ -98,6 +99,11 @@ public class TransitServiceImpl implements TransitService {
             throw new IllegalArgumentException("Name should not be empty");
         }
         return transitRepository.findByName(name);
+    }
+
+    @Override
+    public Transit getByNameAndCategoryName(String name, String categoryName) {
+        return transitRepository.findByNameAndCategoryName(name, categoryName);
     }
 
     @Override

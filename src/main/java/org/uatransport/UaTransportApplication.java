@@ -5,7 +5,13 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.uatransport.entity.NonExtendableCategory;
+import org.uatransport.entity.Transit;
+import org.uatransport.repository.TransitRepository;
+import org.uatransport.service.CategoryService;
 import org.uatransport.service.ewayutil.EwayRoutesListSaver;
+import org.uatransport.service.implementation.CategoryServiceImpl;
+import org.uatransport.service.implementation.TransitServiceImpl;
 
 @SpringBootApplication
 @EnableCaching

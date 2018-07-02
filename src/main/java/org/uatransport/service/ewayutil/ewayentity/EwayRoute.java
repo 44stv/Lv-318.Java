@@ -1,8 +1,8 @@
 package org.uatransport.service.ewayutil.ewayentity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.annotate.JsonProperty;
 
 import java.io.Serializable;
 
@@ -14,6 +14,7 @@ public class EwayRoute implements Serializable {
 
     @JsonProperty("start_position")
     private Integer startPosition;
+    @JsonProperty("stop_position")
     private Integer stop_position;
     private String transport;
 }
