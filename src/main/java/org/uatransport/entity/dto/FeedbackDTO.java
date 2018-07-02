@@ -6,6 +6,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.expression.ParseException;
 import org.uatransport.entity.Feedback;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,6 +19,8 @@ public class FeedbackDTO {
     private Integer userId;
     private Integer transitId;
     private Integer criteriaId;
+    private LocalDateTime date;
+
 
     ModelMapper modelMapper = new ModelMapper();
 

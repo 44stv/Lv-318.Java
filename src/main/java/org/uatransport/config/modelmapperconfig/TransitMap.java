@@ -32,4 +32,5 @@ public class TransitMap implements Converter<Transit, TransitDTO> {
 
         return destination;
     }
+
 }

@@ -20,12 +20,12 @@ public class CapacityHourFeedback {
     public boolean containsHour(Integer hour) {
         Map<Boolean, List<Integer>> containsMinutesMap = IntStream.range(startTime.toMinutes(), endTime.toMinutes())
             .boxed()
-            .collect(Collectors.partitioningBy(minute -> containMinute(hour, minute)));
+            .collect(Collectors.partitioningBy(minute -> containsMinute(hour, minute)));
 
-        return containsMinutesMap.get(true).size() > containsMinutesMap.get(false).size();
+        return containsMinutesMap.get(true).size() >= containsMinutesMap.get(false).size();
     }
 
-    private static boolean containMinute(Integer hour, Integer minute) {
+    private static boolean containsMinute(Integer hour, Integer minute) {
         return Range.closed(hour * MINUTES_IN_HOUR, (hour + 1) * MINUTES_IN_HOUR).contains(minute);
     }
 }

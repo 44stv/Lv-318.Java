@@ -32,4 +32,23 @@ public class FeedbackCriteria {
         RATING, ROUTE_CAPACITY, ACCEPTER, HOURS_CAPACITY
     }
 
+    public Integer getPriority() {
+        int priority = 0;
+        switch (FeedbackCriteria.FeedbackType.valueOf(this.type.toString())) {
+            case RATING:
+                priority = 1;
+                break;
+            case ACCEPTER:
+                priority = 2;
+                break;
+            case HOURS_CAPACITY:
+                priority = 3;
+                break;
+            case ROUTE_CAPACITY:
+                priority = 4;
+                break;
+        }
+        return priority;
+    }
+
 }

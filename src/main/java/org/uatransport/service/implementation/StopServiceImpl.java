@@ -1,6 +1,5 @@
 package org.uatransport.service.implementation;
 
-import com.google.common.base.Strings;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -33,7 +32,7 @@ public class StopServiceImpl implements StopService {
     @Transactional(readOnly = true)
     public Stop getById(Integer id) {
         return stopRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(String.format("Stop with id '%s' not found", id)));
+            .orElseThrow(() -> new ResourceNotFoundException(String.format("Stop with id '%s' not found", id)));
     }
 
     @Override
@@ -66,8 +65,8 @@ public class StopServiceImpl implements StopService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public Stop getByTransitIdAndStopName(Integer transitId, String street) {
-        return stopRepository.findByTransitIdAndStopName(transitId, street);
+    public Stop getByTransitIdAndStopNameAndDirection(Integer transitId, String street, String direction) {
+        return stopRepository.findByTransitIdAndStopNameAndDirection(transitId, street, direction);
     }
 
     @Override
@@ -78,11 +77,21 @@ public class StopServiceImpl implements StopService {
         return stopRepository.findBackwardStopsByTransitId(id);
     }
 
+//    @Override
+//    @Transactional(propagation = Propagation.REQUIRES_NEW)
+//    public Integer getIndexByTransitIdAndStopName(Integer transitId, String street) {
+//        if (stopRepository.existsById(getByTransitIdAndStopNameAndDirection(transitId, street).getId())) {
+//            return stopRepository.findIndexByTransitIdAndStopName(transitId, street);
+//        } else {
+//            throw new ResourceNotFoundException("Stop  not found");
+//        }
+//    }
+
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public Integer getIndexByTransitIdAndStopName(Integer transitId, String street) {
-        if (stopRepository.existsById(getByTransitIdAndStopName(transitId, street).getId())) {
-            return stopRepository.findIndexByTransitIdAndStopName(transitId, street);
+    public Integer getIndexByTransitIdAndStopNameAndDirection(Integer transitId, String street, String direction) {
+        if (stopRepository.existsById(getByTransitIdAndStopNameAndDirection(transitId, street, direction).getId())) {
+            return stopRepository.findIndexByTransitIdAndStopNameAndDirection(transitId, street, direction);
         } else {
             throw new ResourceNotFoundException("Stop  not found");
         }

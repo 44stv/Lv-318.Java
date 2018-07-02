@@ -3,17 +3,16 @@ package org.uatransport.service.implementation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.uatransport.entity.Feedback;
 import org.uatransport.entity.FeedbackCriteria;
 import org.uatransport.exception.ResourceNotFoundException;
 import org.uatransport.repository.FeedbackCriteriaRepository;
 import org.uatransport.service.FeedbackCriteriaService;
 
-;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+
+;
 
 @Service
 @RequiredArgsConstructor
@@ -46,7 +45,7 @@ public class FeedbackCriteriaServiceImpl implements FeedbackCriteriaService {
         }
 
         return feedbackCriteriaRepository.findById(feedbackCriteria.getId()).orElseThrow(() -> new ResourceNotFoundException(
-                String.format("This FeedbackCriteria does not found", feedbackCriteria)));
+            String.format("This FeedbackCriteria does not found", feedbackCriteria)));
     }
 
     @Override
@@ -58,7 +57,7 @@ public class FeedbackCriteriaServiceImpl implements FeedbackCriteriaService {
     @Transactional(readOnly = true)
     public FeedbackCriteria getById(Integer id) {
         return feedbackCriteriaRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(String
-                .format("FeedbackCriteria with id '%s' not found", id)));
+            .format("FeedbackCriteria with id '%s' not found", id)));
     }
 
 
@@ -89,7 +88,9 @@ public class FeedbackCriteriaServiceImpl implements FeedbackCriteriaService {
     @Override
     @Transactional(readOnly = true)
     public List<FeedbackCriteria> getByTypeAndCategoryId(Integer categoryId, String type) {
-        return feedbackCriteriaRepository.findByTypeAndNonExtendableCategoryId(categoryId, type);
+        List<FeedbackCriteria> criteriaList = feedbackCriteriaRepository.findByTypeAndNonExtendableCategoryId(categoryId, type);
+        criteriaList.sort(Comparator.comparingInt(FeedbackCriteria::getPriority).reversed());
+        return criteriaList;
     }
 
     @Override

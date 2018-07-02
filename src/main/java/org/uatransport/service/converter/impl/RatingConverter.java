@@ -14,9 +14,11 @@ public class RatingConverter implements ConversionStrategy<Double> {
     @Override
     @SneakyThrows
     public Double convert(Feedback feedback) {
-        List<RatingFeedback> answers = new ObjectMapper().readValue(feedback.getAnswer(),
-            new TypeReference<List<RatingFeedback>>() {
-            });
-        return answers.stream().mapToInt(answer -> answer.getAnswer() * answer.getWeight()).average().orElse(0.0);
+        List<RatingFeedback> answers = new ObjectMapper().readValue(feedback.getAnswer(), new TypeReference<List<RatingFeedback>>() {});
+
+        return answers.stream()
+            .mapToInt(answer -> answer.getAnswer() * answer.getWeight())
+            .average()
+            .orElse(0.0);
     }
 }
