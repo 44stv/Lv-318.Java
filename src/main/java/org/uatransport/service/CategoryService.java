@@ -7,6 +7,8 @@ import java.util.List;
 
 public interface CategoryService {
 
+    ExtendableCategory findByName(String name);
+
     ExtendableCategory save(ExtendableCategory category);
 
     void delete(Integer id);

@@ -1,11 +1,14 @@
 package org.uatransport.service;
 
 import org.springframework.data.jpa.domain.Specification;
+import org.uatransport.entity.NonExtendableCategory;
 import org.uatransport.entity.Transit;
 
 import java.util.List;
 
 public interface TransitService {
+
+    boolean existsInCategory(String name, NonExtendableCategory category);
 
     Transit add(Transit transit);
 

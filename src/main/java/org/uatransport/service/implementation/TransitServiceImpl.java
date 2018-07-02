@@ -7,6 +7,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.uatransport.entity.NonExtendableCategory;
 import org.uatransport.entity.Transit;
 import org.uatransport.exception.ResourceNotFoundException;
 import org.uatransport.repository.CategoryRepository;
@@ -22,6 +23,14 @@ public class TransitServiceImpl implements TransitService {
 
     private final TransitRepository transitRepository;
     private final CategoryRepository nonExtendableCategoryRepository;
+
+    @Override
+    public boolean existsInCategory(String name, NonExtendableCategory category) {
+        return transitRepository.findByCategoryName(name)
+            .stream()
+            .map(Transit::getCategory)
+            .anyMatch(category::equals);
+    }
 
     @Override
     @Transactional
