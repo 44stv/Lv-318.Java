@@ -3,6 +3,8 @@ package org.uatransport.controller;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,10 +33,11 @@ public class TransitController {
                 .collect(Collectors.toList());
     }
 
+    @Cacheable(cacheNames = "categoryTransits")
     @GetMapping(params = "categoryId")
-    public List<TransitDTO> getTransitsByCategoryId(@RequestParam("categoryId") Integer categoryId) {
-        return transitService.getAllByCategoryId(categoryId).stream()
-                .map(transit -> modelMapper.map(transit, TransitDTO.class)).collect(Collectors.toList());
+    public Page<TransitDTO> getTransitsByCategoryId(@RequestParam("categoryId") Integer categoryId, Pageable pageable) {
+        return transitService.getAllByCategoryIdByPage(categoryId, pageable)
+            .map(transit -> modelMapper.map(transit, TransitDTO.class));
     }
 
     @GetMapping(params = "nextLevelCategoryId")
@@ -46,10 +49,10 @@ public class TransitController {
 
     @Cacheable(cacheNames = "cityTransits")
     @GetMapping(params = "nextLevelCategoryName")
-    public List<TransitDTO> getTransitsByNextLevelCategoryName(
-            @RequestParam("nextLevelCategoryName") String nextLevelCategoryName) {
-        return transitService.getAllByNextLevelCategoryName(nextLevelCategoryName).stream()
-                .map(transit -> modelMapper.map(transit, TransitDTO.class)).collect(Collectors.toList());
+    public Page<TransitDTO> getTransitsByNextLevelCategoryName(@RequestParam("nextLevelCategoryName") String nextLevelCategoryName,
+                                                                     Pageable pageable) {
+        return transitService.getAllByNextLevelCategoryNameByPage(nextLevelCategoryName, pageable)
+            .map(transit -> modelMapper.map(transit, TransitDTO.class));
     }
 
     @PostMapping
