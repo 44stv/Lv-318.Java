@@ -26,7 +26,6 @@ public interface TransitService {
 
     Transit getByNameAndCategoryName(String name, String categoryName);
 
-    List<Transit> getAllByCategoryId(Integer id);
     Page<Transit> getAllByCategoryIdByPage(Integer id, Pageable pageable);
 
     List<Transit> getAllByNextLevelCategoryId(Integer id);
