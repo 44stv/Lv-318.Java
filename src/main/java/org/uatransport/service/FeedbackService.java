@@ -4,6 +4,7 @@ import org.uatransport.entity.Feedback;
 import org.uatransport.entity.FeedbackCriteria;
 import org.uatransport.entity.Stop;
 import org.uatransport.entity.dto.FeedbackDTO;
+import org.uatransport.entity.dto.HeatMapDTO;
 import org.uatransport.service.converter.model.AccepterFeedback;
 
 import java.util.EnumMap;
@@ -27,7 +28,7 @@ public interface FeedbackService {
     List<Feedback> getByTransitAndFeedbackCriteria(Integer transitId, FeedbackCriteria.FeedbackType feedbackType);
 
     List<Feedback> getByTransitAndFeedbackCriteriaAndUserId(Integer transitId,
-            FeedbackCriteria.FeedbackType feedbackType, Integer userId);
+                                                            FeedbackCriteria.FeedbackType feedbackType, Integer userId);
 
     Double getAverageRateByTransitId(Integer transitId);
 
@@ -42,5 +43,7 @@ public interface FeedbackService {
     Double getAverageRateForRateAnswersByTransitAndUser(Integer transitId, Integer userId);
 
     Double getAverageRateForRateAnswersByTransitId(Integer transitId);
+
+    List<HeatMapDTO> getHeatMap(Integer transitId);
 
 }

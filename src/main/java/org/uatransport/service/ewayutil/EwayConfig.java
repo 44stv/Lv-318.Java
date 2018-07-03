@@ -1,9 +1,12 @@
 package org.uatransport.service.ewayutil;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
+@Slf4j
 class EwayConfig {
     static String getProperty(String property) {
         String rootPath = Thread.currentThread().getContextClassLoader().getResource("").getPath();
@@ -12,7 +15,7 @@ class EwayConfig {
         try {
             appProps.load(new FileInputStream(appConfigPath));
         } catch (IOException e) {
-            e.printStackTrace();
+            log.debug(e.getMessage());
         }
         return appProps.getProperty(property);
     }
