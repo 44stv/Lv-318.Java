@@ -5,7 +5,6 @@ import com.google.common.util.concurrent.RateLimiter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.http.client.utils.URIBuilder;
-import org.quartz.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.uatransport.config.SearchCategoryParam;
@@ -24,26 +23,16 @@ import org.uatransport.service.ewayutil.ewaystopentity.EwayStopResponse;
 import java.util.ArrayList;
 import java.util.List;
 
+
 @RequiredArgsConstructor
 @Service
-public class EwayRoutesListSaver implements Job {
+public class EwayRoutesListSaver {
     private final TransitService transitService;
     private final CategoryService categoryService;
     private final StopService stopService;
     private RateLimiter rateLimiter = RateLimiter.create(1.0 / 10);
-    private Trigger trigger = TriggerBuilder
-        .newTrigger()
-        .withIdentity("dummyTriggerName", "group1")
-        .withSchedule(
-            CronScheduleBuilder.cronSchedule("0 0 2 ? * SAT"))
-        .build();
 
-    @Override
-    public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        convertAndSaveEwayRoutes();
-    }
-
-    private void convertAndSaveEwayRoutes() {
+    void convertAndSaveEwayRoutes() {
         for (EwayRoute route : getTransitsObject().getRoutesList().getRoute()) {
             Transit transit = new Transit();
             transit.setCategory(getCategoryByTransportType(route.getTransport()));
