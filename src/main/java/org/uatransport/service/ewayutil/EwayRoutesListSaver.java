@@ -5,6 +5,7 @@ import com.google.common.util.concurrent.RateLimiter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.http.client.utils.URIBuilder;
+import org.quartz.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.uatransport.config.SearchCategoryParam;
@@ -20,22 +21,30 @@ import org.uatransport.service.ewayutil.ewayentity.EwayRoute;
 import org.uatransport.service.ewayutil.ewaystopentity.EwayPoint;
 import org.uatransport.service.ewayutil.ewaystopentity.EwayStopResponse;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
-public class EwayRoutesListSaver {
+public class EwayRoutesListSaver implements Job {
     private final TransitService transitService;
     private final CategoryService categoryService;
     private final StopService stopService;
+    private RateLimiter rateLimiter = RateLimiter.create(1.0 / 10);
+    private Trigger trigger = TriggerBuilder
+        .newTrigger()
+        .withIdentity("dummyTriggerName", "group1")
+        .withSchedule(
+            CronScheduleBuilder.cronSchedule("0 0 2 ? * SAT"))
+        .build();
 
-    public void convertAndSaveEwayRoutes() {
-        RateLimiter rateLimiter = RateLimiter.create(15.0);
+    @Override
+    public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+        convertAndSaveEwayRoutes();
+    }
+
+    private void convertAndSaveEwayRoutes() {
         for (EwayRoute route : getTransitsObject().getRoutesList().getRoute()) {
-            rateLimiter.acquire();
             Transit transit = new Transit();
             transit.setCategory(getCategoryByTransportType(route.getTransport()));
             transit.setName(route.getTitle());
@@ -49,7 +58,7 @@ public class EwayRoutesListSaver {
         }
     }
 
-    private List<Stop> convertAndSaveStops(String routeId){
+    private List<Stop> convertAndSaveStops(String routeId) {
         List<Stop> stops = new ArrayList<>();
         for (EwayPoint point : getStopsObject(routeId).getRoute().getPoints().getPoint()) {
             if (point.getTitle() != null) {
@@ -71,6 +80,7 @@ public class EwayRoutesListSaver {
                 stops.add(transitStop);
             }
         }
+        rateLimiter.acquire();
         return stops;
     }
 
