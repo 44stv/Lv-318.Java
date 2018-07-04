@@ -125,33 +125,17 @@ public class FeedbackServiceImpl implements FeedbackService {
      */
     @Override
     public List<HeatMapDTO> getHeatMap(Integer transitId) {
-        List<HeatMapDTO> valueToReturn = new ArrayList<>();
-
         List<Stop> stopList = stopService.getByTransitId(transitId);
         Map<String, Double> capacityMap = new TreeMap<>(Comparator
             .comparingInt(street -> stopService.getIndexByTransitIdAndStopName(transitId, street)));
 
         Map<Integer, Double> hourCapacityMap = getHourCapacityMap(transitId);
+        int averageHourCapacity = hourCapacityMap.values().stream().mapToInt(Number::intValue).sum();
         Map<Stop, Double> stopCapacityMap = getStopCapacityMap(transitId);
 
-        for (int i = 0; i < 24; i++) {
-            HeatMapDTO heatMapDTO = new HeatMapDTO();
-
-            Double capacityFromHourCapacityMap = hourCapacityMap.get(i);
-
-            for (Stop stop : stopList) {
-                capacityMap.put(stop.getStreet(), (stopCapacityMap.get(stop) + capacityFromHourCapacityMap) / 2);
-            }
-
-            heatMapDTOSetName(heatMapDTO, i);
-
-            heatMapDTO.setSeries(capacityMap);
-
-            valueToReturn.add(heatMapDTO);
-        }
-
-        return valueToReturn;
+        return valueToReturn(stopList, capacityMap, hourCapacityMap, averageHourCapacity, stopCapacityMap);
     }
+
 
     @Override
     @Transactional(readOnly = true)
@@ -188,16 +172,58 @@ public class FeedbackServiceImpl implements FeedbackService {
     }
 
     /**
+     * Method to create specific form of list of data for heatmap.
+     */
+    private List<HeatMapDTO> valueToReturn(List<Stop> stopList, Map<String, Double> capacityMap,
+                                           Map<Integer, Double> hourCapacityMap, int averageHourCapacity, Map<Stop, Double> stopCapacityMap) {
+        List<HeatMapDTO> valueToReturn = new ArrayList<>();
+
+        for (int i = 0; i < 24; i++) {
+            HeatMapDTO heatMapDTO = new HeatMapDTO();
+
+            Double capacityFromHourCapacityMap = hourCapacityMap.get(i);
+
+            mapGegeration(stopList, capacityMap, averageHourCapacity, stopCapacityMap, capacityFromHourCapacityMap);
+
+            heatMapDTOSetName(heatMapDTO, i);
+
+            heatMapDTO.setSeries(capacityMap);
+
+            valueToReturn.add(heatMapDTO);
+        }
+
+        return valueToReturn;
+    }
+
+    /**
      * Method to set name to heatMapDTO in correct form (e.g. 00:00).
      *
      * @param heatMapDTO object in which should put specified name
-     * @param i exact name of the object
+     * @param i          exact name of the object
      */
     private void heatMapDTOSetName(HeatMapDTO heatMapDTO, int i) {
         if (i < 10) {
             heatMapDTO.setName("0" + i + ":00");
         } else {
             heatMapDTO.setName(i + ":00");
+        }
+    }
+
+    /**
+     * Method to write proper data to the capacity map
+     */
+    private void mapGegeration(List<Stop> stopList, Map<String, Double> capacityMap, int averageHourCapacity,
+                               Map<Stop, Double> stopCapacityMap, Double capacityFromHourCapacityMap) {
+        for (Stop stop : stopList) {
+            Double valueToSaveInMap;
+
+            if (averageHourCapacity != 0) {
+                valueToSaveInMap = (stopCapacityMap.get(stop) * capacityFromHourCapacityMap) / averageHourCapacity;
+            } else {
+                valueToSaveInMap = (double) 0;
+            }
+
+            capacityMap.put(stop.getStreet(), valueToSaveInMap);
         }
     }
 
