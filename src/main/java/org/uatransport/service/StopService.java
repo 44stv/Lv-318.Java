@@ -5,6 +5,7 @@ import org.uatransport.entity.Stop;
 import java.util.List;
 
 public interface StopService {
+
     Stop save(Stop point);
 
     Stop getById(Integer id);
