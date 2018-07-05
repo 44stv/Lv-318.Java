@@ -19,13 +19,12 @@ public class FeedbackDTO {
     private Integer userId;
     private Integer transitId;
     private Integer criteriaId;
-    private LocalDateTime date;
 
 
     ModelMapper modelMapper = new ModelMapper();
 
     public Feedback convertToEntity() throws ParseException {
-        return modelMapper.map(this, Feedback.class);
+        return modelMapper.map(this, Feedback.class).setDate(LocalDateTime.now());
 
     }
 

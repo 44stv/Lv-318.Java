@@ -21,7 +21,6 @@ public class FeedbackMap implements Converter<Feedback, FeedbackDTO> {
         destination.setCriteriaId(source.getFeedbackCriteria().getId());
         destination.setTransitId(source.getTransit().getId());
         destination.setAnswer(source.getAnswer());
-        destination.setDate(source.getDate());
         destination.setId(source.getId());
 
         return destination;

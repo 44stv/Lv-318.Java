@@ -66,7 +66,4 @@ public class EwayRoutesListSaver {
         }
         return ewayRouteList;
     }
-
-    public static void main(String[] args) {
-    }
 }

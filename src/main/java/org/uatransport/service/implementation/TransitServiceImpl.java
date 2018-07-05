@@ -4,10 +4,11 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Streams;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.uatransport.entity.Stop;
 import org.uatransport.entity.Transit;
 import org.uatransport.exception.ResourceNotFoundException;
 import org.uatransport.repository.CategoryRepository;
@@ -94,8 +95,8 @@ public class TransitServiceImpl implements TransitService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Transit> getAllByCategoryId(Integer id) {
-        return transitRepository.findByCategoryId(id);
+    public Page<Transit> getAllByCategoryIdByPage(Integer id, Pageable pageable) {
+        return transitRepository.findByCategoryId(id, pageable);
     }
 
     @Override
@@ -103,12 +104,11 @@ public class TransitServiceImpl implements TransitService {
         return transitRepository.findByCategoryNextLevelCategoryId(id);
     }
 
-    @Override
-    public List<Transit> getAllByNextLevelCategoryName(String categoryName) {
+    public Page<Transit> getAllByNextLevelCategoryNameByPage(String categoryName, Pageable pageable) {
         if (Strings.isNullOrEmpty(categoryName)) {
             throw new IllegalArgumentException("Category name should not be empty");
         }
-        return transitRepository.findByCategoryNextLevelCategoryName(categoryName);
+        return transitRepository.findByCategoryNextLevelCategoryName(categoryName, pageable);
     }
 
     @Override
@@ -116,12 +116,6 @@ public class TransitServiceImpl implements TransitService {
     public List<Transit> getAll() {
         return Streams.stream(transitRepository.findAll()).collect(Collectors.toList());
     }
-
-    // @Override
-    // @Transactional(readOnly = true)
-    // public List<Transit> getTransitsByStopsIn(Stop[] stops) {
-    // return transitRepository.findByStopsIn(stops);
-    // }
 
     @Override
     public List<Transit> getAll(Specification specification) {

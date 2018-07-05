@@ -4,6 +4,7 @@ import org.uatransport.entity.Feedback;
 import org.uatransport.entity.FeedbackCriteria;
 import org.uatransport.entity.Stop;
 import org.uatransport.entity.dto.FeedbackDTO;
+import org.uatransport.entity.dto.HeatMapDTO;
 import org.uatransport.service.converter.model.AccepterFeedback;
 
 import java.util.EnumMap;
@@ -38,5 +39,9 @@ public interface FeedbackService {
     Map<Stop, Double> getStopCapacityMap(Integer transitId,String direction, Stop... stops);
 
     EnumMap<AccepterFeedback, Double> getAccepterAnswerPercentageMap(Integer transitId);
+
+
+
+    List<HeatMapDTO> getHeatMap(Integer transitId);
 
 }

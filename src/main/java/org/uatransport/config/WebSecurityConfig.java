@@ -28,10 +28,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        http.authorizeRequests().antMatchers("/user/signin", "/user/signup", "/stop/**", "/transit/**", "/category/**",
-            "/feedback/**", "/feedback-criteria/**", "/question/**", "/actuator/health").permitAll().anyRequest().authenticated();
-
-        // http.exceptionHandling().accessDeniedPage("/login");
+        http.authorizeRequests()
+                .antMatchers("/user/signin", "/user/signup", "/stop/**", "/transit/**", "/category/**", "/feedback/**",
+                        "/feedback-criteria/**", "/question/**", "/actuator/health")
+                .permitAll().anyRequest().authenticated();
 
         http.apply(new JwtTokenFilterConfigurer(jwtTokenProvider));
     }

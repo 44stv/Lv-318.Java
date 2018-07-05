@@ -1,8 +1,11 @@
 package org.uatransport.config;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.IOException;
 import java.util.Properties;
 
+@Slf4j
 public class ConfigurationUtils {
 
     private static ClassLoader classLoader = ConfigurationUtils.class.getClassLoader();
@@ -13,7 +16,7 @@ public class ConfigurationUtils {
         try {
             properties.load(classLoader.getResourceAsStream(CROSS_ORIGIN_PROPERTIES));
         } catch (IOException e) {
-            e.printStackTrace();
+            log.debug(e.getMessage());
         }
         return properties;
     }

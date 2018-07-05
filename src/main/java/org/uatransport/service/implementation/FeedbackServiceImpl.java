@@ -9,6 +9,7 @@ import org.uatransport.entity.Feedback;
 import org.uatransport.entity.FeedbackCriteria;
 import org.uatransport.entity.Stop;
 import org.uatransport.entity.dto.FeedbackDTO;
+import org.uatransport.entity.dto.HeatMapDTO;
 import org.uatransport.exception.ResourceNotFoundException;
 import org.uatransport.repository.FeedbackRepository;
 import org.uatransport.service.FeedbackService;
@@ -126,6 +127,41 @@ public class FeedbackServiceImpl implements FeedbackService {
         return accepterMap;
     }
 
+    /**
+     * Method to return map for HeatMap diagram on UI.
+     *
+     * @param transitId id of specified transit
+     */
+    @Override
+    public List<HeatMapDTO> getHeatMap(Integer transitId) {
+        List<HeatMapDTO> valueToReturn = new ArrayList<>();
+
+        List<Stop> stopList = stopService.getByTransitId(transitId);
+        Map<String, Double> capacityMap = new TreeMap<>(Comparator
+            .comparingInt(street -> stopService.getIndexByTransitIdAndStopNameAndDirection(transitId, street,"FORWARD")));
+
+        Map<Integer, Double> hourCapacityMap = getHourCapacityMap(transitId);
+        Map<Stop, Double> stopCapacityMap = getStopCapacityMap(transitId,"FORWARD");
+
+        for (int i = 0; i < 24; i++) {
+            HeatMapDTO heatMapDTO = new HeatMapDTO();
+
+            Double capacityFromHourCapacityMap = hourCapacityMap.get(i);
+
+            for (Stop stop : stopList) {
+                capacityMap.put(stop.getStreet(), (stopCapacityMap.get(stop) + capacityFromHourCapacityMap) / 2);
+            }
+
+            heatMapDTOSetName(heatMapDTO, i);
+
+            heatMapDTO.setSeries(capacityMap);
+
+            valueToReturn.add(heatMapDTO);
+        }
+
+        return valueToReturn;
+    }
+
     @Override
     @Transactional(readOnly = true)
     public Map<Integer, Double> getHourCapacityMap(Integer transitId) {
@@ -134,6 +170,20 @@ public class FeedbackServiceImpl implements FeedbackService {
             capacityMap.put(hour, getAverageCapacityByTransitAndHour(transitId, hour));
         }
         return capacityMap;
+    }
+
+    /**
+     * Method to set name to heatMapDTO in correct form (e.g. 00:00).
+     *
+     * @param heatMapDTO object in which should put specified name
+     * @param i exact name of the object
+     */
+    private void heatMapDTOSetName(HeatMapDTO heatMapDTO, int i) {
+        if (i < 10) {
+            heatMapDTO.setName("0" + i + ":00");
+        } else {
+            heatMapDTO.setName(i + ":00");
+        }
     }
 
     private Double getAverageCapacityByTransitAndHour(Integer transitId, Integer feedbackHour) {
