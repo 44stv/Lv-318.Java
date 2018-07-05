@@ -1,0 +1,58 @@
+language: java
+jdk: oraclejdk8
+
+services:
+  postgresql
+
+addons:
+  postgresql: "9.6"
+
+before_install:
+  - jdk_switcher use oraclejdk8
+  - psql -c 'create database uatransport;' -U postgres
+
+install:
+  - mvn clean install
+
+script:
+  - cd target/classes
+  - mv appspec.yml ..
+  - mkdir ../scripts
+  - mv scripts/* ../scripts/
+  - cd ..
+  - zip -r server *
+  - mkdir -p upload
+  - mv server.zip upload/server.zip
+
+deploy:
+  - provider: s3
+    access_key_id: $AWS_ACCESS_KEY
+    secret_access_key: $AWS_SECRET_KEY
+    skip_cleanup: true
+    on: &2
+      branch: deploy
+    bucket: travisdeploybucket
+    region: eu-central-1
+    local-dir: upload
+  - provider: codedeploy
+    access_key_id: $AWS_ACCESS_KEY
+    secret_access_key: $AWS_SECRET_KEY
+    bucket: travisdeploybucket
+    key: server.zip
+    bundle_type: zip
+    application: ServerCodedeployApplication
+    deployment_group: ServerDeploymentGroup
+    region: eu-central-1
+    on: *2
+
+cache:
+  directories:
+  - $HOME/.m2
+
+branches:
+  only:
+    deploy
+
+notifications:
+  email:
+    s.turchynskyi@gmail.com

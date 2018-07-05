@@ -1,0 +1,19 @@
+version: 0.0
+os: linux
+files:
+  - source: ua-transport-1.0.jar
+    destination: /home/ec2-user/server
+    overwrite: yes
+hooks:
+  ApplicationStop:
+    - location: scripts/server_stop.sh
+      timeout: 20
+      runas: ec2-user
+  ApplicationStart:
+    - location: scripts/server_start.sh
+      timeout: 20
+      runas: ec2-user
+  ValidateService:
+    - location: scripts/server_validate.sh
+      timeout: 60
+      runas: ec2-user

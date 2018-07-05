@@ -43,6 +43,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public void delete(Integer id) {
         if (id == null) {
             throw new IllegalArgumentException("Parameter should not be null");
@@ -55,6 +56,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public ExtendableCategory update(ExtendableCategory categoryToUpdate) {
         if (categoryRepository.existsById(categoryToUpdate.getId())) {
             return categoryRepository.save(categoryToUpdate);
