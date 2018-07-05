@@ -21,6 +21,7 @@ import org.uatransport.service.converter.model.CapacityHourFeedback;
 import org.uatransport.service.converter.model.CapacityRouteFeedback;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -154,11 +155,16 @@ public class FeedbackServiceImpl implements FeedbackService {
     public EnumMap<AccepterFeedback, Double> getAccepterAnswerPercentageMap(Integer transitId) {
         EnumMap<AccepterFeedback, Double> accepterMap = new EnumMap<>(AccepterFeedback.class);
         for (AccepterFeedback accepterFeedback : AccepterFeedback.values()) {
-            double percentValue = 100 * countByValue(accepterFeedback, transitId)
-                / (double) countAllAccepterFeedBacks(transitId);
+            double percentValue = 0;
+            double count = (double) countAllAccepterFeedBacks(transitId);
+
+            if (count != 0){
+                percentValue = 100 * countByValue(accepterFeedback, transitId)
+                    / count;
+            }
             accepterMap.put(accepterFeedback, percentValue);
         }
-        return accepterMap;
+        return returnAccepterMapNonZeroValue(accepterMap);
     }
 
     @Override
@@ -171,6 +177,20 @@ public class FeedbackServiceImpl implements FeedbackService {
         return capacityMap;
     }
 
+    /**
+     * Method to return default value in case of absence of proper data.
+     *
+     * @param accepterMap EnumMap which should be checked
+     */
+    private EnumMap<AccepterFeedback, Double> returnAccepterMapNonZeroValue(EnumMap<AccepterFeedback, Double> accepterMap) {
+        boolean isZero = false;
+        AtomicReference<Double> valueInMap = new AtomicReference<>((double) 0);
+        accepterMap.forEach((key, value) -> valueInMap.updateAndGet(v -> v + value));
+        if (valueInMap.get() == 0) {
+            accepterMap.put(AccepterFeedback.YES, (double)1);
+        }
+        return accepterMap;
+    }
     /**
      * Method to create specific form of list of data for heatmap.
      */
