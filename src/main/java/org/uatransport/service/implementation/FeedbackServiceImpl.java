@@ -256,7 +256,7 @@ public class FeedbackServiceImpl implements FeedbackService {
     // Old version
     private Double getAverageRate(List<Feedback> feedbackList) {
         return feedbackList.stream().mapToInt(new RatingConversionStrategy()::convert).average()
-            .orElseThrow(ResourceNotFoundException::new);
+            .orElse(0.0);
     }
 
     private Double getAverageRateForRateAnswers(List<Feedback> feedbackList) {
