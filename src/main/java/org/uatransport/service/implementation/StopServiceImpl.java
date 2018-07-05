@@ -65,8 +65,8 @@ public class StopServiceImpl implements StopService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public Stop getByTransitIdAndStopName(Integer transitId, String street) {
-        return stopRepository.findByTransitIdAndStopName(transitId, street);
+    public Stop getByTransitIdAndStopNameAndDirection(Integer transitId, String street, String direction) {
+        return stopRepository.findByTransitIdAndStopNameAndDirection(transitId, street, direction);
     }
 
     @Override
@@ -79,9 +79,9 @@ public class StopServiceImpl implements StopService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public Integer getIndexByTransitIdAndStopName(Integer transitId, String street) {
-        if (stopRepository.existsById(getByTransitIdAndStopName(transitId, street).getId())) {
-            return stopRepository.findIndexByTransitIdAndStopName(transitId, street);
+    public Integer getIndexByTransitIdAndStopNameAndDirection(Integer transitId, String street, String direction) {
+        if (stopRepository.existsById(getByTransitIdAndStopNameAndDirection(transitId, street, direction).getId())) {
+            return stopRepository.findIndexByTransitIdAndStopNameAndDirection(transitId, street, direction);
         } else {
             throw new ResourceNotFoundException("Stop  not found");
         }
