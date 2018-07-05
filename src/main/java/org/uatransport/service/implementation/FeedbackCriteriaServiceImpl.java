@@ -33,7 +33,6 @@ public class FeedbackCriteriaServiceImpl implements FeedbackCriteriaService {
         feedbackCriteriaRepository.deleteById(id);
     }
 
-
     @Transactional
     public FeedbackCriteria update(FeedbackCriteria feedbackCriteria) {
         if (feedbackCriteria == null) {
@@ -44,8 +43,9 @@ public class FeedbackCriteriaServiceImpl implements FeedbackCriteriaService {
             return feedbackCriteriaRepository.saveAndFlush(feedbackCriteria);
         }
 
-        return feedbackCriteriaRepository.findById(feedbackCriteria.getId()).orElseThrow(() -> new ResourceNotFoundException(
-            String.format("This FeedbackCriteria does not found", feedbackCriteria)));
+        return feedbackCriteriaRepository.findById(feedbackCriteria.getId())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        String.format("This FeedbackCriteria does not found", feedbackCriteria)));
     }
 
     @Override
@@ -56,10 +56,9 @@ public class FeedbackCriteriaServiceImpl implements FeedbackCriteriaService {
     @Override
     @Transactional(readOnly = true)
     public FeedbackCriteria getById(Integer id) {
-        return feedbackCriteriaRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(String
-            .format("FeedbackCriteria with id '%s' not found", id)));
+        return feedbackCriteriaRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException(String.format("FeedbackCriteria with id '%s' not found", id)));
     }
-
 
     @Override
     @Transactional(readOnly = true)
@@ -88,7 +87,8 @@ public class FeedbackCriteriaServiceImpl implements FeedbackCriteriaService {
     @Override
     @Transactional(readOnly = true)
     public List<FeedbackCriteria> getByTypeAndCategoryId(Integer categoryId, String type) {
-        List<FeedbackCriteria> criteriaList = feedbackCriteriaRepository.findByTypeAndNonExtendableCategoryId(categoryId, type);
+        List<FeedbackCriteria> criteriaList = feedbackCriteriaRepository
+                .findByTypeAndNonExtendableCategoryId(categoryId, type);
         criteriaList.sort(Comparator.comparingInt(FeedbackCriteria::getPriority).reversed());
         return criteriaList;
     }
@@ -108,6 +108,5 @@ public class FeedbackCriteriaServiceImpl implements FeedbackCriteriaService {
     public List<FeedbackCriteria> getByQuestionsWeight(Integer weight) {
         return feedbackCriteriaRepository.findByQuestionsWeight(weight);
     }
-
 
 }

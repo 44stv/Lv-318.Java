@@ -35,12 +35,8 @@ public interface FeedbackService {
 
     Map<Integer, Double> getHourCapacityMap(Integer transitId);
 
-    Map<Stop, Double> getStopCapacityMap(Integer transitId,String direction, Stop... stops);
+    Map<Stop, Double> getStopCapacityMap(Integer transitId, String direction, Stop... stops);
 
     EnumMap<AccepterFeedback, Double> getAccepterAnswerPercentageMap(Integer transitId);
-
-    Double getAverageRateForRateAnswersByTransitAndUser(Integer transitId, Integer userId);
-
-    Double getAverageRateForRateAnswersByTransitId(Integer transitId);
 
 }

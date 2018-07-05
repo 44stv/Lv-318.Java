@@ -19,8 +19,7 @@ public class CapacityHourFeedback {
 
     public boolean containsHour(Integer hour) {
         Map<Boolean, List<Integer>> containsMinutesMap = IntStream.range(startTime.toMinutes(), endTime.toMinutes())
-            .boxed()
-            .collect(Collectors.partitioningBy(minute -> containsMinute(hour, minute)));
+                .boxed().collect(Collectors.partitioningBy(minute -> containsMinute(hour, minute)));
 
         return containsMinutesMap.get(true).size() >= containsMinutesMap.get(false).size();
     }

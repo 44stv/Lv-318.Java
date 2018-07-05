@@ -61,10 +61,10 @@ public class FeedbackController {
     }
 
     @GetMapping(value = "/byStops/{transitId}/direction/{direction}")
-    public Map<Stop, Double> getCapacityStopMap(@PathVariable Integer transitId,@PathVariable String direction,
-                                                @RequestParam(value = "stop-list", required = false) List<Stop> stopList) {
+    public Map<Stop, Double> getCapacityStopMap(@PathVariable Integer transitId, @PathVariable String direction,
+            @RequestParam(value = "stop-list", required = false) List<Stop> stopList) {
         Stop[] stopsVarArg = stopList.toArray(new Stop[stopList.size()]);
-        return feedbackService.getStopCapacityMap(transitId,direction, stopsVarArg);
+        return feedbackService.getStopCapacityMap(transitId, direction, stopsVarArg);
     }
 
     @GetMapping(value = "/accepterMap/{transitId}")
