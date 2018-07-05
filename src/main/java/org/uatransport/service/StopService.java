@@ -5,6 +5,7 @@ import org.uatransport.entity.Stop;
 import java.util.List;
 
 public interface StopService {
+
     Stop save(Stop point);
 
     Stop getById(Integer id);
@@ -15,7 +16,7 @@ public interface StopService {
 
     List<Stop> getByTransitId(Integer id);
 
-    Stop getByTransitIdAndStopNameAndDirection(Integer transitId, String street, String direction);
+    Stop getByTransitIdAndStopName(Integer transitId, String street);
 
     List<Stop> getByTransitIdAndDirection(Integer id, String direction);
 

@@ -26,12 +26,10 @@ public interface StopRepository extends CrudRepository<Stop, Integer> {
     Integer findIndexByTransitIdAndStopNameAndDirection(@Param("id") Integer transitId, @Param("street") String street,
             @Param("direction") String direction);
 
-    @Query("SELECT s FROM Transit t JOIN t.stops s "
-            + "WHERE t.id = :id AND s.street IS NOT NULL AND s.direction ='FORWARD' ORDER BY INDEX(s)")
+    @Query("SELECT s FROM Transit t JOIN t.stops s WHERE t.id = :id AND s.street IS NOT NULL AND s.direction ='FORWARD' ORDER BY INDEX(s)")
     List<Stop> findForwardStopsByTransitId(@Param("id") Integer id);
 
-    @Query("SELECT s FROM Transit t JOIN t.stops s "
-            + "WHERE t.id = :id AND s.street IS NOT NULL AND s.direction ='BACKWARD' ORDER BY INDEX(s)")
+    @Query("SELECT s FROM Transit t JOIN t.stops s WHERE t.id = :id AND s.street IS NOT NULL AND s.direction ='BACKWARD' ORDER BY INDEX(s)")
     List<Stop> findBackwardStopsByTransitId(@Param("id") Integer id);
 
 }

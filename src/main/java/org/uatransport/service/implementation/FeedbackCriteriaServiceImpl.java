@@ -9,7 +9,10 @@ import org.uatransport.repository.FeedbackCriteriaRepository;
 import org.uatransport.service.FeedbackCriteriaService;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+
+;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +33,7 @@ public class FeedbackCriteriaServiceImpl implements FeedbackCriteriaService {
         feedbackCriteriaRepository.deleteById(id);
     }
 
+
     @Transactional
     public FeedbackCriteria update(FeedbackCriteria feedbackCriteria) {
         if (feedbackCriteria == null) {
@@ -40,9 +44,8 @@ public class FeedbackCriteriaServiceImpl implements FeedbackCriteriaService {
             return feedbackCriteriaRepository.saveAndFlush(feedbackCriteria);
         }
 
-        return feedbackCriteriaRepository.findById(feedbackCriteria.getId())
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        String.format("FeedbackCriteria with id '%s' not found", feedbackCriteria.getId())));
+        return feedbackCriteriaRepository.findById(feedbackCriteria.getId()).orElseThrow(() -> new ResourceNotFoundException(
+            String.format("This FeedbackCriteria does not found", feedbackCriteria)));
     }
 
     @Override
@@ -53,9 +56,10 @@ public class FeedbackCriteriaServiceImpl implements FeedbackCriteriaService {
     @Override
     @Transactional(readOnly = true)
     public FeedbackCriteria getById(Integer id) {
-        return feedbackCriteriaRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException(String.format("FeedbackCriteria with id '%s' not found", id)));
+        return feedbackCriteriaRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(String
+            .format("FeedbackCriteria with id '%s' not found", id)));
     }
+
 
     @Override
     @Transactional(readOnly = true)
@@ -84,7 +88,9 @@ public class FeedbackCriteriaServiceImpl implements FeedbackCriteriaService {
     @Override
     @Transactional(readOnly = true)
     public List<FeedbackCriteria> getByTypeAndCategoryId(Integer categoryId, String type) {
-        return feedbackCriteriaRepository.findByTypeAndNonExtendableCategoryId(categoryId, type);
+        List<FeedbackCriteria> criteriaList = feedbackCriteriaRepository.findByTypeAndNonExtendableCategoryId(categoryId, type);
+        criteriaList.sort(Comparator.comparingInt(FeedbackCriteria::getPriority).reversed());
+        return criteriaList;
     }
 
     @Override
@@ -93,6 +99,7 @@ public class FeedbackCriteriaServiceImpl implements FeedbackCriteriaService {
         List<String> allEnumTypes = new ArrayList<>();
         for (FeedbackCriteria.FeedbackType feedbackType : FeedbackCriteria.FeedbackType.values()) {
             allEnumTypes.add(feedbackType.toString());
+            System.out.println(allEnumTypes.size());
         }
         return allEnumTypes;
     }
@@ -101,5 +108,6 @@ public class FeedbackCriteriaServiceImpl implements FeedbackCriteriaService {
     public List<FeedbackCriteria> getByQuestionsWeight(Integer weight) {
         return feedbackCriteriaRepository.findByQuestionsWeight(weight);
     }
+
 
 }
