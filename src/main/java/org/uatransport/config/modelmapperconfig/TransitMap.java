@@ -24,7 +24,7 @@ public class TransitMap implements Converter<Transit, TransitDTO> {
         String lastStop = "";
         boolean found = false;
 
-        //TODO: rewrite search
+        // TODO: rewrite search
         if (!stops.isEmpty()) {
             firstStop = stops.get(0).getStreet();
             for (int i = 0; i < stops.size() - 1; i++) {
@@ -54,6 +54,6 @@ public class TransitMap implements Converter<Transit, TransitDTO> {
 
     private boolean exists(List<Stop> stops, int i) {
         return stops.get(i).getStreet().equals(stops.get(i + 1).getStreet())
-            && !(stops.get(i).getDirection().equals(stops.get(i + 1).getDirection()));
+                && !(stops.get(i).getDirection().equals(stops.get(i + 1).getDirection()));
     }
 }

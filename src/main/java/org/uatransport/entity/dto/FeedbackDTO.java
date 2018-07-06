@@ -20,7 +20,6 @@ public class FeedbackDTO {
     private Integer transitId;
     private Integer criteriaId;
 
-
     ModelMapper modelMapper = new ModelMapper();
 
     public Feedback convertToEntity() throws ParseException {

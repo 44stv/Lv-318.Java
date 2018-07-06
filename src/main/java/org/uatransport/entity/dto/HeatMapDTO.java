@@ -15,7 +15,7 @@ public class HeatMapDTO {
     private List<SeriesItem> series = new ArrayList<>();
 
     public void setSeries(Map<String, Double> series) {
-    series.forEach((key, value) -> this.series.add(new SeriesItem(key, value)));
+        series.forEach((key, value) -> this.series.add(new SeriesItem(key, value)));
     }
 }
 

@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 import org.uatransport.entity.Feedback;
 import org.uatransport.entity.dto.FeedbackDTO;
 
-
 @Component
 @RequiredArgsConstructor
 public class FeedbackMap implements Converter<Feedback, FeedbackDTO> {

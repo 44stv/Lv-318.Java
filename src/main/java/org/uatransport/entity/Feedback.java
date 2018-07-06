@@ -6,7 +6,6 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 

@@ -1,7 +1,6 @@
 package org.uatransport.service;
 
 import org.uatransport.entity.Stop;
-import org.uatransport.entity.Transit;
 
 import java.util.List;
 
@@ -21,11 +20,11 @@ public interface StopService {
 
     List<Stop> getByTransitId(Integer id);
 
-    Stop getByTransitIdAndStopNameAndDirection(Integer transitId, String street,String direction);
+    Stop getByTransitIdAndStopNameAndDirection(Integer transitId, String street, String direction);
 
     List<Stop> getByTransitIdAndDirection(Integer id, String direction);
 
-//    Integer getIndexByTransitIdAndStopName(Integer transitId, String street);
+    // Integer getIndexByTransitIdAndStopName(Integer transitId, String street);
 
     Integer getIndexByTransitIdAndStopNameAndDirection(Integer transitId, String street, String direction);
 }

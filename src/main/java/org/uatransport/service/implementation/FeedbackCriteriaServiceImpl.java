@@ -57,7 +57,6 @@ public class FeedbackCriteriaServiceImpl implements FeedbackCriteriaService {
                 () -> new ResourceNotFoundException(String.format("FeedbackCriteria with id '%s' not found", id)));
     }
 
-
     @Override
     @Transactional(readOnly = true)
     public List<FeedbackCriteria> getByType(FeedbackCriteria.FeedbackType type) {
