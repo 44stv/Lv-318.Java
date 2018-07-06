@@ -62,10 +62,10 @@ public class FeedbackController {
     }
 
     @GetMapping(value = "/byStops/{transitId}/direction/{direction}")
-    public Map<Stop, Double> getCapacityStopMap(@PathVariable Integer transitId,@PathVariable String direction,
-                                                @RequestParam(value = "stop-list", required = false) List<Stop> stopList) {
+    public Map<Stop, Double> getCapacityStopMap(@PathVariable Integer transitId, @PathVariable String direction,
+            @RequestParam(value = "stop-list", required = false) List<Stop> stopList) {
         Stop[] stopsVarArg = stopList.toArray(new Stop[stopList.size()]);
-        return feedbackService.getStopCapacityMap(transitId,direction, stopsVarArg);
+        return feedbackService.getStopCapacityMap(transitId, direction, stopsVarArg);
     }
 
     @GetMapping(value = "/accepterMap/{transitId}")
@@ -78,11 +78,11 @@ public class FeedbackController {
         return new ResponseEntity<>(feedbackService.addAll(feedbackDTOList), HttpStatus.CREATED);
     }
 
-
     /**
      * Method to returns data for the heatmap in single transit page.
      *
-     * @param transitId id of specified transit
+     * @param transitId
+     *            id of specified transit
      */
     @GetMapping(value = "/heat-map/{transitId}")
     public List<HeatMapDTO> getHeatMapData(@PathVariable Integer transitId) {

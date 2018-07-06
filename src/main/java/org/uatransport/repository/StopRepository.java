@@ -18,7 +18,9 @@ public interface StopRepository extends CrudRepository<Stop, Integer> {
     List<Stop> findByTransitId(@Param("id") Integer id);
 
     @Query("SELECT s FROM Transit t JOIN t.stops s WHERE t.id = :id AND s.street IS NOT NULL AND s.direction = :dir AND s.street = :street")
-    Stop findByTransitIdAndStopNameAndDirection(@Param("id") Integer transitId, @Param("street") String street, @Param("dir") String direction);
+    Stop findByTransitIdAndStopNameAndDirection(@Param("id") Integer transitId, @Param("street") String street,
+            @Param("dir") String direction);
+
     @Query("SELECT s FROM Transit t JOIN t.stops s "
             + "WHERE t.id = :id AND s.street IS NOT NULL AND s.direction ='FORWARD' AND s.street = :street")
     Stop findByTransitIdAndStopName(@Param("id") Integer transitId, @Param("street") String street);
@@ -36,7 +38,8 @@ public interface StopRepository extends CrudRepository<Stop, Integer> {
     List<Stop> findBackwardStopsByTransitId(@Param("id") Integer id);
 
     @Query("SELECT INDEX(s) FROM Transit t JOIN t.stops s "
-        + "WHERE t.id = :id AND s.street = :street AND s.direction = :dir")
-    Integer findIndexByTransitIdAndStopNameAndDirection(@Param("id") Integer transitId, @Param("street") String street, @Param("dir") String direction);
+            + "WHERE t.id = :id AND s.street = :street AND s.direction = :dir")
+    Integer findIndexByTransitIdAndStopNameAndDirection(@Param("id") Integer transitId, @Param("street") String street,
+            @Param("dir") String direction);
 
 }

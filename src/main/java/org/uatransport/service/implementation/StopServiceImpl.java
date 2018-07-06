@@ -42,7 +42,7 @@ public class StopServiceImpl implements StopService {
     @Transactional(readOnly = true)
     public Stop getById(Integer id) {
         return stopRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException(String.format("Stop with id '%s' not found", id)));
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("Stop with id '%s' not found", id)));
     }
 
     @Override
@@ -87,15 +87,15 @@ public class StopServiceImpl implements StopService {
         return stopRepository.findBackwardStopsByTransitId(id);
     }
 
-//    @Override
-//    @Transactional(propagation = Propagation.REQUIRES_NEW)
-//    public Integer getIndexByTransitIdAndStopName(Integer transitId, String street) {
-//        if (stopRepository.existsById(getByTransitIdAndStopNameAndDirection(transitId, street).getId())) {
-//            return stopRepository.findIndexByTransitIdAndStopName(transitId, street);
-//        } else {
-//            throw new ResourceNotFoundException("Stop  not found");
-//        }
-//    }
+    // @Override
+    // @Transactional(propagation = Propagation.REQUIRES_NEW)
+    // public Integer getIndexByTransitIdAndStopName(Integer transitId, String street) {
+    // if (stopRepository.existsById(getByTransitIdAndStopNameAndDirection(transitId, street).getId())) {
+    // return stopRepository.findIndexByTransitIdAndStopName(transitId, street);
+    // } else {
+    // throw new ResourceNotFoundException("Stop not found");
+    // }
+    // }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
