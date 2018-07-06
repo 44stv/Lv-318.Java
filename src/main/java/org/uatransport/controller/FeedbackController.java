@@ -46,16 +46,14 @@ public class FeedbackController {
         return new ResponseEntity<>(feedbackService.addFeedback(feedbackDTO), HttpStatus.CREATED);
     }
 
-    // old Version
-    @GetMapping(value = "/rate/{transitId}")
-    public Double getAverageRateByTransit(@PathVariable Integer transitId) {
-        return feedbackService.getAverageRateByTransitId(transitId);
+    @GetMapping(value = "/rating/{transitId}")
+    public Double getRatingByTransit(@PathVariable Integer transitId) {
+        return feedbackService.getRatingByTransitId(transitId);
     }
 
-    // old Version
-    @GetMapping(value = "/rate/{transitId}/{userId}")
-    public Double getAverageRateByTransitAndUser(@PathVariable Integer transitId, @PathVariable Integer userId) {
-        return feedbackService.getAverageRateByTransitAndUser(transitId, userId);
+    @GetMapping(value = "/rating/{transitId}/{userId}")
+    public Double getRatingByTransitAndUser(@PathVariable Integer transitId, @PathVariable Integer userId) {
+        return feedbackService.getRatingByTransitAndUser(transitId, userId);
     }
 
     @GetMapping(value = "/byHour/{transitId}")
@@ -63,11 +61,11 @@ public class FeedbackController {
         return feedbackService.getHourCapacityMap(transitId);
     }
 
-    @GetMapping(value = "/byStop/{transitId}")
-    public Map<Stop, Double> getCapacityStopMap(@PathVariable Integer transitId,
-            @RequestParam(value = "stop-list", required = false) List<Stop> stopList) {
+    @GetMapping(value = "/byStops/{transitId}/direction/{direction}")
+    public Map<Stop, Double> getCapacityStopMap(@PathVariable Integer transitId,@PathVariable String direction,
+                                                @RequestParam(value = "stop-list", required = false) List<Stop> stopList) {
         Stop[] stopsVarArg = stopList.toArray(new Stop[stopList.size()]);
-        return feedbackService.getStopCapacityMap(transitId, stopsVarArg);
+        return feedbackService.getStopCapacityMap(transitId,direction, stopsVarArg);
     }
 
     @GetMapping(value = "/accepterMap/{transitId}")
@@ -80,15 +78,6 @@ public class FeedbackController {
         return new ResponseEntity<>(feedbackService.addAll(feedbackDTOList), HttpStatus.CREATED);
     }
 
-    @GetMapping(value = "/rating/{transitId}")
-    public Double getRateByTransit(@PathVariable Integer transitId) {
-        return feedbackService.getAverageRateForRateAnswersByTransitId(transitId);
-    }
-
-    @GetMapping(value = "/rating/{transitId}/{userId}")
-    public Double getRateByTransitAndUser(@PathVariable Integer transitId, @PathVariable Integer userId) {
-        return feedbackService.getAverageRateForRateAnswersByTransitAndUser(transitId, userId);
-    }
 
     /**
      * Method to returns data for the heatmap in single transit page.
