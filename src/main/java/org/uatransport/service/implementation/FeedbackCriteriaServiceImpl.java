@@ -11,8 +11,6 @@ import org.uatransport.service.FeedbackCriteriaService;
 import java.util.ArrayList;
 import java.util.List;
 
-;
-
 @Service
 @RequiredArgsConstructor
 public class FeedbackCriteriaServiceImpl implements FeedbackCriteriaService {
@@ -44,7 +42,7 @@ public class FeedbackCriteriaServiceImpl implements FeedbackCriteriaService {
 
         return feedbackCriteriaRepository.findById(feedbackCriteria.getId())
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        String.format("This FeedbackCriteria does not found", feedbackCriteria)));
+                        String.format("FeedbackCriteria with id '%s' not found", feedbackCriteria.getId())));
     }
 
     @Override
@@ -58,6 +56,7 @@ public class FeedbackCriteriaServiceImpl implements FeedbackCriteriaService {
         return feedbackCriteriaRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException(String.format("FeedbackCriteria with id '%s' not found", id)));
     }
+
 
     @Override
     @Transactional(readOnly = true)

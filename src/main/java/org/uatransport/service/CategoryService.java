@@ -20,4 +20,5 @@ public interface CategoryService {
     void delete(ExtendableCategory extendableCategory);
 
     List<ExtendableCategory> getAll(SearchCategoryParam searchCategoryParam);
+
 }
