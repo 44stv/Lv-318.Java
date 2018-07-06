@@ -34,6 +34,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll().anyRequest().authenticated();
 
         http.apply(new JwtTokenFilterConfigurer(jwtTokenProvider));
+        http.headers().frameOptions().sameOrigin();
     }
 
     @Bean
