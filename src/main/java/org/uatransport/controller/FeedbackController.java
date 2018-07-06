@@ -92,6 +92,7 @@ public class FeedbackController {
 
     /**
      * Method to returns data for the heatmap in single transit page.
+     *
      * @param transitId id of specified transit
      */
     @GetMapping(value = "/heat-map/{transitId}")
