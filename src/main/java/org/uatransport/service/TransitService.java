@@ -3,17 +3,22 @@ package org.uatransport.service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.uatransport.entity.NonExtendableCategory;
 import org.uatransport.entity.Transit;
 
 import java.util.List;
 
 public interface TransitService {
 
+    boolean existsInCategory(String name, NonExtendableCategory category);
+
     Transit add(Transit transit);
 
     Transit getById(Integer id);
 
     Transit getByName(String name);
+
+    Transit getByNameAndCategoryName(String name, String categoryName);
 
     Page<Transit> getAllByCategoryIdByPage(Integer id, Pageable pageable);
 

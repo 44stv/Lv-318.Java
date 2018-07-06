@@ -13,6 +13,10 @@ public interface TransitRepository
 
     Transit findByName(String name);
 
+    Transit findByNameAndCategoryName(String name, String categoryName);
+
+    List<Transit> findByNameContaining(String name);
+
     List<Transit> findByCategoryName(String name);
 
     Page<Transit> findByCategoryId(Integer id, Pageable pageable);
