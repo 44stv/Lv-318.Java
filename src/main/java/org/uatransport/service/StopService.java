@@ -1,10 +1,15 @@
 package org.uatransport.service;
 
 import org.uatransport.entity.Stop;
+import org.uatransport.entity.Transit;
 
 import java.util.List;
 
 public interface StopService {
+
+    boolean existByCoordinatesAndDirection(Double lat, Double lng, Stop.DIRECTION direction);
+
+    Stop getByLatAndLngAndDirection(Double lat, Double lng, Stop.DIRECTION direction);
 
     Stop save(Stop point);
 
