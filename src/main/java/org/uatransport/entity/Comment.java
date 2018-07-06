@@ -1,14 +1,15 @@
 package org.uatransport.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -16,6 +17,7 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(of = "id")
 @Accessors(chain = true)
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Comment {
 
     private static final long MAX_DELETE_TIME_MINUTES = 10;
@@ -29,9 +31,11 @@ public class Comment {
     private String commentText;
 
     @Column(nullable = false)
+    @Convert(converter = Jsr310JpaConverters.LocalDateTimeConverter.class)
     private LocalDateTime createdDate;
 
     @Column
+    @Convert(converter = Jsr310JpaConverters.LocalDateTimeConverter.class)
     private LocalDateTime modifiedDate;
 
     @JsonBackReference(value = "userJson")
@@ -44,28 +48,24 @@ public class Comment {
     @JoinColumn(name = "transit_id")
     private Transit transit;
 
-    //TODO: delete comment or mark deleted
-    @Column(nullable = false)
-    private boolean deleted = false;
+    private int level;
 
-    private boolean modified;
-
-//    @JsonManagedReference(value = "parentCommentJson")
-//    @JsonBackReference(value = "parentCommentJson")
-//    @JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
-    @JsonProperty("parent_id")
     @ManyToOne
     @JoinColumn(name = "parent_id")
-    private Comment parentComment; // change to id
+    @JsonIgnore
+    private Comment parentComment;
 
     @OneToMany(mappedBy = "parentComment", cascade = CascadeType.ALL)
     @OrderBy("created_date ASC")
-    private List<Comment> childrenComments = new ArrayList<>();
+    private List<Comment> childrenComments;
+
+//    @Lob
+//    List<byte[]> images;
+//    separate table for images
 
     public int commentLevel() {
         Comment comment = this;
         int level = 0;
-        // if parent comment exist
         while ((comment = comment.getParentComment()) != null) {
             level++;
         }
@@ -87,10 +87,5 @@ public class Comment {
     public LocalDateTime maxEditTime() {
         return createdDate.plusMinutes(MAX_EDIT_TIME_MINUTES);
     }
-
-//    @Lob
-//    @OneToOne
-//    List<byte[]> images;
-//    separate table for images
 
 }

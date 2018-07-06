@@ -14,6 +14,7 @@ public class CommentDTO {
     private LocalDateTime modifiedDate;
     private Integer userId;
     private Integer transitId;
-    private Integer parentCommentId;
+    private boolean modified;
+//    private Integer parentCommentId;
     private List<Comment> childrenComments;
 }

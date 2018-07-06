@@ -2,16 +2,20 @@ package org.uatransport.controller;
 
 
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.uatransport.entity.Comment;
+import org.uatransport.entity.dto.CommentDTO;
 import org.uatransport.service.CommentService;
 
 @RestController
 @RequestMapping("/comment")
 @RequiredArgsConstructor
 public class CommentController {
+
+    private final ModelMapper modelMapper;
 
     private final CommentService commentService;
 
@@ -26,7 +30,7 @@ public class CommentController {
 
     //test
     @GetMapping("/{id}")
-    public Comment getOne(@PathVariable Integer id) {
-        return commentService.getById(id);
+    public CommentDTO getOne(@PathVariable Integer id) {
+        return modelMapper.map(commentService.getById(id), CommentDTO.class);
     }
 }

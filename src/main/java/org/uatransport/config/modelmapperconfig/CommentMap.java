@@ -22,9 +22,21 @@ public class CommentMap implements Converter<Comment, CommentDTO> {
         destination.setModifiedDate(source.getModifiedDate());
         destination.setUserId(source.getUser().getId());
         destination.setTransitId(source.getTransit().getId());
-        destination.setParentCommentId(source.getParentComment().getId());
+//        destination.setParentCommentId(source.getParentComment().getId());
         destination.setChildrenComments(source.getChildrenComments());
 
         return destination;
     }
 }
+
+///asdasdasdsa
+//    /asdsadasdsa
+//    ...(show more)
+//
+///asdasdasdsa
+//    /asdsadasdsa
+//        /asdasdsa
+//        /asdasdasd
+//    /dasdasdasdas
+//
+///asdasdasdasd

@@ -73,12 +73,14 @@ public class CommentServiceImpl implements CommentService {
 
 
         throw new TimeExpiredException(String.format("Time for updating comment with id '%s' expired", commentId));
-
+//        return ;
     }
 
     @Override
     @Transactional
-    public Comment delete(Integer commendId) {
-        return null;
+    public Comment delete(Integer commentId) {
+
+        throw new TimeExpiredException(String.format("Time for updating comment with id '%s' expired", commentId));
+//        return ;
     }
 }
