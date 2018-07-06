@@ -29,7 +29,7 @@ public class EwayRoutesListSaver {
     private final TransitService transitService;
     private final CategoryService categoryService;
     private final StopService stopService;
-    private RateLimiter rateLimiter = RateLimiter.create(1.0 / /* 10 */ 3.0);
+    private RateLimiter rateLimiter = RateLimiter.create(1.0 / 10);
 
     void convertAndSaveEwayRoutes() {
         for (EwayRoute route : getTransitsObject().getRoutesList().getRoute()) {
