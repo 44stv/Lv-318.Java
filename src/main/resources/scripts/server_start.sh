@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
 
 cd /home/ec2-user/server
-java -jar *.jar > /dev/null 2> /dev/null < /dev/null &
-cd ..
-mkdir logs
+java -jar *.jar > spring.log 2>&1 &
