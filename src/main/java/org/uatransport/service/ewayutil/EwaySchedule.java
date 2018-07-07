@@ -33,6 +33,6 @@ public class EwaySchedule extends QuartzJobBean {
         SimpleScheduleBuilder scheduleBuilder = SimpleScheduleBuilder.simpleSchedule().repeatForever();
         return TriggerBuilder.newTrigger().forJob(jobDetail()).withIdentity("jobTrigger")
                 .withDescription("Update list of transit and stops")
-                .withSchedule(CronScheduleBuilder.cronSchedule("0 5 2 ? * SAT")).build();
+                .withSchedule(CronScheduleBuilder.cronSchedule("0 0 1 ? * SUN")).build();
     }
 }

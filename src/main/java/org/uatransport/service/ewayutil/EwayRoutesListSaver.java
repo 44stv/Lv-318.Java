@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.util.concurrent.RateLimiter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.utils.URIBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -24,12 +25,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
+@Slf4j
 @Service
 public class EwayRoutesListSaver {
     private final TransitService transitService;
     private final CategoryService categoryService;
     private final StopService stopService;
-    private RateLimiter rateLimiter = RateLimiter.create(1.0 / 10);
+    private RateLimiter rateLimiter = RateLimiter.create(1.0 / 6);
 
     void convertAndSaveEwayRoutes() {
         for (EwayRoute route : getTransitsObject().getRoutesList().getRoute()) {
@@ -45,6 +47,7 @@ public class EwayRoutesListSaver {
                 transitService.update(transit);
             }
         }
+        log.debug("End of updating database");
     }
 
     private List<Stop> convertAndSaveStops(String routeId) {
