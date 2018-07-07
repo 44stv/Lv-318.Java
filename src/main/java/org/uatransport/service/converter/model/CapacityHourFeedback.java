@@ -3,40 +3,28 @@ package org.uatransport.service.converter.model;
 import com.google.common.collect.Range;
 import lombok.Data;
 
-import java.util.Comparator;
-import java.util.Objects;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import static org.uatransport.service.converter.model.Time.MINUTES_IN_HOUR;
 
 @Data
 public class CapacityHourFeedback {
-    private final Integer QUANTITY_MINUTES_IN_HOUR = 60;
+
     private Integer capacity;
     private Time startTime;
     private Time endTime;
 
     public boolean containsHour(Integer hour) {
-        return (Objects.equals(this.startTime.getHour(), this.endTime.getHour()))
-                ? containsHourWithEqualsStartEndHours(hour) : containsHourWithDifferentStartEndHours(hour);
+        Map<Boolean, List<Integer>> containsMinutesMap = IntStream.range(startTime.toMinutes(), endTime.toMinutes())
+                .boxed().collect(Collectors.partitioningBy(minute -> containsMinute(hour, minute)));
+
+        return containsMinutesMap.get(true).size() >= containsMinutesMap.get(false).size();
     }
 
-    private boolean containsHourWithEqualsStartEndHours(Integer hour) {
-        int minuteValue = this.startTime.getHour() * this.QUANTITY_MINUTES_IN_HOUR + this.startTime.getMinute();
-        int startPositionToCheck = hour * this.QUANTITY_MINUTES_IN_HOUR;
-        int endPositionToCheck = startPositionToCheck + 1;
-        return Range.closed(startPositionToCheck, endPositionToCheck).contains(minuteValue);
-    }
-
-    private boolean containsHourWithDifferentStartEndHours(Integer hour) {
-        int startPosition = this.startTime.getHour() * this.QUANTITY_MINUTES_IN_HOUR + this.startTime.getMinute();
-        int endPosition = this.endTime.getHour() * this.QUANTITY_MINUTES_IN_HOUR + this.endTime.getMinute();
-        int countCheckedMinutes = (endPosition - startPosition) / 2; // 50% of all minutes of feedback period
-        int counter = 0;
-        int startPositionToCheck = hour * this.QUANTITY_MINUTES_IN_HOUR;
-        int endPositionToCheck = startPositionToCheck + 1;
-        for (int minuteValue = startPosition; minuteValue < endPosition; minuteValue++) {
-            if (Range.closed(startPositionToCheck, endPositionToCheck).contains(minuteValue)) {
-                counter++;
-            }
-        }
-        return counter >= countCheckedMinutes;
+    private static boolean containsMinute(Integer hour, Integer minute) {
+        return Range.closed(hour * MINUTES_IN_HOUR, (hour + 1) * MINUTES_IN_HOUR).contains(minute);
     }
 }

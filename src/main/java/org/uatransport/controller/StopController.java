@@ -32,7 +32,6 @@ public class StopController {
     @GetMapping
     public List<Stop> getByTransitIdAndDirection(@RequestParam("id") Integer id,
             @RequestParam("dir") String direction) {
-        System.out.println(direction);
         return stopService.getByTransitIdAndDirection(id, direction);
     }
 
