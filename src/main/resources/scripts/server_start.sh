@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
 cd /home/ec2-user/server
-nohup java -jar *.jar > /dev/null &
+java -jar *.jar 2>&1 >> logfile.log &
