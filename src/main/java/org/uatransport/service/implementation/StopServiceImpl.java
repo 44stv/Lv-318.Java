@@ -3,6 +3,7 @@ package org.uatransport.service.implementation;
 import com.google.common.base.Strings;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -86,5 +87,10 @@ public class StopServiceImpl implements StopService {
         } else {
             throw new ResourceNotFoundException("Stop  not found");
         }
+    }
+
+    @Override
+    public List<Stop> getAll(Specification specification) {
+            return stopRepository.findAll(specification);
     }
 }

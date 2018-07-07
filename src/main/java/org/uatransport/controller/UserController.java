@@ -8,8 +8,9 @@ import org.uatransport.entity.TokenModel;
 import org.uatransport.entity.User;
 import org.uatransport.entity.dto.LoginDTO;
 import org.uatransport.entity.dto.UserDTO;
+import org.uatransport.security.SocialSignInRequest;
 import org.uatransport.service.UserService;
-
+import org.springframework.security.core.userdetails.UserDetails;
 import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
 
@@ -58,4 +59,6 @@ public class UserController {
     public User getCurrentUser(Principal principal) {
         return userService.getUser(principal);
     }
+
+
 }

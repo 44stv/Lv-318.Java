@@ -19,14 +19,13 @@ public class GlobalSearchSpecification implements Specification<Transit> {
 
     private final GlobalSearch globalSearch;
     public final List<Predicate> predicates = new ArrayList<>();
-    char charForTransitName = '\u0023';
+
 
     private void filterBySearchName(Root<Transit> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
         if (!globalSearch.getGlobalSearch().isEmpty()) {
-            Predicate transitName = cb.like(root.get("name"),
-                    charForTransitName + globalSearch.getGlobalSearch() + "%");
+            Predicate transitName = cb.like(root.get("name"), "%" + globalSearch.getGlobalSearch() + "%");
             Join<Transit, Stop> transitStopJoin = root.join("stops");
-            Predicate stops = cb.like(transitStopJoin.get("street"), globalSearch.getGlobalSearch() + "%");
+            Predicate stops = cb.like(transitStopJoin.get("street"), "%" + globalSearch.getGlobalSearch() + "%");
             predicates.add(cb.or(transitName, stops));
         }
 

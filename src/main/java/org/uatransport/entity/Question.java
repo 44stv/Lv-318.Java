@@ -2,6 +2,7 @@ package org.uatransport.entity;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 
 import javax.persistence.*;
@@ -20,5 +21,15 @@ public class Question {
     private String name;
 
     private Integer weight;
+
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "type", updatable = false)
+    private Question.QuestionType type;
+
+    @RequiredArgsConstructor
+    public enum QuestionType {
+        SIMPLE, STOP, TIME, PERCENTAGE
+    }
+
 
 }

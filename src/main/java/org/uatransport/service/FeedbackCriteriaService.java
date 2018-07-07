@@ -1,6 +1,7 @@
 package org.uatransport.service;
 
 import org.uatransport.entity.FeedbackCriteria;
+import org.uatransport.entity.Question;
 
 import java.util.List;
 
@@ -28,5 +29,7 @@ public interface FeedbackCriteriaService {
     List<String> getAllEnumsType();
 
     List<FeedbackCriteria> getByQuestionsWeight(Integer weight);
+
+    List<FeedbackCriteria> getByQuestionsType(Question.QuestionType type);
 
 }

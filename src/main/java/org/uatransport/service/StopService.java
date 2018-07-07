@@ -1,5 +1,6 @@
 package org.uatransport.service;
 
+import org.springframework.data.jpa.domain.Specification;
 import org.uatransport.entity.Stop;
 
 import java.util.List;
@@ -20,4 +21,6 @@ public interface StopService {
     List<Stop> getByTransitIdAndDirection(Integer id, String direction);
 
     Integer getIndexByTransitIdAndStopName(Integer transitId, String street);
+
+    List<Stop> getAll(Specification specification);
 }
