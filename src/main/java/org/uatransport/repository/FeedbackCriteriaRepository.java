@@ -3,6 +3,7 @@ package org.uatransport.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.uatransport.entity.FeedbackCriteria;
+import org.uatransport.entity.Question;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,6 +15,8 @@ public interface FeedbackCriteriaRepository extends JpaRepository<FeedbackCriter
     List<FeedbackCriteria> findByQuestionsName(String question);
 
     List<FeedbackCriteria> findByQuestionsId(Integer questionId);
+
+    List<FeedbackCriteria> findByQuestionsType(Question.QuestionType type);
 
     List<FeedbackCriteria> findByType(FeedbackCriteria.FeedbackType type);
 

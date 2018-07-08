@@ -37,7 +37,7 @@ public class TransitController {
     @GetMapping(params = "categoryId")
     public Page<TransitDTO> getTransitsByCategoryId(@RequestParam("categoryId") Integer categoryId, Pageable pageable) {
         return transitService.getAllByCategoryIdByPage(categoryId, pageable)
-            .map(transit -> modelMapper.map(transit, TransitDTO.class));
+                .map(transit -> modelMapper.map(transit, TransitDTO.class));
     }
 
     @GetMapping(params = "nextLevelCategoryId")
@@ -49,10 +49,10 @@ public class TransitController {
 
     @Cacheable(cacheNames = "cityTransits")
     @GetMapping(params = "nextLevelCategoryName")
-    public Page<TransitDTO> getTransitsByNextLevelCategoryName(@RequestParam("nextLevelCategoryName") String nextLevelCategoryName,
-                                                                     Pageable pageable) {
+    public Page<TransitDTO> getTransitsByNextLevelCategoryName(
+            @RequestParam("nextLevelCategoryName") String nextLevelCategoryName, Pageable pageable) {
         return transitService.getAllByNextLevelCategoryNameByPage(nextLevelCategoryName, pageable)
-            .map(transit -> modelMapper.map(transit, TransitDTO.class));
+                .map(transit -> modelMapper.map(transit, TransitDTO.class));
     }
 
     @PostMapping
