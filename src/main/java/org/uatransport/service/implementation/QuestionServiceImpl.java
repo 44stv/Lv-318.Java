@@ -8,6 +8,7 @@ import org.uatransport.repository.QuestionRepository;
 import org.uatransport.service.QuestionService;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -33,15 +34,7 @@ public class QuestionServiceImpl implements QuestionService {
             return questionRepository.saveAndFlush(question);
         }
         return questionRepository.findById(question.getId()).orElseThrow(
-                () -> new ResourceNotFoundException(String.format("This Question %s does not found", question))); // getting
-        // a
-        // warning
-        // too
-        // many
-        // arguments
-        // for
-        // format
-        // string
+            () -> new ResourceNotFoundException(String.format("This Question %s does not found", question)));
     }
 
     @Override
@@ -57,7 +50,7 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     public Question getById(Integer id) {
         return questionRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(String.format("Question with id '%s' not found", id)));
+            .orElseThrow(() -> new ResourceNotFoundException(String.format("Question with id '%s' not found", id)));
     }
 
     @Override
@@ -73,6 +66,20 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     public List<Question> getByWeight(Integer weight) {
         return questionRepository.findByWeight(weight);
+    }
+
+    @Override
+    public List<Question> getByType(Question.QuestionType type) {
+        return questionRepository.findByType(type);
+    }
+
+    @Override
+    public List<String> getAllEnumsTypeOfQuestion() {
+        List<String> allEnumTypes = new ArrayList<>();
+        for (Question.QuestionType questionType : Question.QuestionType.values()) {
+            allEnumTypes.add(questionType.toString());
+        }
+        return allEnumTypes;
     }
 
 }

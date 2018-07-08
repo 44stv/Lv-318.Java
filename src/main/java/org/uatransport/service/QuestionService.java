@@ -22,4 +22,8 @@ public interface QuestionService {
 
     List<Question> getByWeight(Integer weight);
 
+    List<Question> getByType(Question.QuestionType type);
+
+    List<String> getAllEnumsTypeOfQuestion();
+
 }
