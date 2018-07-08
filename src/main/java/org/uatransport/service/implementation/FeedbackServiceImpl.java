@@ -191,6 +191,7 @@ public class FeedbackServiceImpl implements FeedbackService {
         }
         return accepterMap;
     }
+
     /**
      * Method to create specific form of list of data for heatmap.
      */
