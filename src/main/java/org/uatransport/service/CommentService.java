@@ -11,11 +11,11 @@ public interface CommentService {
 
     Comment getById(Integer id);
 
-    List<Comment> getAllByTransitId(Integer transitId);
-
     List<Comment> getAllByUserId(Integer userId);
 
-    List<Comment> getAllByTransitIdAndLevel(Integer transitId, Integer level);
+    List<Comment> getAllTopLevel(Integer transitId);
+
+//    List<Comment> getAllByParentId(Integer parentId);
 
     Comment update(Comment newData, Integer commentId) throws TimeExpiredException;
 

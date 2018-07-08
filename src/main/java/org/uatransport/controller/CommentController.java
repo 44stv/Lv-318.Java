@@ -10,13 +10,15 @@ import org.uatransport.entity.Comment;
 import org.uatransport.entity.dto.CommentDTO;
 import org.uatransport.service.CommentService;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @RestController
 @RequestMapping("/comment")
 @RequiredArgsConstructor
 public class CommentController {
 
     private final ModelMapper modelMapper;
-
     private final CommentService commentService;
 
 //    @PreAuthorize("hasRole('ROLE_USER')")
@@ -29,8 +31,31 @@ public class CommentController {
     }
 
     //test
-    @GetMapping("/{id}")
-    public CommentDTO getOne(@PathVariable Integer id) {
-        return modelMapper.map(commentService.getById(id), CommentDTO.class);
+//    @GetMapping("/{id}")
+//    public Comment getComment(@PathVariable Integer id) {
+//        return commentService.getById(id);
+//    }
+
+//    @GetMapping("/{transitId}")
+//    public List<Comment> getTransitComments(@PathVariable Integer transitId) {
+//        return commentService.getAllTopLevel(transitId);
+//    }
+
+    @GetMapping("/{transitId}")
+    public List<CommentDTO> getTransitComments(@PathVariable Integer transitId) {
+        return commentService.getAllTopLevel(transitId).stream()
+            .map(comment -> modelMapper.map(comment, CommentDTO.class)).collect(Collectors.toList());
+    }
+
+    @PutMapping("/{commentId}")
+    public ResponseEntity<Comment> updateComment(@RequestBody Comment comment, @PathVariable Integer commentId) {
+        Comment updatedComment = commentService.update(comment, commentId);
+
+        return new ResponseEntity<>(updatedComment, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{commentId}")
+    public void deleteComment(@PathVariable Integer commentId) {
+        commentService.delete(commentId);
     }
 }

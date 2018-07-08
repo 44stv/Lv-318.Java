@@ -79,4 +79,18 @@ public class Comment {
         return createdDate.plusMinutes(MAX_EDIT_TIME_MINUTES);
     }
 
+    @Override
+    public String toString() {
+        return "Comment{" +
+            "id=" + id +
+            ", commentText='" + commentText + '\'' +
+            ", createdDate=" + createdDate +
+            ", modifiedDate=" + modifiedDate +
+            ", userId=" + user.getId() +
+            ", transitId=" + transit.getId() +
+            ", level=" + level +
+            ", parentCommentId=" + parentComment.getId() +
+            ", childrenComments=" + childrenComments +
+            '}';
+    }
 }

@@ -30,6 +30,8 @@ public class CommentServiceImpl implements CommentService {
             throw new IllegalArgumentException("Comment object should not be null");
         }
 
+        comment.setLevel(1);
+
         if (parentId != null) {
             Comment parentComment = getById(parentId);
             int parentLevel = parentComment.getLevel();
@@ -38,7 +40,6 @@ public class CommentServiceImpl implements CommentService {
             comment.setParentComment(parentComment);
         }
 
-        comment.setLevel(1);
         comment.setCreatedDate(LocalDateTime.now());
         comment.setTransit(transitRepository.getOne(transitId));
         comment.setUser(userRepository.getOne(userId));
@@ -57,21 +58,20 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Comment> getAllByTransitId(Integer transitId) {
-        return commentRepository.findByTransitId(transitId);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public List<Comment> getAllByUserId(Integer userId) {
         return commentRepository.findByUserId(userId);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Comment> getAllByTransitIdAndLevel(Integer transitId, Integer level) {
-        return commentRepository.findByTransitIdAndLevel(transitId, level);
+    public List<Comment> getAllTopLevel(Integer transitId) {
+        return commentRepository.findByTransitIdAndLevel(transitId, 1);
     }
+
+//    @Override
+//    public List<Comment> getAllByParentId(Integer parentId) {
+//        return commentRepository.findByParentCommentId(parentId);
+//    }
 
     @Override
     @Transactional
