@@ -15,8 +15,10 @@ public interface CommentService {
 
     List<Comment> getAllByUserId(Integer userId);
 
-    Comment update(Comment newData, Integer commentId) throws TimeExpiredException; // add expired exception
+    List<Comment> getAllByTransitIdAndLevel(Integer transitId, Integer level);
 
-    Comment delete(Integer commendId) throws TimeExpiredException; //exception
+    Comment update(Comment newData, Integer commentId) throws TimeExpiredException;
+
+    void delete(Integer commendId) throws TimeExpiredException;
 
 }

@@ -63,15 +63,6 @@ public class Comment {
 //    List<byte[]> images;
 //    separate table for images
 
-    public int commentLevel() {
-        Comment comment = this;
-        int level = 0;
-        while ((comment = comment.getParentComment()) != null) {
-            level++;
-        }
-        return level;
-    }
-
     public boolean canDelete() {
         return LocalDateTime.now().isBefore(maxDeleteTime());
     }
