@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import org.uatransport.entity.Feedback;
 import org.uatransport.entity.Stop;
 import org.uatransport.entity.dto.FeedbackDTO;
+import org.uatransport.entity.dto.HeatMapDTO;
 import org.uatransport.service.FeedbackService;
 import org.uatransport.service.converter.model.AccepterFeedback;
 
@@ -77,4 +78,14 @@ public class FeedbackController {
         return new ResponseEntity<>(feedbackService.addAll(feedbackDTOList), HttpStatus.CREATED);
     }
 
+    /**
+     * Method to returns data for the heatmap in single transit page.
+     *
+     * @param transitId
+     *            id of specified transit
+     */
+    @GetMapping(value = "/heat-map/{transitId}")
+    public List<HeatMapDTO> getHeatMapData(@PathVariable Integer transitId) {
+        return feedbackService.getHeatMap(transitId);
+    }
 }

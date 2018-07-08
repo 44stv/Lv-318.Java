@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.uatransport.entity.NonExtendableCategory;
 import org.uatransport.entity.Transit;
 import org.uatransport.exception.ResourceNotFoundException;
 import org.uatransport.repository.CategoryRepository;
@@ -24,6 +25,12 @@ public class TransitServiceImpl implements TransitService {
 
     private final TransitRepository transitRepository;
     private final CategoryRepository nonExtendableCategoryRepository;
+
+    @Override
+    @Transactional
+    public boolean existsInCategory(String name, NonExtendableCategory category) {
+        return transitRepository.findByCategoryName(name).stream().map(Transit::getCategory).anyMatch(category::equals);
+    }
 
     @Override
     @Transactional
@@ -94,6 +101,11 @@ public class TransitServiceImpl implements TransitService {
     }
 
     @Override
+    public Transit getByNameAndCategoryName(String name, String categoryName) {
+        return transitRepository.findByNameAndCategoryName(name, categoryName);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public Page<Transit> getAllByCategoryIdByPage(Integer id, Pageable pageable) {
         return transitRepository.findByCategoryId(id, pageable);
@@ -116,6 +128,12 @@ public class TransitServiceImpl implements TransitService {
     public List<Transit> getAll() {
         return Streams.stream(transitRepository.findAll()).collect(Collectors.toList());
     }
+
+    // @Override
+    // @Transactional(readOnly = true)
+    // public List<Transit> getTransitsByStopsIn(Stop[] stops) {
+    // return transitRepository.findByStopsIn(stops);
+    // }
 
     @Override
     public List<Transit> getAll(Specification specification) {

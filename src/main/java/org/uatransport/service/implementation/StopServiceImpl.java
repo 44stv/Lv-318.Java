@@ -20,6 +20,16 @@ public class StopServiceImpl implements StopService {
     private final StopRepository stopRepository;
 
     @Override
+    public boolean existByCoordinatesAndDirection(Double lat, Double lng, Stop.DIRECTION direction) {
+        return stopRepository.existsByLatAndLngAndDirection(lat, lng, direction);
+    }
+
+    @Override
+    public Stop getByLatAndLngAndDirection(Double lat, Double lng, Stop.DIRECTION direction) {
+        return stopRepository.findByLatAndLngAndDirection(lat, lng, direction);
+    }
+
+    @Override
     @Transactional
     public Stop save(Stop point) {
         if (point == null) {

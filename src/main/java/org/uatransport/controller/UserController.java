@@ -32,8 +32,8 @@ public class UserController {
 
     @PostMapping("/signin")
     public ResponseEntity signin(@RequestBody LoginDTO loginDTO, HttpServletResponse response) {
-        String token = userService.signin(loginDTO);
 
+        String token = userService.signin(loginDTO);
         response.setHeader("Authorization", token);
 
         return ResponseEntity.ok(new TokenModel(token));
@@ -43,15 +43,13 @@ public class UserController {
     public void deleteUser(@PathVariable Integer id) {
 
         userService.deleteById(id);
-
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@RequestBody User user, @PathVariable Integer id) {
-
         User updatedUser = userService.update(user);
-        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
 
+        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
 
     @GetMapping("/me")

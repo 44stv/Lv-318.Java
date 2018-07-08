@@ -9,10 +9,7 @@ import org.uatransport.repository.FeedbackCriteriaRepository;
 import org.uatransport.service.FeedbackCriteriaService;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-
-;
 
 @Service
 @RequiredArgsConstructor
@@ -45,7 +42,7 @@ public class FeedbackCriteriaServiceImpl implements FeedbackCriteriaService {
 
         return feedbackCriteriaRepository.findById(feedbackCriteria.getId())
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        String.format("This FeedbackCriteria does not found", feedbackCriteria)));
+                        String.format("FeedbackCriteria with id '%s' not found", feedbackCriteria.getId())));
     }
 
     @Override
@@ -87,10 +84,7 @@ public class FeedbackCriteriaServiceImpl implements FeedbackCriteriaService {
     @Override
     @Transactional(readOnly = true)
     public List<FeedbackCriteria> getByTypeAndCategoryId(Integer categoryId, String type) {
-        List<FeedbackCriteria> criteriaList = feedbackCriteriaRepository
-                .findByTypeAndNonExtendableCategoryId(categoryId, type);
-        criteriaList.sort(Comparator.comparingInt(FeedbackCriteria::getPriority).reversed());
-        return criteriaList;
+        return feedbackCriteriaRepository.findByTypeAndNonExtendableCategoryId(categoryId, type);
     }
 
     @Override
@@ -99,7 +93,6 @@ public class FeedbackCriteriaServiceImpl implements FeedbackCriteriaService {
         List<String> allEnumTypes = new ArrayList<>();
         for (FeedbackCriteria.FeedbackType feedbackType : FeedbackCriteria.FeedbackType.values()) {
             allEnumTypes.add(feedbackType.toString());
-            System.out.println(allEnumTypes.size());
         }
         return allEnumTypes;
     }

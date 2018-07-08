@@ -11,7 +11,7 @@ public interface StopRepository extends CrudRepository<Stop, Integer> {
 
     boolean existsByLatAndLngAndDirection(Double lat, Double lng, Stop.DIRECTION direction);
 
-    Stop getByLatAndLngAndDirection(Double lat, Double lng, Stop.DIRECTION direction);
+    Stop findByLatAndLngAndDirection(Double lat, Double lng, Stop.DIRECTION direction);
 
     @Query("SELECT s FROM Transit t JOIN t.stops s " + "WHERE t.id = :id ORDER BY INDEX(s)")
     List<Stop> findByTransitId(@Param("id") Integer id);
