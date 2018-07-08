@@ -17,4 +17,6 @@ public interface QuestionRepository extends JpaRepository<Question, Integer> {
     List<Question> findByFeedbackCriteriaId(Integer feedbackCriteriaId);
 
     List<Question> findByWeight(Integer weight);
+
+    List<Question> findByType(Question.QuestionType type);
 }
