@@ -139,4 +139,5 @@ public class TransitServiceImpl implements TransitService {
     public List<Transit> getAll(Specification specification) {
         return transitRepository.findAll(specification);
     }
+
 }
