@@ -34,7 +34,7 @@ public class QuestionServiceImpl implements QuestionService {
             return questionRepository.saveAndFlush(question);
         }
         return questionRepository.findById(question.getId()).orElseThrow(
-            () -> new ResourceNotFoundException(String.format("This Question %s does not found", question)));
+                () -> new ResourceNotFoundException(String.format("This Question %s does not found", question)));
     }
 
     @Override
@@ -50,7 +50,7 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     public Question getById(Integer id) {
         return questionRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException(String.format("Question with id '%s' not found", id)));
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("Question with id '%s' not found", id)));
     }
 
     @Override

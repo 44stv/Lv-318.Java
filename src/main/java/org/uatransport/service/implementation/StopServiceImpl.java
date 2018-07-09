@@ -100,9 +100,6 @@ public class StopServiceImpl implements StopService {
 
     @Override
     public List<Stop> getAll(Specification specification) {
-            return stopRepository.findAll(specification);
+        return stopRepository.findAll(specification);
     }
 }
-
-}
-
