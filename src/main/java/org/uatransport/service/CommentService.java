@@ -15,7 +15,7 @@ public interface CommentService {
 
     List<Comment> getAllTopLevel(Integer transitId);
 
-//    List<Comment> getAllByParentId(Integer parentId);
+    List<Comment> getAllByParentId(Integer parentId);
 
     Comment update(Comment newData, Integer commentId) throws TimeExpiredException;
 

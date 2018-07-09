@@ -5,6 +5,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.uatransport.entity.Comment;
+import org.uatransport.exception.MaxLevelCommentException;
 import org.uatransport.exception.ResourceNotFoundException;
 import org.uatransport.exception.TimeExpiredException;
 import org.uatransport.repository.CommentRepository;
@@ -23,6 +24,8 @@ public class CommentServiceImpl implements CommentService {
     private final TransitRepository transitRepository;
     private final UserRepository userRepository;
 
+    private static final int MAX_COMMENT_LEVEL = 5;
+
     @Override
     @Transactional
     public Comment add(Comment comment, Integer transitId, Integer userId, Integer parentId) {
@@ -35,7 +38,12 @@ public class CommentServiceImpl implements CommentService {
         if (parentId != null) {
             Comment parentComment = getById(parentId);
             int parentLevel = parentComment.getLevel();
-            comment.setLevel(parentLevel + 1);
+
+            if (parentLevel == MAX_COMMENT_LEVEL) {
+                throw new MaxLevelCommentException(String.format("Reached max comment level %d", MAX_COMMENT_LEVEL));
+            } else {
+                comment.setLevel(parentLevel + 1);
+            }
 
             comment.setParentComment(parentComment);
         }
@@ -52,8 +60,9 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional(readOnly = true)
     public Comment getById(Integer id) {
-        return commentRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException(String.format("Comment with id '%s' not found", id)));
+        return commentRepository.getOne(id);
+//        return commentRepository.findById(id)
+//            .orElseThrow(() -> new ResourceNotFoundException(String.format("Comment with id '%s' not found", id)));
     }
 
     @Override
@@ -68,10 +77,10 @@ public class CommentServiceImpl implements CommentService {
         return commentRepository.findByTransitIdAndLevel(transitId, 1);
     }
 
-//    @Override
-//    public List<Comment> getAllByParentId(Integer parentId) {
-//        return commentRepository.findByParentCommentId(parentId);
-//    }
+    @Override
+    public List<Comment> getAllByParentId(Integer parentId) {
+        return commentRepository.findByParentCommentId(parentId);
+    }
 
     @Override
     @Transactional
