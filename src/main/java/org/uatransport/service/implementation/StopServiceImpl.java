@@ -43,7 +43,7 @@ public class StopServiceImpl implements StopService {
     @Transactional(readOnly = true)
     public Stop getById(Integer id) {
         return stopRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(String.format("Stop with id '%s' not found", id)));
+            .orElseThrow(() -> new ResourceNotFoundException(String.format("Stop with id '%s' not found", id)));
     }
 
     @Override
@@ -110,9 +110,6 @@ public class StopServiceImpl implements StopService {
 
     @Override
     public List<Stop> getAll(Specification specification) {
-            return stopRepository.findAll(specification);
+        return stopRepository.findAll(specification);
     }
 }
-
-}
-
