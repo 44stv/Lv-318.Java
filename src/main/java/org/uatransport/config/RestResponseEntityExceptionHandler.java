@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import org.uatransport.exception.MaxLevelCommentException;
 import org.uatransport.exception.ResourceNotFoundException;
 import org.uatransport.exception.SecurityJwtException;
 import org.uatransport.exception.TimeExpiredException;
@@ -64,6 +65,13 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     @ExceptionHandler(value = TimeExpiredException.class)
     protected ResponseEntity<Object> handleConflict(TimeExpiredException ex, WebRequest request) {
         log.error("Expired time for this operation", ex);
+        final ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex);
+        return handleExceptionInternal(ex, apiError, HTTP_HEADERS, apiError.getStatus(), request);
+    }
+
+    @ExceptionHandler(value = MaxLevelCommentException.class)
+    protected ResponseEntity<Object> handleConflict(MaxLevelCommentException ex, WebRequest request) {
+        log.error("Reached max comment level", ex);
         final ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex);
         return handleExceptionInternal(ex, apiError, HTTP_HEADERS, apiError.getStatus(), request);
     }
