@@ -132,7 +132,6 @@ public class UserController {
         return userService.getUser(principal);
     }
 
-
     @PostMapping(value = "/update/password/{uuidFromUrl}")
     public ResponseEntity saveUserPassword(@PathVariable String uuidFromUrl) {
         Optional<TemporaryDataConfirmation> checkedTemporaryDataConfirmation =

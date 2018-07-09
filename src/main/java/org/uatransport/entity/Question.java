@@ -31,5 +31,5 @@ public class Question {
     public enum QuestionType {
         SIMPLE, STOP, TIME, PERCENTAGE
     }
-   
+
 }

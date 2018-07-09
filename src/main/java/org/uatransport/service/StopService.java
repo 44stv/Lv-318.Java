@@ -27,8 +27,6 @@ public interface StopService {
 
     List<Stop> getAll(Specification specification);
 
-    // Integer getIndexByTransitIdAndStopName(Integer transitId, String street);
-
     Integer getIndexByTransitIdAndStopNameAndDirection(Integer transitId, String street, String direction);
 
 }
