@@ -11,6 +11,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import org.uatransport.exception.MaxLevelCommentException;
+import org.uatransport.exception.EmailSendException;
 import org.uatransport.exception.ResourceNotFoundException;
 import org.uatransport.exception.SecurityJwtException;
 import org.uatransport.exception.TimeExpiredException;
@@ -73,6 +74,13 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     protected ResponseEntity<Object> handleConflict(MaxLevelCommentException ex, WebRequest request) {
         log.error("Reached max comment level", ex);
         final ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex);
+        return handleExceptionInternal(ex, apiError, HTTP_HEADERS, apiError.getStatus(), request);
+    }
+
+    @ExceptionHandler(value = EmailSendException.class)
+    protected ResponseEntity<Object> handleConflict(EmailSendException ex, WebRequest request) {
+        final ApiError apiError = new ApiError(ex.getHttpStatus(), ex);
+        apiError.setMessage(ex.getMessage());
         return handleExceptionInternal(ex, apiError, HTTP_HEADERS, apiError.getStatus(), request);
     }
 }

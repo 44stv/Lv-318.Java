@@ -3,6 +3,7 @@ package org.uatransport.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -29,9 +30,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http.authorizeRequests()
-                .antMatchers("/user/signin", "/user/signup", "/stop/**", "/transit/**", "/category/**", "/feedback/**",
-                        "/feedback-criteria/**", "/question/**", "/actuator/health", "/comment/**")
-                .permitAll().anyRequest().authenticated();
+                .antMatchers("/user/signin", "/user/activate/**","/user/**","/user/signup", "/stop/**", "/transit/**", "/category/**", "/feedback/**",
+                        "/feedback-criteria/**", "/question/**", "/actuator/health", "/search/**", "/comment/**")
+                .permitAll().antMatchers(HttpMethod.OPTIONS, "/**").permitAll().anyRequest().authenticated();
 
         http.apply(new JwtTokenFilterConfigurer(jwtTokenProvider));
     }
