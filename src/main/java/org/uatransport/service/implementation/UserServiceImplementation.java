@@ -56,11 +56,34 @@ public class UserServiceImplementation implements UserService {
         user.setLastName(userDTO.getLastName());
         user.setEmail(userDTO.getEmail());
         user.setPassword(bcryptEncoder.encode(userDTO.getPassword()));
-        user.setRole(Role.USER);
+        user.setRole(Role.UNACTIVATED);
         userRepository.save(user);
         return jwtTokenProvider.createToken(user.getEmail(), user.getRole());
 
     }
+
+    @Override
+    public User getUserByEmail(String userEmail) {
+        return userRepository.findByEmail(userEmail);
+    }
+
+    @Override
+    public void activateUserByEmail(String userEmail) {
+
+            User user = userRepository.findByEmail(userEmail);
+            user.setRole(Role.USER);
+            userRepository.saveAndFlush(user);
+
+        }
+
+    @Override
+    public void updateUserEncodedPassword(String newPassword, String userEmail) {
+        User user= userRepository.findByEmail(userEmail);
+        user.setPassword(newPassword);
+
+        userRepository.saveAndFlush(user);
+    }
+
 
     @Override
     @Transactional
