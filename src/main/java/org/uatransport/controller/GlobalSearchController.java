@@ -13,7 +13,6 @@ import org.uatransport.service.TransitService;
 import org.uatransport.service.StopService;
 import org.springframework.http.ResponseEntity;
 
-
 import java.util.List;
 
 @RestController
@@ -31,6 +30,7 @@ public class GlobalSearchController {
         GlobalSearchSpecification globalSearchSpecification = new GlobalSearchSpecification(new GlobalSearch(search));
         return new ResponseEntity<>(transitService.getAll(globalSearchSpecification), HttpStatus.OK);
     }
+
     @GetMapping(params = "searchStop")
     public ResponseEntity<List<Stop>> getAllStops(@RequestParam("searchStop") String search) {
         StopSearchSpecification stopSearchSpecification = new StopSearchSpecification(new GlobalSearch(search));
