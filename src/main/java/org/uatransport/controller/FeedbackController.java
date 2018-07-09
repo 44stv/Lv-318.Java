@@ -31,6 +31,7 @@ public class FeedbackController {
         return feedbackService.getByTransitId(transitId);
     }
 
+
     @GetMapping(params = "userId")
     public List<Feedback> getByUser(@RequestParam("userId") Integer userId) {
         return feedbackService.getByUserId(userId);
@@ -51,7 +52,12 @@ public class FeedbackController {
         return feedbackService.getRatingByTransitId(transitId);
     }
 
-    @GetMapping(value = "/rating/{transitId}/{userId}")
+    @GetMapping(value = "/categoryRating/{categoryId}")
+    public Double getRatingByCategoryId(@PathVariable Integer categoryId) {
+        return feedbackService.getRatingByCategoryId(categoryId);
+    }
+
+    @GetMapping(value = "/rating/{transitId}/user/{userId}")
     public Double getRatingByTransitAndUser(@PathVariable Integer transitId, @PathVariable Integer userId) {
         return feedbackService.getRatingByTransitAndUser(transitId, userId);
     }
@@ -63,7 +69,7 @@ public class FeedbackController {
 
     @GetMapping(value = "/byStops/{transitId}/direction/{direction}")
     public Map<Stop, Double> getCapacityStopMap(@PathVariable Integer transitId,@PathVariable String direction,
-                                                @RequestParam(value = "stop-list", required = false) List<Stop> stopList) {
+                                                @RequestParam(value = "stop-list[]", required = false) List<Stop> stopList) {
         Stop[] stopsVarArg = stopList.toArray(new Stop[stopList.size()]);
         return feedbackService.getStopCapacityMap(transitId,direction, stopsVarArg);
     }

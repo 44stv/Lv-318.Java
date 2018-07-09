@@ -1,4 +1,0 @@
-INSERT INTO public.users (id, email, first_name, last_name, password, role) VALUES (1, 'name1@gmail.com', 'Name1', 'Lastname1', '1111', 0);
-INSERT INTO public.users (id, email, first_name, last_name, password, role) VALUES (2, 'name2@gmail.com', 'Name2', 'Lastname2', '2222', 0);
-INSERT INTO public.users (id, email, first_name, last_name, password, role) VALUES (3, 'name3@gmail.com', 'Name3', 'Lastname3', '3333', 0);
-INSERT INTO public.users (id, email, first_name, last_name, password, role) VALUES (4, 'postman', 'postman', 'postman', '$2a$12$.Jvz18LqlmhPDXEl.vDdXO7Fu71Irv6tyHE0S2WdhFoIWTUWoaUvm', 0);

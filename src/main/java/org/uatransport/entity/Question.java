@@ -28,7 +28,7 @@ public class Question {
 
     @RequiredArgsConstructor
     public enum QuestionType {
-        RATING, CAPACITY, ACCEPTER, TIME, ROUTE
+        SIMPLE, PERCENTAGE, TIME, ROUTE
     }
 
 }
