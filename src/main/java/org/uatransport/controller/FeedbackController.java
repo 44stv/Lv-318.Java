@@ -9,7 +9,7 @@ import org.uatransport.entity.Stop;
 import org.uatransport.entity.dto.FeedbackDTO;
 import org.uatransport.entity.dto.HeatMapDTO;
 import org.uatransport.service.FeedbackService;
-import org.uatransport.service.converter.model.AccepterFeedback;
+import org.uatransport.service.converter.model.SimpleFeedback;
 
 import java.util.EnumMap;
 import java.util.List;
@@ -75,8 +75,8 @@ public class FeedbackController {
     }
 
     @GetMapping(value = "/accepterMap/{transitId}")
-    public EnumMap<AccepterFeedback, Double> getAccepterMap(@PathVariable Integer transitId) {
-        return feedbackService.getAccepterAnswerPercentageMap(transitId);
+    public EnumMap<SimpleFeedback, Double> getSimpleFeedbacksMap(@PathVariable Integer transitId) {
+        return feedbackService.getSimpleAnswerPercentageMap(transitId);
     }
 
     @PostMapping(value = "/add")

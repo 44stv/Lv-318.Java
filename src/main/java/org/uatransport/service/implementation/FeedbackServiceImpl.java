@@ -16,7 +16,7 @@ import org.uatransport.service.FeedbackService;
 import org.uatransport.service.StopService;
 import org.uatransport.service.converter.impl.FeedbackTypeConverter;
 import org.uatransport.service.converter.impl.RatingConverter;
-import org.uatransport.service.converter.model.AccepterFeedback;
+import org.uatransport.service.converter.model.SimpleFeedback;
 import org.uatransport.service.converter.model.CapacityHourFeedback;
 import org.uatransport.service.converter.model.CapacityRouteFeedback;
 
@@ -133,14 +133,14 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     @Override
     @Transactional(readOnly = true)
-    public EnumMap<AccepterFeedback, Double> getAccepterAnswerPercentageMap(Integer transitId) {
-        EnumMap<AccepterFeedback, Double> accepterMap = new EnumMap<>(AccepterFeedback.class);
-        for (AccepterFeedback accepterFeedback : AccepterFeedback.values()) {
-            double percentValue = 100 * countByValue(accepterFeedback, transitId)
+    public EnumMap<SimpleFeedback, Double> getSimpleAnswerPercentageMap(Integer transitId) {
+        EnumMap<SimpleFeedback, Double> simpleFeedbackDoubleEnumMap = new EnumMap<>(SimpleFeedback.class);
+        for (SimpleFeedback simpleFeedback : SimpleFeedback.values()) {
+            double percentValue = 100 * countByValue(simpleFeedback, transitId)
                 / (double) countAllAccepterFeedBacks(transitId);
-            accepterMap.put(accepterFeedback, percentValue);
+            simpleFeedbackDoubleEnumMap.put(simpleFeedback, percentValue);
         }
-        return accepterMap;
+        return simpleFeedbackDoubleEnumMap;
     }
 
     /**
@@ -177,12 +177,12 @@ public class FeedbackServiceImpl implements FeedbackService {
      *
      * @param accepterMap EnumMap which should be checked
      */
-    private EnumMap<AccepterFeedback, Double> returnAccepterMapNonZeroValue(EnumMap<AccepterFeedback, Double> accepterMap) {
+    private EnumMap<SimpleFeedback, Double> returnAccepterMapNonZeroValue(EnumMap<SimpleFeedback, Double> accepterMap) {
         boolean isZero = false;
         AtomicReference<Double> valueInMap = new AtomicReference<>((double) 0);
         accepterMap.forEach((key, value) -> valueInMap.updateAndGet(v -> v + value));
         if (valueInMap.get() == 0) {
-            accepterMap.put(AccepterFeedback.YES, (double) 1);
+            accepterMap.put(SimpleFeedback.YES, (double) 1);
         }
         return accepterMap;
     }
@@ -292,19 +292,19 @@ public class FeedbackServiceImpl implements FeedbackService {
             .collect(Collectors.toList());
     }
 
-    private Long countByValue(AccepterFeedback answer, Integer transitId) {
-        return convertAccepterFeedBacks(transitId).stream()
-            .filter(accepterFeedback -> accepterFeedback == answer)
+    private Long countByValue(SimpleFeedback answer, Integer transitId) {
+        return convertSimpleFeedBacks(transitId).stream()
+            .filter(simpleFeedback -> simpleFeedback == answer)
             .count();
     }
 
-    private List<AccepterFeedback> convertAccepterFeedBacks(Integer transitId) {
-        return getByTransitAndFeedbackCriteria(transitId, FeedbackCriteria.FeedbackType.ACCEPTER).stream()
-            .map(feedback -> new FeedbackTypeConverter<>(AccepterFeedback.class).convert(feedback))
+    private List<SimpleFeedback> convertSimpleFeedBacks(Integer transitId) {
+        return getByTransitAndFeedbackCriteria(transitId, FeedbackCriteria.FeedbackType.SIMPLE).stream()
+            .map(feedback -> new FeedbackTypeConverter<>(SimpleFeedback.class).convert(feedback))
             .collect(Collectors.toList());
     }
 
     private Integer countAllAccepterFeedBacks(Integer transitId) {
-        return convertAccepterFeedBacks(transitId).size();
+        return convertSimpleFeedBacks(transitId).size();
     }
 }
