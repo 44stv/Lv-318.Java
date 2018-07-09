@@ -23,32 +23,47 @@ public class CommentController {
 
 //    @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping("/{transitId}")
-    public ResponseEntity<Comment> addComment(@RequestBody Comment comment,
+    public ResponseEntity<CommentDTO> addComment(@RequestBody Comment comment,
                                               @PathVariable Integer transitId,
                                               @RequestParam(value = "userId") Integer userId,
                                               @RequestParam(value = "parentId", defaultValue = "") Integer parentId) {
-        return new ResponseEntity<>(commentService.add(comment, transitId, userId, parentId), HttpStatus.CREATED);
+        Comment addedComment = commentService.add(comment, transitId, userId, parentId);
+        return new ResponseEntity<>(modelMapper.map(addedComment, CommentDTO.class), HttpStatus.CREATED);
     }
 
-    //test
+//    test
 //    @GetMapping("/{id}")
-//    public Comment getComment(@PathVariable Integer id) {
-//        return commentService.getById(id);
-//    }
-
-//    @GetMapping("/{transitId}")
-//    public List<Comment> getTransitComments(@PathVariable Integer transitId) {
-//        return commentService.getAllTopLevel(transitId);
+//    public CommentDTO getComment(@PathVariable Integer id) {
+//        return modelMapper.map(commentService.getById(id), CommentDTO.class);
 //    }
 
     @GetMapping("/{transitId}")
     public List<CommentDTO> getTransitComments(@PathVariable Integer transitId) {
-        return commentService.getAllTopLevel(transitId).stream()
-            .map(comment -> modelMapper.map(comment, CommentDTO.class)).collect(Collectors.toList());
+        return commentService.getAllTopLevel(transitId)
+            .stream()
+            .map(comment -> modelMapper.map(comment, CommentDTO.class))
+            .collect(Collectors.toList());
+    }
+
+    @GetMapping(params = "parentId")
+    public List<CommentDTO> getChildComments(@RequestParam(value = "parentId") Integer parentId) {
+        return commentService.getAllByParentId(parentId)
+            .stream()
+            .map(comment -> modelMapper.map(comment, CommentDTO.class))
+            .collect(Collectors.toList());
+    }
+
+    @GetMapping(params = "userId")
+    public List<CommentDTO> getUserComments(@RequestParam(value = "userId") Integer userId) {
+        return commentService.getAllByUserId(userId)
+            .stream()
+            .map(comment -> modelMapper.map(comment, CommentDTO.class))
+            .collect(Collectors.toList());
     }
 
     @PutMapping("/{commentId}")
-    public ResponseEntity<Comment> updateComment(@RequestBody Comment comment, @PathVariable Integer commentId) {
+    public ResponseEntity<Comment> updateComment(@RequestBody Comment comment,
+                                                 @PathVariable Integer commentId) {
         Comment updatedComment = commentService.update(comment, commentId);
 
         return new ResponseEntity<>(updatedComment, HttpStatus.OK);
