@@ -28,4 +28,9 @@ public class ExtendableCategory {
 
     @Column(name = "icon_url")
     private String iconURL;
+
+    @ManyToOne
+    @JoinColumn(name = "geotag_id")
+    private Geotag geotag;
+
 }
