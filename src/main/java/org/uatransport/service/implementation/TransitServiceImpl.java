@@ -29,10 +29,7 @@ public class TransitServiceImpl implements TransitService {
     @Override
     @Transactional
     public boolean existsInCategory(String name, NonExtendableCategory category) {
-        return transitRepository.findByCategoryName(name)
-            .stream()
-            .map(Transit::getCategory)
-            .anyMatch(category::equals);
+        return transitRepository.findByCategoryName(name).stream().map(Transit::getCategory).anyMatch(category::equals);
     }
 
     @Override

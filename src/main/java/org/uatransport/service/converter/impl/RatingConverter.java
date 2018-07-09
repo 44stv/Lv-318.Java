@@ -9,18 +9,15 @@ import org.uatransport.service.converter.model.RatingFeedback;
 
 import java.util.List;
 
-public class RatingConversionStrategy implements ConversionStrategy<Integer> {
+public class RatingConverter implements ConversionStrategy<Double> {
 
     @Override
-    public Integer convert(Feedback feedback) {
-        return Integer.parseInt(feedback.getAnswer());
-    }
-
     @SneakyThrows
-    public Double apply(Feedback feedback) {
+    public Double convert(Feedback feedback) {
         List<RatingFeedback> answers = new ObjectMapper().readValue(feedback.getAnswer(),
                 new TypeReference<List<RatingFeedback>>() {
                 });
+
         return answers.stream().mapToInt(answer -> answer.getAnswer() * answer.getWeight()).average().orElse(0.0);
     }
 }

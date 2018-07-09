@@ -18,4 +18,9 @@ public interface UserService {
 
     String signup(UserDTO user);
 
+    User getUserByEmail(String userEmail);
+
+    void activateUserByEmail(String userEmail);
+
+    void updateUserEncodedPassword(String newPassword, String userEmail);
 }
