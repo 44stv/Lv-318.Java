@@ -22,8 +22,26 @@ public class CommentMap implements Converter<Comment, CommentDTO> {
         destination.setModifiedDate(source.getModifiedDate());
         destination.setUserId(source.getUser().getId());
         destination.setTransitId(source.getTransit().getId());
+
+        try {
+            if (source.getChildrenComments().isEmpty()) {
+                destination.setParent(false);
+            } else {
+                destination.setParent(true);
+            }
+        } catch (NullPointerException e) {
+            e.getMessage();
+        }
+
+
+        try {
+            destination.setParentCommentId(source.getParentComment().getId());
+        } catch (NullPointerException e) {
+            e.getMessage();
+        }
+
 //        destination.setParentCommentId(source.getParentComment().getId());
-        destination.setChildrenComments(source.getChildrenComments());
+//        destination.setChildrenComments(source.getChildrenComments());
 
         return destination;
     }

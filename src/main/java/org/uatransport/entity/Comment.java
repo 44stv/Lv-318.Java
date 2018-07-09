@@ -52,9 +52,10 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(name = "parent_id")
-    @JsonIgnore
+//    @JsonIgnore
     private Comment parentComment;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "parentComment", cascade = CascadeType.ALL)
     @OrderBy("created_date ASC")
     private List<Comment> childrenComments;
@@ -79,18 +80,4 @@ public class Comment {
         return createdDate.plusMinutes(MAX_EDIT_TIME_MINUTES);
     }
 
-    @Override
-    public String toString() {
-        return "Comment{" +
-            "id=" + id +
-            ", commentText='" + commentText + '\'' +
-            ", createdDate=" + createdDate +
-            ", modifiedDate=" + modifiedDate +
-            ", userId=" + user.getId() +
-            ", transitId=" + transit.getId() +
-            ", level=" + level +
-            ", parentCommentId=" + parentComment.getId() +
-            ", childrenComments=" + childrenComments +
-            '}';
-    }
 }

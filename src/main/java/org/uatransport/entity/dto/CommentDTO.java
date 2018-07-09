@@ -1,10 +1,8 @@
 package org.uatransport.entity.dto;
 
 import lombok.Data;
-import org.uatransport.entity.Comment;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 public class CommentDTO {
@@ -14,7 +12,7 @@ public class CommentDTO {
     private LocalDateTime modifiedDate;
     private Integer userId;
     private Integer transitId;
-    private boolean modified;
-//    private Integer parentCommentId;
-    private List<Comment> childrenComments;
+    private Integer parentCommentId;
+    private boolean parent;
+//    private List<Comment> childrenComments;
 }
