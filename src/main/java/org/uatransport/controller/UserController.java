@@ -8,10 +8,7 @@ import org.springframework.mail.MailException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import org.uatransport.entity.ConfirmationType;
-import org.uatransport.entity.TemporaryDataConfirmation;
-import org.uatransport.entity.TokenModel;
-import org.uatransport.entity.User;
+import org.uatransport.entity.*;
 import org.uatransport.entity.dto.ForgetPasswordDTO;
 import org.uatransport.entity.dto.LoginDTO;
 import org.uatransport.entity.dto.UserDTO;
@@ -69,10 +66,11 @@ public class UserController {
         } finally {
             emailExecutor.shutdown();
         }
-        return ResponseEntity.status(HttpStatus.OK).body("Please check your email, and confirm registration");
+       // return ResponseEntity.status(HttpStatus.OK).body("Please check your email, and confirm registration");
+        return ResponseEntity.status(HttpStatus.OK).body(new InfoResponse("Please check your email, and confirm registration"));
     }
-    @PostMapping("/activate/{uuidFromUrl}")
-    public ResponseEntity activateUser(@PathVariable String uuidFromUrl) {
+    @PostMapping("/activate")
+    public ResponseEntity activateUser(@RequestBody String uuidFromUrl) {
         Optional<TemporaryDataConfirmation> checkedTemporaryDataConfirmation = expirationCheckService
             .getTemporaryDataConfirmationWithExpirationChecking(uuidFromUrl);
 
