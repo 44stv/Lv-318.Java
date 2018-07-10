@@ -6,24 +6,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import org.uatransport.entity.ConfirmationType;
-import org.uatransport.entity.TemporaryDataConfirmation;
-import org.uatransport.entity.TokenModel;
-import org.uatransport.entity.User;
+import org.uatransport.entity.*;
 import org.uatransport.entity.dto.ForgetPasswordDTO;
 import org.uatransport.entity.dto.LoginDTO;
+import org.uatransport.entity.dto.UpdateUserRoleDTO;
 import org.uatransport.entity.dto.UserDTO;
 import org.uatransport.exception.EmailSendException;
-import org.uatransport.security.SocialSignInRequest;
 import org.uatransport.service.TemporaryDataConfirmationService;
 import org.uatransport.service.UserService;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.uatransport.service.email.EmailService;
 import org.uatransport.service.implementation.ExpirationCheckService;
 
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
 import java.util.Optional;
@@ -181,6 +175,13 @@ public class UserController {
         sendPasswordChangeConfirmationEmail(userEmail, firstName, confirmUrl);
 
         return new  ResponseEntity<>("Please, check your email",HttpStatus.OK);
+    }
+
+    @PutMapping("/update-role")
+    public ResponseEntity updateUserRole(@RequestBody UpdateUserRoleDTO updateUserRoleDTO) {
+        String role = updateUserRoleDTO.getRole();
+        String email = updateUserRoleDTO.getEmail();
+        return new ResponseEntity<>(userService.updateUserRole(role,email), HttpStatus.OK);
     }
 
     private void sendPasswordChangeConfirmationEmail(String userEmail, String firstName, String confirmUrl) {

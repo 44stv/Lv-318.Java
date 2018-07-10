@@ -14,6 +14,7 @@ import org.uatransport.entity.Role;
 import org.uatransport.entity.User;
 import org.uatransport.entity.dto.LoginDTO;
 import org.uatransport.entity.dto.UserDTO;
+import org.uatransport.exception.ResourceNotFoundException;
 import org.uatransport.exception.SecurityJwtException;
 import org.uatransport.repository.UserRepository;
 import org.uatransport.security.JwtTokenProvider;
@@ -70,15 +71,15 @@ public class UserServiceImplementation implements UserService {
     @Override
     public void activateUserByEmail(String userEmail) {
 
-            User user = userRepository.findByEmail(userEmail);
-            user.setRole(Role.USER);
-            userRepository.saveAndFlush(user);
+        User user = userRepository.findByEmail(userEmail);
+        user.setRole(Role.USER);
+        userRepository.saveAndFlush(user);
 
-        }
+    }
 
     @Override
     public void updateUserEncodedPassword(String newPassword, String userEmail) {
-        User user= userRepository.findByEmail(userEmail);
+        User user = userRepository.findByEmail(userEmail);
         user.setPassword(newPassword);
 
         userRepository.saveAndFlush(user);
@@ -104,6 +105,22 @@ public class UserServiceImplementation implements UserService {
     public User getUser(Principal principal) {
 
         return userRepository.findByEmail(principal.getName());
+
+    }
+
+    @Override
+    @Transactional
+    public User updateUserRole(String role, String email) {
+        if (role == null) {
+            throw new IllegalArgumentException("Parameter should not be null");
+        }
+        if (userRepository.existsByEmail(email)) {
+            User user = userRepository.findByEmail(email);
+            user.setRole(Role.valueOf(role.trim().toUpperCase()));
+            return userRepository.save(user);
+        } else {
+            throw new ResourceNotFoundException("User not found");
+        }
 
     }
 
