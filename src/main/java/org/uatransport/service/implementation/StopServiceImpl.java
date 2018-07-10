@@ -2,6 +2,7 @@ package org.uatransport.service.implementation;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -75,35 +76,32 @@ public class StopServiceImpl implements StopService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public Stop getByTransitIdAndStopNameAndDirection(Integer transitId, String street, String direction) {
+    public Stop getByTransitIdAndStopNameAndDirection(Integer transitId, String street, Stop.DIRECTION direction) {
         return stopRepository.findByTransitIdAndStopNameAndDirection(transitId, street, direction);
     }
 
     @Override
-    public List<Stop> getByTransitIdAndDirection(Integer id, String direction) {
-        if (direction.equals("forward")) {
+    public List<Stop> getByTransitIdAndDirection(Integer id, Stop.DIRECTION direction) {
+        if (direction.equals(Stop.DIRECTION.FORWARD)) {
             return stopRepository.findForwardStopsByTransitId(id);
         }
         return stopRepository.findBackwardStopsByTransitId(id);
     }
 
-    // @Override
-    // @Transactional(propagation = Propagation.REQUIRES_NEW)
-    // public Integer getIndexByTransitIdAndStopName(Integer transitId, String street) {
-    // if (stopRepository.existsById(getByTransitIdAndStopNameAndDirection(transitId, street).getId())) {
-    // return stopRepository.findIndexByTransitIdAndStopName(transitId, street);
-    // } else {
-    // throw new ResourceNotFoundException("Stop not found");
-    // }
-    // }
-
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public Integer getIndexByTransitIdAndStopNameAndDirection(Integer transitId, String street, String direction) {
+    public Integer getIndexByTransitIdAndStopNameAndDirection(Integer transitId, String street,
+            Stop.DIRECTION direction) {
+
         if (stopRepository.existsById(getByTransitIdAndStopNameAndDirection(transitId, street, direction).getId())) {
             return stopRepository.findIndexByTransitIdAndStopNameAndDirection(transitId, street, direction);
         } else {
             throw new ResourceNotFoundException("Stop  not found");
         }
+    }
+
+    @Override
+    public List<Stop> getAll(Specification specification) {
+        return stopRepository.findAll(specification);
     }
 }

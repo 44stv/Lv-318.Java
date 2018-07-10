@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.uatransport.config.SearchCategoryParam;
 import org.uatransport.entity.ExtendableCategory;
+import org.uatransport.entity.dto.CategoryDTO;
 import org.uatransport.service.CategoryService;
 
 import javax.servlet.http.HttpServletResponse;
@@ -19,7 +20,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/category")
 @RequiredArgsConstructor
-
 public class CategoryController {
     private final CategoryService categoryService;
 
@@ -36,6 +36,11 @@ public class CategoryController {
     @GetMapping
     public List<ExtendableCategory> search(SearchCategoryParam searchCategoryParam) {
         return categoryService.getAll(searchCategoryParam);
+    }
+
+    @GetMapping("/count")
+    public List<CategoryDTO> getWithCountOfTransits(SearchCategoryParam searchCategoryParam) {
+        return categoryService.getAllWithCountOfTransits(searchCategoryParam);
     }
 
     @PostMapping

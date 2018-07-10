@@ -5,7 +5,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.uatransport.entity.FeedbackCriteria;
+import org.uatransport.entity.Question;
 import org.uatransport.service.FeedbackCriteriaService;
+import org.uatransport.service.QuestionService;
 
 import java.util.List;
 
@@ -14,6 +16,7 @@ import java.util.List;
 @RequestMapping("/feedback-criteria")
 public class FeedbackCriteriaController {
     private final FeedbackCriteriaService feedbackCriteriaService;
+    private final QuestionService questionService;
 
     @PostMapping
     public ResponseEntity<FeedbackCriteria> addFeedbackCriteria(@RequestBody FeedbackCriteria feedbackCriteria) {
@@ -57,6 +60,13 @@ public class FeedbackCriteriaController {
 
     }
 
+    @GetMapping(params = "questionType")
+    public List<FeedbackCriteria> getByQuestionsType(
+            @RequestParam(value = "questionType") Question.QuestionType questionType) {
+        return feedbackCriteriaService.getByQuestionsType(questionType);
+
+    }
+
     @GetMapping(params = "question")
     public List<FeedbackCriteria> getByQuestions(@RequestParam(value = "question") String question) {
         return feedbackCriteriaService.getByQuestionsName(question);
@@ -77,5 +87,10 @@ public class FeedbackCriteriaController {
     @GetMapping("/enums")
     public List<String> getAllEnumTypes() {
         return feedbackCriteriaService.getAllEnumsType();
+    }
+
+    @GetMapping("/questionEnums")
+    public List<String> getAllEnumTypesOfQuestion() {
+        return questionService.getAllEnumsTypeOfQuestion();
     }
 }

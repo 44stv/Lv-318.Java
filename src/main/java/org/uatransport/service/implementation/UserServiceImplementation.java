@@ -14,6 +14,7 @@ import org.uatransport.entity.Role;
 import org.uatransport.entity.User;
 import org.uatransport.entity.dto.LoginDTO;
 import org.uatransport.entity.dto.UserDTO;
+import org.uatransport.exception.ResourceNotFoundException;
 import org.uatransport.exception.SecurityJwtException;
 import org.uatransport.repository.UserRepository;
 import org.uatransport.security.JwtTokenProvider;
@@ -56,10 +57,32 @@ public class UserServiceImplementation implements UserService {
         user.setLastName(userDTO.getLastName());
         user.setEmail(userDTO.getEmail());
         user.setPassword(bcryptEncoder.encode(userDTO.getPassword()));
-        user.setRole(Role.USER);
+        user.setRole(Role.UNACTIVATED);
         userRepository.save(user);
         return jwtTokenProvider.createToken(user.getEmail(), user.getRole());
 
+    }
+
+    @Override
+    public User getUserByEmail(String userEmail) {
+        return userRepository.findByEmail(userEmail);
+    }
+
+    @Override
+    public void activateUserByEmail(String userEmail) {
+
+        User user = userRepository.findByEmail(userEmail);
+        user.setRole(Role.USER);
+        userRepository.saveAndFlush(user);
+
+    }
+
+    @Override
+    public void updateUserEncodedPassword(String newPassword, String userEmail) {
+        User user = userRepository.findByEmail(userEmail);
+        user.setPassword(newPassword);
+
+        userRepository.saveAndFlush(user);
     }
 
     @Override
@@ -84,4 +107,24 @@ public class UserServiceImplementation implements UserService {
 
     }
 
+    @Override
+    @Transactional
+    public User updateUserRole(String role, String email) {
+        if (role == null) {
+            throw new IllegalArgumentException("Parameter should not be null");
+        }
+        if (userRepository.existsByEmail(email)) {
+            User user = userRepository.findByEmail(email);
+            user.setRole(Role.valueOf(role.trim().toUpperCase()));
+            return userRepository.save(user);
+        } else {
+            throw new ResourceNotFoundException("User not found");
+        }
+
+    }
+
+    @Override
+    public boolean existUserByEmail(String email) {
+        return userRepository.existsByEmail(email);
+    }
 }
