@@ -85,7 +85,6 @@ public class UserServiceImplementation implements UserService {
         userRepository.saveAndFlush(user);
     }
 
-
     @Override
     @Transactional
     public User update(User user) {

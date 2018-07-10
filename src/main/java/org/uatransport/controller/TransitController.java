@@ -37,7 +37,7 @@ public class TransitController {
     @GetMapping(params = "categoryId")
     public Page<TransitDTO> getTransitsByCategoryId(@RequestParam("categoryId") Integer categoryId, Pageable pageable) {
         return transitService.getAllByCategoryIdByPage(categoryId, pageable)
-            .map(transit -> modelMapper.map(transit, TransitDTO.class));
+                .map(transit -> modelMapper.map(transit, TransitDTO.class));
     }
 
     @GetMapping(params = "nextLevelCategoryId")
@@ -72,9 +72,9 @@ public class TransitController {
         return new ResponseEntity<>(updatedTransit, HttpStatus.OK);
     }
 
-//    @PutMapping
-//    public ResponseEntity<Transit> upsertTransit(@RequestBody TransitDTO transitDTO) {
-//        Transit updatedTransit = transitService.upsert(modelMapper.map(transitDTO, Transit.class));
-//        return new ResponseEntity<>(updatedTransit, HttpStatus.OK);
-//    }
+    // @PutMapping
+    // public ResponseEntity<Transit> upsertTransit(@RequestBody TransitDTO transitDTO) {
+    // Transit updatedTransit = transitService.upsert(modelMapper.map(transitDTO, Transit.class));
+    // return new ResponseEntity<>(updatedTransit, HttpStatus.OK);
+    // }
 }

@@ -10,4 +10,4 @@ import lombok.NoArgsConstructor;
 public class UpdateUserRoleDTO {
     private String email;
     private String role;
-   }
+}

@@ -8,8 +8,7 @@ import org.uatransport.entity.Transit;
 
 import java.util.List;
 
-public interface TransitRepository
-        extends JpaRepository<Transit, Integer>, JpaSpecificationExecutor<Transit> {
+public interface TransitRepository extends JpaRepository<Transit, Integer>, JpaSpecificationExecutor<Transit> {
 
     Transit findByName(String name);
 

@@ -33,28 +33,27 @@ public class CommentMap implements Converter<Comment, CommentDTO> {
             e.getMessage();
         }
 
-
         try {
             destination.setParentCommentId(source.getParentComment().getId());
         } catch (NullPointerException e) {
             e.getMessage();
         }
 
-//        destination.setParentCommentId(source.getParentComment().getId());
-//        destination.setChildrenComments(source.getChildrenComments());
+        // destination.setParentCommentId(source.getParentComment().getId());
+        // destination.setChildrenComments(source.getChildrenComments());
 
         return destination;
     }
 }
 
-///asdasdasdsa
-//    /asdsadasdsa
-//    ...(show more)
+/// asdasdasdsa
+// /asdsadasdsa
+// ...(show more)
 //
-///asdasdasdsa
-//    /asdsadasdsa
-//        /asdasdsa
-//        /asdasdasd
-//    /dasdasdasdas
+/// asdasdasdsa
+// /asdsadasdsa
+// /asdasdsa
+// /asdasdasd
+// /dasdasdasdas
 //
-///asdasdasdasd
+/// asdasdasdasd

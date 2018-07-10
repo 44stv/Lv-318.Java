@@ -16,11 +16,8 @@ public class FeedbackMap implements Converter<Feedback, FeedbackDTO> {
         Feedback source = mappingContext.getSource();
         FeedbackDTO destination = mappingContext.getDestination();
 
-        destination.setUserId(source.getUser().getId())
-            .setCriteriaId(source.getFeedbackCriteria().getId())
-            .setTransitId(source.getTransit().getId())
-            .setAnswer(source.getAnswer())
-            .setId(source.getId());
+        destination.setUserId(source.getUser().getId()).setCriteriaId(source.getFeedbackCriteria().getId())
+                .setTransitId(source.getTransit().getId()).setAnswer(source.getAnswer()).setId(source.getId());
 
         return destination;
     }
