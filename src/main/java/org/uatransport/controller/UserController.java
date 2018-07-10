@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.uatransport.entity.*;
 import org.uatransport.entity.dto.ForgetPasswordDTO;
 import org.uatransport.entity.dto.LoginDTO;
+import org.uatransport.entity.dto.UpdateUserRoleDTO;
 import org.uatransport.entity.dto.UserDTO;
 import org.uatransport.exception.EmailSendException;
 import org.uatransport.service.TemporaryDataConfirmationService;
@@ -176,6 +177,13 @@ public class UserController {
         sendPasswordChangeConfirmationEmail(userEmail, firstName, confirmUrl);
 
         return new ResponseEntity<>(new InfoResponse("Please, check your email "), HttpStatus.OK);
+    }
+
+    @PutMapping("/update-role")
+    public ResponseEntity updateUserRole(@RequestBody UpdateUserRoleDTO updateUserRoleDTO) {
+        String role = updateUserRoleDTO.getRole();
+        String email = updateUserRoleDTO.getEmail();
+        return new ResponseEntity<>(userService.updateUserRole(role,email), HttpStatus.OK);
     }
 
     private void sendPasswordChangeConfirmationEmail(String userEmail, String firstName, String confirmUrl) {
