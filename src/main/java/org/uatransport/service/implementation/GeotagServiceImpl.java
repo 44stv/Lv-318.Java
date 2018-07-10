@@ -3,6 +3,7 @@ package org.uatransport.service.implementation;
 import com.google.common.collect.Streams;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.uatransport.entity.Geotag;
 import org.uatransport.exception.ResourceNotFoundException;
 import org.uatransport.repository.GeotadRepository;
@@ -48,6 +49,15 @@ public class GeotagServiceImpl implements GeotagService {
         }
 
         throw new ResourceNotFoundException("Can`t resolve location");
+    }
+
+    @Override
+    @Transactional
+    public Geotag save(Geotag geotag) {
+        if (geotag == null) {
+            throw new IllegalArgumentException("Parameter should not be null");
+        }
+        return geotadRepository.save(geotag);
     }
 
     /**
