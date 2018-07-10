@@ -70,15 +70,15 @@ public class UserServiceImplementation implements UserService {
     @Override
     public void activateUserByEmail(String userEmail) {
 
-            User user = userRepository.findByEmail(userEmail);
-            user.setRole(Role.USER);
-            userRepository.saveAndFlush(user);
+        User user = userRepository.findByEmail(userEmail);
+        user.setRole(Role.USER);
+        userRepository.saveAndFlush(user);
 
-        }
+    }
 
     @Override
     public void updateUserEncodedPassword(String newPassword, String userEmail) {
-        User user= userRepository.findByEmail(userEmail);
+        User user = userRepository.findByEmail(userEmail);
         user.setPassword(newPassword);
 
         userRepository.saveAndFlush(user);

@@ -15,9 +15,10 @@ public class StopSearchSpecification implements Specification<Stop> {
 
     @Override
     public Predicate toPredicate(Root<Stop> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
-        if (globalSearch.getGlobalSearch().isEmpty())
+        if (globalSearch.getGlobalSearch().isEmpty()) {
             return null;
+        }
         return criteriaBuilder.like(criteriaBuilder.lower(root.get("street")),
-                "%" + globalSearch.getGlobalSearch().toLowerCase() + "%");
+            "%" + globalSearch.getGlobalSearch().toLowerCase() + "%");
     }
 }

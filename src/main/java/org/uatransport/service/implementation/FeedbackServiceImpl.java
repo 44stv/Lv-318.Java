@@ -118,7 +118,7 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     @Override
     @Transactional(readOnly = true)
-    public Map<Stop, Double> getStopCapacityMap(Integer transitId, String direction, Stop... stops) {
+    public Map<Stop, Double> getStopCapacityMap(Integer transitId, Stop.DIRECTION direction, Stop... stops) {
         List<Stop> stopList = stops.length > 0 ? Arrays.asList(stops)
             : stopService.getByTransitIdAndDirection(transitId, direction);
         Map<Stop, Double> capacityMap = new TreeMap<>(Comparator.comparingInt(stop ->
@@ -150,13 +150,13 @@ public class FeedbackServiceImpl implements FeedbackService {
      */
     @Override
     public List<HeatMapDTO> getHeatMap(Integer transitId) {
-        List<Stop> stopList = stopService.getByTransitId(transitId);
+        List<Stop> stopList = stopService.getByTransitIdAndDirection(transitId, Stop.DIRECTION.FORWARD);
         Map<String, Double> capacityMap = new TreeMap<>(Comparator.comparingInt(
-                street -> stopService.getIndexByTransitIdAndStopNameAndDirection(transitId, street, "FORWARD")));
+                street -> stopService.getIndexByTransitIdAndStopNameAndDirection(transitId, street, Stop.DIRECTION.FORWARD)));
 
         Map<Integer, Double> hourCapacityMap = getHourCapacityMap(transitId);
         int averageHourCapacity = hourCapacityMap.values().stream().mapToInt(Number::intValue).sum();
-        Map<Stop, Double> stopCapacityMap = getStopCapacityMap(transitId, "FORWARD");
+        Map<Stop, Double> stopCapacityMap = getStopCapacityMap(transitId, Stop.DIRECTION.FORWARD);
 
         return valueToReturn(stopList, capacityMap, hourCapacityMap, averageHourCapacity, stopCapacityMap);
     }
@@ -219,6 +219,7 @@ public class FeedbackServiceImpl implements FeedbackService {
      *            exact name of the object
      */
     private void heatMapDTOSetName(HeatMapDTO heatMapDTO, int i) {
+        //10 is the first two-digit number
         if (i < 10) {
             heatMapDTO.setName("0" + i + ":00");
         } else {
@@ -266,7 +267,7 @@ public class FeedbackServiceImpl implements FeedbackService {
             .collect(Collectors.toList());
     }
 
-    private boolean existInStopIndexesRange(Integer transitId, Stop stop, String fromStop, String toStop, String direction) {
+    private boolean existInStopIndexesRange(Integer transitId, Stop stop, String fromStop, String toStop, Stop.DIRECTION direction) {
         Integer fromStopIndex = stopService.getIndexByTransitIdAndStopNameAndDirection(transitId, fromStop, direction);
         Integer toStopIndex = stopService.getIndexByTransitIdAndStopNameAndDirection(transitId, toStop, direction);
         Integer stopIndex = stopService.getIndexByTransitIdAndStopNameAndDirection(transitId, stop.getStreet(), direction);
@@ -275,7 +276,7 @@ public class FeedbackServiceImpl implements FeedbackService {
             : Range.closed(toStopIndex, fromStopIndex).contains(stopIndex);
     }
 
-    private Double getCapacityByTransitAndStops(Integer transitId, Stop stop, String direction) {
+    private Double getCapacityByTransitAndStops(Integer transitId, Stop stop, Stop.DIRECTION direction) {
         Predicate<CapacityRouteFeedback> existInRange = capacityRouteFeedback -> existInStopIndexesRange(transitId, stop,
             capacityRouteFeedback.getFrom().getStreet(), capacityRouteFeedback.getTo().getStreet(), direction);
 
