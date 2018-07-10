@@ -84,11 +84,11 @@ public class FeedbackController {
         return new ResponseEntity<>(feedbackService.addAll(feedbackDTOList), HttpStatus.CREATED);
     }
 
-
     /**
      * Method to returns data for the heatmap in single transit page.
      *
-     * @param transitId id of specified transit
+     * @param transitId
+     *            id of specified transit
      */
     @GetMapping(value = "/heat-map/{transitId}")
     public List<HeatMapDTO> getHeatMapData(@PathVariable Integer transitId) {

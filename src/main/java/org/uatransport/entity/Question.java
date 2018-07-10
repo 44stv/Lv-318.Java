@@ -24,11 +24,12 @@ public class Question {
 
     @Enumerated(value = EnumType.STRING)
     @Column(name = "type", updatable = false)
+
     private QuestionType type;
 
     @RequiredArgsConstructor
     public enum QuestionType {
-        SIMPLE, PERCENTAGE, TIME, ROUTE
+        SIMPLE, STOP, TIME, PERCENTAGE
     }
 
 }

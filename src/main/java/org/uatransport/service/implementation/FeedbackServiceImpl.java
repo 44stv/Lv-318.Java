@@ -44,14 +44,14 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Override
     public List<Feedback> addAll(List<FeedbackDTO> feedbackDTOList) {
         return Streams.stream(feedbackRepository.saveAll(FeedbackDTO.toEntity(feedbackDTOList)))
-            .collect(Collectors.toList());
+                .collect(Collectors.toList());
     }
 
     @Override
     @Transactional(readOnly = true)
     public Feedback getById(Integer id) {
         return feedbackRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException(String.format("Feedback with id '%s' not found", id)));
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("Feedback with id '%s' not found", id)));
     }
 
     @Override
@@ -116,7 +116,6 @@ public class FeedbackServiceImpl implements FeedbackService {
         return getAverageRate(feedbackList);
     }
 
-
     @Override
     @Transactional(readOnly = true)
     public Map<Stop, Double> getStopCapacityMap(Integer transitId, String direction, Stop... stops) {
@@ -146,21 +145,21 @@ public class FeedbackServiceImpl implements FeedbackService {
     /**
      * Method to return map for HeatMap diagram on UI.
      *
-     * @param transitId id of specified transit
+     * @param transitId
+     *            id of specified transit
      */
     @Override
     public List<HeatMapDTO> getHeatMap(Integer transitId) {
         List<Stop> stopList = stopService.getByTransitId(transitId);
-        Map<String, Double> capacityMap = new TreeMap<>(Comparator
-            .comparingInt(street -> stopService.getIndexByTransitIdAndStopNameAndDirection(transitId, street, "FORWARD")));
+        Map<String, Double> capacityMap = new TreeMap<>(Comparator.comparingInt(
+                street -> stopService.getIndexByTransitIdAndStopNameAndDirection(transitId, street, "FORWARD")));
 
         Map<Integer, Double> hourCapacityMap = getHourCapacityMap(transitId);
         int averageHourCapacity = hourCapacityMap.values().stream().mapToInt(Number::intValue).sum();
-        Map<Stop, Double> stopCapacityMap = getStopCapacityMap(transitId, "forward");
+        Map<Stop, Double> stopCapacityMap = getStopCapacityMap(transitId, "FORWARD");
 
         return valueToReturn(stopList, capacityMap, hourCapacityMap, averageHourCapacity, stopCapacityMap);
     }
-
 
     @Override
     @Transactional(readOnly = true)
@@ -175,7 +174,8 @@ public class FeedbackServiceImpl implements FeedbackService {
     /**
      * Method to return default value in case of absence of proper data.
      *
-     * @param accepterMap EnumMap which should be checked
+     * @param accepterMap
+     *            EnumMap which should be checked
      */
     private EnumMap<SimpleFeedback, Double> returnAccepterMapNonZeroValue(EnumMap<SimpleFeedback, Double> accepterMap) {
         boolean isZero = false;
@@ -186,12 +186,11 @@ public class FeedbackServiceImpl implements FeedbackService {
         }
         return accepterMap;
     }
-
     /**
      * Method to create specific form of list of data for heatmap.
      */
     private List<HeatMapDTO> valueToReturn(List<Stop> stopList, Map<String, Double> capacityMap,
-                                           Map<Integer, Double> hourCapacityMap, int averageHourCapacity, Map<Stop, Double> stopCapacityMap) {
+            Map<Integer, Double> hourCapacityMap, int averageHourCapacity, Map<Stop, Double> stopCapacityMap) {
         List<HeatMapDTO> valueToReturn = new ArrayList<>();
 
         for (int i = 0; i < 24; i++) {
@@ -214,8 +213,10 @@ public class FeedbackServiceImpl implements FeedbackService {
     /**
      * Method to set name to heatMapDTO in correct form (e.g. 00:00).
      *
-     * @param heatMapDTO object in which should put specified name
-     * @param i          exact name of the object
+     * @param heatMapDTO
+     *            object in which should put specified name
+     * @param i
+     *            exact name of the object
      */
     private void heatMapDTOSetName(HeatMapDTO heatMapDTO, int i) {
         if (i < 10) {
@@ -229,7 +230,7 @@ public class FeedbackServiceImpl implements FeedbackService {
      * Method to write proper data to the capacity map
      */
     private void mapGegeration(List<Stop> stopList, Map<String, Double> capacityMap, int averageHourCapacity,
-                               Map<Stop, Double> stopCapacityMap, Double capacityFromHourCapacityMap) {
+            Map<Stop, Double> stopCapacityMap, Double capacityFromHourCapacityMap) {
         for (Stop stop : stopList) {
             Double valueToSaveInMap;
 
@@ -250,7 +251,6 @@ public class FeedbackServiceImpl implements FeedbackService {
             .average()
             .orElse(0.0);
     }
-
 
     private Double getAverageRate(List<Feedback> feedbackList) {
         return feedbackList.stream()

@@ -2,6 +2,7 @@ package org.uatransport.service.implementation;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,7 +43,7 @@ public class StopServiceImpl implements StopService {
     @Transactional(readOnly = true)
     public Stop getById(Integer id) {
         return stopRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException(String.format("Stop with id '%s' not found", id)));
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("Stop with id '%s' not found", id)));
     }
 
     @Override
@@ -87,16 +88,6 @@ public class StopServiceImpl implements StopService {
         return stopRepository.findBackwardStopsByTransitId(id);
     }
 
-//    @Override
-//    @Transactional(propagation = Propagation.REQUIRES_NEW)
-//    public Integer getIndexByTransitIdAndStopName(Integer transitId, String street) {
-//        if (stopRepository.existsById(getByTransitIdAndStopNameAndDirection(transitId, street).getId())) {
-//            return stopRepository.findIndexByTransitIdAndStopName(transitId, street);
-//        } else {
-//            throw new ResourceNotFoundException("Stop  not found");
-//        }
-//    }
-
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Integer getIndexByTransitIdAndStopNameAndDirection(Integer transitId, String street, String direction) {
@@ -105,5 +96,10 @@ public class StopServiceImpl implements StopService {
         } else {
             throw new ResourceNotFoundException("Stop  not found");
         }
+    }
+
+    @Override
+    public List<Stop> getAll(Specification specification) {
+        return stopRepository.findAll(specification);
     }
 }

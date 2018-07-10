@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.uatransport.entity.FeedbackCriteria;
+import org.uatransport.entity.Question;
 import org.uatransport.exception.ResourceNotFoundException;
 import org.uatransport.repository.FeedbackCriteriaRepository;
 import org.uatransport.service.FeedbackCriteriaService;
@@ -53,10 +54,10 @@ public class FeedbackCriteriaServiceImpl implements FeedbackCriteriaService {
     @Override
     @Transactional(readOnly = true)
     public FeedbackCriteria getById(Integer id) {
+
         return feedbackCriteriaRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException(String.format("FeedbackCriteria with id '%s' not found", id)));
     }
-
 
     @Override
     @Transactional(readOnly = true)
@@ -101,6 +102,11 @@ public class FeedbackCriteriaServiceImpl implements FeedbackCriteriaService {
     @Override
     public List<FeedbackCriteria> getByQuestionsWeight(Integer weight) {
         return feedbackCriteriaRepository.findByQuestionsWeight(weight);
+    }
+
+    @Override
+    public List<FeedbackCriteria> getByQuestionsType(Question.QuestionType type) {
+        return feedbackCriteriaRepository.findByQuestionsType(type);
     }
 
 }
