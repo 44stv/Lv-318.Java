@@ -152,11 +152,11 @@ public class FeedbackServiceImpl implements FeedbackService {
     public List<HeatMapDTO> getHeatMap(Integer transitId) {
         List<Stop> stopList = stopService.getByTransitId(transitId);
         Map<String, Double> capacityMap = new TreeMap<>(Comparator.comparingInt(
-                street -> stopService.getIndexByTransitIdAndStopNameAndDirection(transitId, street, "FORWARD")));
+                street -> stopService.getIndexByTransitIdAndStopNameAndDirection(transitId, street, "forward")));
 
         Map<Integer, Double> hourCapacityMap = getHourCapacityMap(transitId);
         int averageHourCapacity = hourCapacityMap.values().stream().mapToInt(Number::intValue).sum();
-        Map<Stop, Double> stopCapacityMap = getStopCapacityMap(transitId, "FORWARD");
+        Map<Stop, Double> stopCapacityMap = getStopCapacityMap(transitId, "forward");
 
         return valueToReturn(stopList, capacityMap, hourCapacityMap, averageHourCapacity, stopCapacityMap);
     }
@@ -219,6 +219,7 @@ public class FeedbackServiceImpl implements FeedbackService {
      *            exact name of the object
      */
     private void heatMapDTOSetName(HeatMapDTO heatMapDTO, int i) {
+        //10 is the first two-digit number
         if (i < 10) {
             heatMapDTO.setName("0" + i + ":00");
         } else {
