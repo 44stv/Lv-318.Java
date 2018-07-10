@@ -104,7 +104,7 @@ public class CategoryServiceImpl implements CategoryService {
                 category.getName(),
                 category.getNextLevelCategory(),
                 category.getIconURL(),
-                transitRepository.countAllByCategory_Id(category.getId()));
+                transitRepository.countAllByCategoryId(category.getId()));
             list.add(categoryDTO);
             System.out.println(categoryDTO);
         }
