@@ -20,12 +20,12 @@ public interface StopRepository extends CrudRepository<Stop, Integer>, JpaSpecif
     @Query("SELECT s FROM Transit t JOIN t.stops s "
             + "WHERE t.id = :id AND s.street = :street AND s.direction = :direction")
     Stop findByTransitIdAndStopNameAndDirection(@Param("id") Integer transitId, @Param("street") String street,
-            @Param("direction") String direction);
+            @Param("direction") Stop.DIRECTION direction);
 
     @Query("SELECT INDEX(s) FROM Transit t JOIN t.stops s "
             + "WHERE t.id = :id AND s.street = :street AND s.direction = :direction")
     Integer findIndexByTransitIdAndStopNameAndDirection(@Param("id") Integer transitId, @Param("street") String street,
-            @Param("direction") String direction);
+            @Param("direction") Stop.DIRECTION direction);
 
     @Query("SELECT s FROM Transit t JOIN t.stops s WHERE t.id = :id AND s.street IS NOT NULL AND s.direction ='FORWARD' ORDER BY INDEX(s)")
     List<Stop> findForwardStopsByTransitId(@Param("id") Integer id);

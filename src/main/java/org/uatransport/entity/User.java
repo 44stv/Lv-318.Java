@@ -1,11 +1,13 @@
 package org.uatransport.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -30,6 +32,10 @@ public class User {
 
     @Column(name = "password", nullable = false)
     private String password;
+
+    @JsonManagedReference(value = "userJson")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    private List<Comment> comments;
 
     @Column(name = "provider")
     private String provider;

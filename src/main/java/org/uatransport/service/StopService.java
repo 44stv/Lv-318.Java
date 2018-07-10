@@ -21,12 +21,12 @@ public interface StopService {
 
     List<Stop> getByTransitId(Integer id);
 
-    Stop getByTransitIdAndStopNameAndDirection(Integer transitId, String street, String direction);
+    Stop getByTransitIdAndStopNameAndDirection(Integer transitId, String street, Stop.DIRECTION direction);
 
-    List<Stop> getByTransitIdAndDirection(Integer id, String direction);
+    List<Stop> getByTransitIdAndDirection(Integer id, Stop.DIRECTION direction);
 
     List<Stop> getAll(Specification specification);
 
-    Integer getIndexByTransitIdAndStopNameAndDirection(Integer transitId, String street, String direction);
+    Integer getIndexByTransitIdAndStopNameAndDirection(Integer transitId, String street, Stop.DIRECTION direction);
 
 }

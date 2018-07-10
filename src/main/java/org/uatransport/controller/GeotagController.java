@@ -22,4 +22,9 @@ public class GeotagController {
     public Geotag getByCoordinates(@RequestParam Double latitude, @RequestParam Double longtitude) {
         return geotagService.whereIAm(latitude, longtitude);
     }
+
+    @PostMapping
+    public Geotag save(@RequestBody Geotag geotag) {
+        return geotagService.save(geotag);
+    }
 }

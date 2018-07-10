@@ -2,7 +2,6 @@ package org.uatransport.entity.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 import org.uatransport.entity.ExtendableCategory;
 
 @Data
