@@ -204,6 +204,18 @@ public class UserController {
             emailExecutor.shutdown();
         }
     }
+
+    @PostMapping("/social")
+    public ResponseEntity socialSignIn(@RequestBody UserDTO userDTO) {
+
+        if(userService.existUserByEmail(userDTO.getEmail())){
+            //
+        }
+        else {
+            userService.signup(userDTO);
+        }
+        return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }
 
 

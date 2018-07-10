@@ -25,4 +25,7 @@ public interface UserService {
     void updateUserEncodedPassword(String newPassword, String userEmail);
 
     User updateUserRole(String role, String email);
+
+    boolean existUserByEmail(String email);
+
 }
