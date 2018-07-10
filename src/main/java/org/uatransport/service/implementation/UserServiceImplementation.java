@@ -124,4 +124,8 @@ public class UserServiceImplementation implements UserService {
 
     }
 
+    @Override
+    public boolean existUserByEmail(String email) {
+        return userRepository.existsUserByEmail(email);
+    }
 }

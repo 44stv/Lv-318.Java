@@ -35,7 +35,6 @@ public class UserController {
     @Autowired
     private TemporaryDataConfirmationService temporaryDataConfirmationService;
 
-
     @Autowired
     private EmailService emailService;
 
@@ -197,6 +196,18 @@ public class UserController {
         } finally {
             emailExecutor.shutdown();
         }
+    }
+
+    @PostMapping("/social")
+    public ResponseEntity socialSignIn(@RequestBody UserDTO userDTO) {
+
+        if(userService.existUserByEmail(userDTO.getEmail())){
+            //
+        }
+        else {
+            userService.signup(userDTO);
+        }
+        return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
 
