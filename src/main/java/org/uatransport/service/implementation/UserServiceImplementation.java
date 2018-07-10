@@ -4,9 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AccountStatusUserDetailsChecker;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -70,15 +72,15 @@ public class UserServiceImplementation implements UserService {
     @Override
     public void activateUserByEmail(String userEmail) {
 
-            User user = userRepository.findByEmail(userEmail);
-            user.setRole(Role.USER);
-            userRepository.saveAndFlush(user);
+        User user = userRepository.findByEmail(userEmail);
+        user.setRole(Role.USER);
+        userRepository.saveAndFlush(user);
 
-        }
+    }
 
     @Override
     public void updateUserEncodedPassword(String newPassword, String userEmail) {
-        User user= userRepository.findByEmail(userEmail);
+        User user = userRepository.findByEmail(userEmail);
         user.setPassword(newPassword);
 
         userRepository.saveAndFlush(user);
@@ -107,4 +109,8 @@ public class UserServiceImplementation implements UserService {
 
     }
 
+    @Override
+    public boolean existUserByEmail(String email) {
+        return userRepository.existsUserByEmail(email);
+    }
 }

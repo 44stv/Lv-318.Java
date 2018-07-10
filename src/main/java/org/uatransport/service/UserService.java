@@ -1,5 +1,6 @@
 package org.uatransport.service;
 
+import org.springframework.security.core.userdetails.UserDetails;
 import org.uatransport.entity.User;
 import org.uatransport.entity.dto.LoginDTO;
 import org.uatransport.entity.dto.UserDTO;
@@ -23,4 +24,7 @@ public interface UserService {
     void activateUserByEmail(String userEmail);
 
     void updateUserEncodedPassword(String newPassword, String userEmail);
+
+    boolean existUserByEmail(String email);
+
 }

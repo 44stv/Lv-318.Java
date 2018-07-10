@@ -31,6 +31,9 @@ public class User {
     @Column(name = "password", nullable = false)
     private String password;
 
+    @Column(name = "provider")
+    private String provider;
+
     @NotNull
     @Column(name = "role", nullable = false)
     private Role role;
