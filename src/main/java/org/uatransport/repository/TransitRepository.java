@@ -25,6 +25,6 @@ public interface TransitRepository
 
     Page<Transit> findByCategoryNextLevelCategoryName(String name, Pageable pageable);
 
-    Integer countAllByCategory_Id(Integer categoryId);
+    Integer countAllByCategoryId(Integer categoryId);
 
 }
