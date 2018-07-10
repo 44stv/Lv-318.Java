@@ -32,6 +32,9 @@ public class EmailService {
     @Value("${subject.password.confirmation}")
     private String changePasswordSubject;
 
+    @Value("${subject.friend.invitation}")
+    private String invitation;
+
     @Value("${subject.account.activation}")
     private String accountActivationSubject;
 
@@ -74,4 +77,17 @@ public class EmailService {
         };
         mailSender.send(messagePreparator);
     }
+
+    public void prepareAndSendFriendInvitationEmail(String recipient, String userName, String friendName, String invitationLink) {
+        MimeMessagePreparator messagePreparator = mimeMessage -> {
+            MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage);
+            messageHelper.setFrom(emailFrom);
+            messageHelper.setTo(recipient);
+            messageHelper.setSubject(invitation);
+            String content = emailContentBuilder.buildFriendInvitationHtml(userName, friendName ,invitationLink);
+            messageHelper.setText(content, true);
+        };
+        mailSender.send(messagePreparator);
+    }
+
 }

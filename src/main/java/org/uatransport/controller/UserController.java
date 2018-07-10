@@ -2,16 +2,13 @@ package org.uatransport.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.uatransport.entity.*;
-import org.uatransport.entity.dto.ForgetPasswordDTO;
-import org.uatransport.entity.dto.LoginDTO;
-import org.uatransport.entity.dto.UpdateUserRoleDTO;
-import org.uatransport.entity.dto.UserDTO;
+import org.uatransport.entity.dto.*;
 import org.uatransport.exception.EmailSendException;
 import org.uatransport.service.TemporaryDataConfirmationService;
 import org.uatransport.service.UserService;
@@ -41,12 +38,18 @@ public class UserController {
     @Autowired
     private ExpirationCheckService expirationCheckService;
 
+    @Value("${server.url}")
+    private String serverUrl;
+
+    @Value("localhost:4200/main")
+    private String invitationLink;
+
     @PostMapping("/signup")
     public ResponseEntity signUp(@RequestBody UserDTO userDTO) {
         if (userDTO.getPassword().equals(userDTO.getPasswordConfirmation())) {
             userService.signup(userDTO);
             final String uuid = UUID.randomUUID().toString().replace("-", "");
-            final String confirmUrl = "http://localhost:4200/main/user" + "/activate/" + uuid;
+            final String confirmUrl = serverUrl + "/main/user/activate/" + uuid;
             String email = userDTO.getEmail();
             String firstName = userDTO.getFirstName();
             temporaryDataConfirmationService
@@ -106,13 +109,14 @@ public class UserController {
 
     @PostMapping("/signin")
     public ResponseEntity signin(@RequestBody LoginDTO loginDTO, HttpServletResponse response) {
-      if(loginDTO.getPassword().equals(loginDTO.getPasswordConfirmation())){
-        String token = userService.signin(loginDTO);
-        response.setHeader("Authorization", token);
+        if (userService.getUserByEmail(loginDTO.getEmail()).getRole() != Role.UNACTIVATED) {
+            String token = userService.signin(loginDTO);
+            response.setHeader("Authorization", token);
 
-        return ResponseEntity.ok(new TokenModel(token));
-      }else
-          return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new InfoResponse("Password and passwordConfirm are not equals"));
+            return ResponseEntity.ok(new TokenModel(token));
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new InfoResponse("Your account is not activated"));
+
     }
 
     @DeleteMapping("/{id}")
@@ -157,42 +161,17 @@ public class UserController {
         return new ResponseEntity<>("Error during password changing", HttpStatus.BAD_REQUEST);
     }
 
-    @PostMapping("/update/password/confirm")
-    public ResponseEntity sendConfirmation(@RequestBody ForgetPasswordDTO forgetPasswordDTO) {
-        final String uuid = UUID.randomUUID().toString().replace("-", "");
-        final String confirmUrl = "http://localhost:4200/user" + "/update/password/" + uuid;
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        String firstName = userService.getUserByEmail(email).getFirstName();
-        temporaryDataConfirmationService.save(
-            temporaryDataConfirmationService
-                .makePasswordConfirmationEntity(uuid, forgetPasswordDTO.getNewPassword(), email));
-        sendPasswordChangeConfirmationEmail(email, firstName, confirmUrl);
-
-        return new ResponseEntity<>("Please, check your email", HttpStatus.OK);
-    }
 
     @PostMapping("/forget/password/confirm")
-    public ResponseEntity forgetPasswordSendConfirmation(@RequestBody LoginDTO forgetPasswordDTO) {
+    public ResponseEntity forgetPasswordSendConfirmation(@RequestBody ForgetPasswordDTO forgetPasswordDTO) {
+        if(forgetPasswordDTO.getPassword().equals(forgetPasswordDTO.getPasswordConfirmation())){
         final String uuid = UUID.randomUUID().toString().replace("-", "");
-        final String confirmUrl = "http://localhost:4200/main/user" + "/forgetpass/" + uuid;
+        final String confirmUrl = serverUrl + "/main/user/forgetpass/" + uuid;
         String userEmail = forgetPasswordDTO.getEmail();
         String firstName = userService.getUserByEmail(userEmail).getFirstName();
         temporaryDataConfirmationService.save(
             temporaryDataConfirmationService
                 .makePasswordConfirmationEntity(uuid, forgetPasswordDTO.getPassword(), userEmail));
-        sendPasswordChangeConfirmationEmail(userEmail, firstName, confirmUrl);
-
-        return new ResponseEntity<>(new InfoResponse("Please, check your email "), HttpStatus.OK);
-    }
-
-    @PutMapping("/update-role")
-    public ResponseEntity updateUserRole(@RequestBody UpdateUserRoleDTO updateUserRoleDTO) {
-        String role = updateUserRoleDTO.getRole();
-        String email = updateUserRoleDTO.getEmail();
-        return new ResponseEntity<>(userService.updateUserRole(role, email), HttpStatus.OK);
-    }
-
-    private void sendPasswordChangeConfirmationEmail(String userEmail, String firstName, String confirmUrl) {
         ExecutorService emailExecutor = Executors.newSingleThreadExecutor();
         try {
             emailExecutor.execute(() -> {
@@ -203,18 +182,63 @@ public class UserController {
         } finally {
             emailExecutor.shutdown();
         }
+
+        return new ResponseEntity<>(new InfoResponse("Please, check your email "), HttpStatus.OK);
+        }return new ResponseEntity<>(new InfoResponse("Password and PasswordConfirmation are not equals"), HttpStatus.BAD_REQUEST);
+
     }
+
+    @PutMapping("/update-role")
+    public ResponseEntity updateUserRole(@RequestBody UpdateUserRoleDTO updateUserRoleDTO) {
+        String role = updateUserRoleDTO.getRole();
+        String email = updateUserRoleDTO.getEmail();
+        return new ResponseEntity<>(userService.updateUserRole(role, email), HttpStatus.OK);
+    }
+
 
     @PostMapping("/social")
     public ResponseEntity socialSignIn(@RequestBody UserDTO userDTO) {
 
-        if(userService.existUserByEmail(userDTO.getEmail())){
+        if (userService.existUserByEmail(userDTO.getEmail())) {
             //
-        }
-        else {
+        } else {
             userService.signup(userDTO);
         }
         return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @PostMapping("/invite")
+    public ResponseEntity inviteFriend(@RequestBody FriendInvitationDTO friendInvitationDTO, Principal principal) {
+        String recipient = friendInvitationDTO.getFriendEmail();
+        String userName = userService.getUser(principal).getFirstName() + " " + userService.getUser(principal).getLastName();
+        String friendName = friendInvitationDTO.getFriendName();
+
+        ExecutorService emailExecutor = Executors.newSingleThreadExecutor();
+        try {
+            emailExecutor.execute(() -> {
+                emailService.prepareAndSendFriendInvitationEmail(recipient, userName, friendName, invitationLink);
+            });
+        } catch (MailException e) {
+            throw new EmailSendException("Could not send email to ", HttpStatus.INTERNAL_SERVER_ERROR);
+        } finally {
+            emailExecutor.shutdown();
+        }
+
+        return new ResponseEntity<>(new InfoResponse("Invitation sent successfully"), HttpStatus.OK);
+
+    }
+
+    @PostMapping("/profile/update/password")
+    public ResponseEntity updatePassword(@RequestBody UpdatePasswordDTO updatePasswordDTO, Principal principal) {
+        if (updatePasswordDTO.getNewPassword().equals(updatePasswordDTO.getPasswordConfirmation())) {
+
+            if (userService.updatePassword(principal.getName(), updatePasswordDTO.getOldPassword(), updatePasswordDTO.getNewPassword())) {
+                return new ResponseEntity<>(new InfoResponse("Password changed successfully"), HttpStatus.OK);
+            } else return new ResponseEntity<>(new InfoResponse("Invalid old password"), HttpStatus.BAD_REQUEST);
+
+        } else
+            return new ResponseEntity<>(new InfoResponse("Password and passwordConfirmation are not equals"), HttpStatus.BAD_REQUEST);
+
     }
 }
 
