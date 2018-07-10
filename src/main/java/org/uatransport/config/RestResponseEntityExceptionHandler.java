@@ -10,9 +10,11 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import org.uatransport.exception.MaxLevelCommentException;
 import org.uatransport.exception.EmailSendException;
 import org.uatransport.exception.ResourceNotFoundException;
 import org.uatransport.exception.SecurityJwtException;
+import org.uatransport.exception.TimeExpiredException;
 
 @ControllerAdvice
 @Slf4j
@@ -22,14 +24,14 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 
     @ExceptionHandler(value = ResourceNotFoundException.class)
     protected ResponseEntity<Object> handleConflict(ResourceNotFoundException ex, WebRequest request) {
-        logger.error("Unable to parse data {}", ex);
+        log.error("Unable to parse data {}", ex);
         final ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex);
         return handleExceptionInternal(ex, apiError, HTTP_HEADERS, apiError.getStatus(), request);
     }
 
     @ExceptionHandler(value = ConstraintViolationException.class)
     protected ResponseEntity<Object> handleConstraintViolation(ConstraintViolationException ex, WebRequest request) {
-        logger.error("Validation error occurred:", ex.getCause());
+        log.error("Validation error occurred:", ex.getCause());
         final ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex);
         apiError.setMessage("Validation error occurred: " + ex.getCause());
         return handleExceptionInternal(ex, apiError, HTTP_HEADERS, apiError.getStatus(), request);
@@ -38,7 +40,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     @ExceptionHandler(value = MethodArgumentTypeMismatchException.class)
     protected ResponseEntity<Object> handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException ex,
             WebRequest request) {
-        logger.error("Unable to parse data {}", ex);
+        log.error("Unable to parse data {}", ex);
         Class<?> requiredType = ex.getRequiredType();
         final ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex);
         apiError.setMessage(String.format("The parameter '%s' of value '%s' could not be converted to type '%s'",
@@ -48,7 +50,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 
     @ExceptionHandler(value = { IllegalArgumentException.class, IllegalStateException.class })
     protected ResponseEntity<Object> handleConflict(RuntimeException ex, WebRequest request) {
-        logger.error("Unable to parse data {}", ex);
+        log.error("Unable to parse data {}", ex);
         final ApiError apiError = new ApiError(HttpStatus.CONFLICT, ex);
         apiError.setMessage("This should be application specific");
         return handleExceptionInternal(ex, apiError, HTTP_HEADERS, apiError.getStatus(), request);
@@ -58,6 +60,20 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     protected ResponseEntity<Object> handleConflict(SecurityJwtException ex, WebRequest request) {
         final ApiError apiError = new ApiError(ex.getHttpStatus(), ex);
         apiError.setMessage(ex.getMessage());
+        return handleExceptionInternal(ex, apiError, HTTP_HEADERS, apiError.getStatus(), request);
+    }
+
+    @ExceptionHandler(value = TimeExpiredException.class)
+    protected ResponseEntity<Object> handleConflict(TimeExpiredException ex, WebRequest request) {
+        log.error("Expired time for this operation", ex);
+        final ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex);
+        return handleExceptionInternal(ex, apiError, HTTP_HEADERS, apiError.getStatus(), request);
+    }
+
+    @ExceptionHandler(value = MaxLevelCommentException.class)
+    protected ResponseEntity<Object> handleConflict(MaxLevelCommentException ex, WebRequest request) {
+        log.error("Reached max comment level", ex);
+        final ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex);
         return handleExceptionInternal(ex, apiError, HTTP_HEADERS, apiError.getStatus(), request);
     }
 
