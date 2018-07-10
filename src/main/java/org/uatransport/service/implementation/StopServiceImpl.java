@@ -1,6 +1,5 @@
 package org.uatransport.service.implementation;
 
-import jdk.nashorn.internal.ir.annotations.Ignore;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.jpa.domain.Specification;
@@ -13,8 +12,6 @@ import org.uatransport.repository.StopRepository;
 import org.uatransport.service.StopService;
 
 import java.util.List;
-
-import static org.uatransport.entity.Stop.DIRECTION.FORWARD;
 
 @Service
 @Transactional
