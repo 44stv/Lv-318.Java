@@ -12,5 +12,7 @@ public class UserDTO {
     private String lastName;
     private String email;
     private String password;
+    private String passwordConfirmation;
     private String provider;
+
 }
