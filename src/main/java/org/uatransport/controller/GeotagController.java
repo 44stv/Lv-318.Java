@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.uatransport.entity.Geotag;
 import org.uatransport.service.GeotagService;
-import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 

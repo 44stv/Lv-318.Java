@@ -42,7 +42,7 @@ public class GeotagServiceImpl implements GeotagService {
             .min()
             .orElseThrow(NoSuchElementException::new);
 
-        for (Map.Entry<Geotag, Double> item :distances.entrySet()){
+        for (Map.Entry<Geotag, Double> item : distances.entrySet()) {
             if (item.getValue().equals(minimalDistance)) {
                 return item.getKey();
             }

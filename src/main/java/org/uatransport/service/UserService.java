@@ -23,4 +23,6 @@ public interface UserService {
     void activateUserByEmail(String userEmail);
 
     void updateUserEncodedPassword(String newPassword, String userEmail);
+
+    User updateUserRole(String role, String email);
 }
