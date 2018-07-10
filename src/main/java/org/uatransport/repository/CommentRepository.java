@@ -13,6 +13,6 @@ public interface CommentRepository extends JpaRepository<Comment, Integer> {
 
     List<Comment> findByTransitIdAndLevel(Integer transitId, Integer level);
 
-    List<Comment> findByParentCommentId(Integer parentId);
+    List<Comment> findByParentCommentIdOrderByCreatedDateDesc(Integer parentId);
 
 }

@@ -79,7 +79,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public List<Comment> getAllByParentId(Integer parentId) {
-        return commentRepository.findByParentCommentId(parentId);
+        return commentRepository.findByParentCommentIdOrderByCreatedDateDesc(parentId);
     }
 
     @Override
