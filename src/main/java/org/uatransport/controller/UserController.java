@@ -35,7 +35,6 @@ public class UserController {
     @Autowired
     private TemporaryDataConfirmationService temporaryDataConfirmationService;
 
-
     @Autowired
     private EmailService emailService;
 
@@ -44,26 +43,30 @@ public class UserController {
 
     @PostMapping("/signup")
     public ResponseEntity signUp(@RequestBody UserDTO userDTO) {
+        if (userDTO.getPassword().equals(userDTO.getPasswordConfirmation())) {
+            userService.signup(userDTO);
+            final String uuid = UUID.randomUUID().toString().replace("-", "");
+            final String confirmUrl = "http://localhost:4200/main/user" + "/activate/" + uuid;
+            String email = userDTO.getEmail();
+            String firstName = userDTO.getFirstName();
+            temporaryDataConfirmationService
+                .save(temporaryDataConfirmationService.makeRegistrationConfirmationEntity(uuid, email));
+            ExecutorService emailExecutor = Executors.newSingleThreadExecutor();
+            try {
+                emailExecutor.execute(() -> {
+                    emailService.prepareAndSendConfirmRegistrationEmail(email, firstName, confirmUrl);
+                });
+            } catch (MailException e) {
+                throw new EmailSendException("Could not send email to " + email, HttpStatus.INTERNAL_SERVER_ERROR);
 
-        userService.signup(userDTO);
-        final String uuid = UUID.randomUUID().toString().replace("-", "");
-        final String confirmUrl = "http://localhost:4200/main/user" + "/activate/" + uuid;
-        String email = userDTO.getEmail();
-        String firstName = userDTO.getFirstName();
-        temporaryDataConfirmationService
-            .save(temporaryDataConfirmationService.makeRegistrationConfirmationEntity(uuid, email));
-        ExecutorService emailExecutor = Executors.newSingleThreadExecutor();
-        try {
-            emailExecutor.execute(() -> {
-                emailService.prepareAndSendConfirmRegistrationEmail(email, firstName, confirmUrl);
-            });
-        } catch (MailException e) {
-            throw new EmailSendException("Could not send email to " + email, HttpStatus.INTERNAL_SERVER_ERROR);
+            } finally {
+                emailExecutor.shutdown();
+            }
+            return ResponseEntity.status(HttpStatus.OK).body(new InfoResponse("Please check your email, and confirm registration"));
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new InfoResponse("Password and passwordConfirm are not equals"));
 
-        } finally {
-            emailExecutor.shutdown();
         }
-        return ResponseEntity.status(HttpStatus.OK).body(new InfoResponse("Please check your email, and confirm registration"));
     }
 
     @PostMapping("/activate")
@@ -79,6 +82,7 @@ public class UserController {
                 .getConfirmationType() == ConfirmationType.REGISTRATION_CONFIRM)) {
 
                 userService.activateUserByEmail(checkedTemporaryDataConfirmation.get().getUserEmail());
+
                 temporaryDataConfirmationService.delete(checkedTemporaryDataConfirmation.get());
 
                 ExecutorService emailExecutor = Executors.newSingleThreadExecutor();
@@ -102,11 +106,13 @@ public class UserController {
 
     @PostMapping("/signin")
     public ResponseEntity signin(@RequestBody LoginDTO loginDTO, HttpServletResponse response) {
-
+      if(loginDTO.getPassword().equals(loginDTO.getPasswordConfirmation())){
         String token = userService.signin(loginDTO);
         response.setHeader("Authorization", token);
 
         return ResponseEntity.ok(new TokenModel(token));
+      }else
+          return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new InfoResponse("Password and passwordConfirm are not equals"));
     }
 
     @DeleteMapping("/{id}")
@@ -183,7 +189,7 @@ public class UserController {
     public ResponseEntity updateUserRole(@RequestBody UpdateUserRoleDTO updateUserRoleDTO) {
         String role = updateUserRoleDTO.getRole();
         String email = updateUserRoleDTO.getEmail();
-        return new ResponseEntity<>(userService.updateUserRole(role,email), HttpStatus.OK);
+        return new ResponseEntity<>(userService.updateUserRole(role, email), HttpStatus.OK);
     }
 
     private void sendPasswordChangeConfirmationEmail(String userEmail, String firstName, String confirmUrl) {
