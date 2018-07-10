@@ -40,15 +40,6 @@ public class TransitController {
             .map(transit -> modelMapper.map(transit, TransitDTO.class));
     }
 
-
-    //To list
-//    @Cacheable(cacheNames = "categoryTransits")
-//    @GetMapping(params = "categoryId")
-//    public Page<TransitDTO> getTransitsByCategoryId(@RequestParam("categoryId") Integer categoryId, Pageable pageable) {
-//        return transitService.getAllByCategoryIdByPage(categoryId, pageable)
-//            .map(transit -> modelMapper.map(transit, TransitDTO.class));
-//    }
-
     @GetMapping(params = "nextLevelCategoryId")
     public List<TransitDTO> getTransitsByNextLevelCategoryId(
             @RequestParam("nextLevelCategoryId") Integer nextLevelCategoryId) {
