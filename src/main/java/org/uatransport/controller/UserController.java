@@ -47,7 +47,7 @@ public class UserController {
 
         userService.signup(userDTO);
         final String uuid = UUID.randomUUID().toString().replace("-", "");
-        final String confirmUrl = "http://localhost:4200/user" + "/activate/" + uuid;
+        final String confirmUrl = "http://localhost:4200/main/user" + "/activate/" + uuid;
         String email = userDTO.getEmail();
         String firstName = userDTO.getFirstName();
         temporaryDataConfirmationService
@@ -58,15 +58,16 @@ public class UserController {
                 emailService.prepareAndSendConfirmRegistrationEmail(email, firstName, confirmUrl);
             });
         } catch (MailException e) {
-            throw  new EmailSendException("Could not send email to"+email, HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new EmailSendException("Could not send email to " + email, HttpStatus.INTERNAL_SERVER_ERROR);
 
         } finally {
             emailExecutor.shutdown();
         }
-        return ResponseEntity.status(HttpStatus.OK).body("Please check your email, and confirm registration");
+        return ResponseEntity.status(HttpStatus.OK).body(new InfoResponse("Please check your email, and confirm registration"));
     }
-    @PostMapping("/activate/{uuidFromUrl}")
-    public ResponseEntity activateUser(@PathVariable String uuidFromUrl) {
+
+    @PostMapping("/activate")
+    public ResponseEntity activateUser(@RequestBody String uuidFromUrl) {
         Optional<TemporaryDataConfirmation> checkedTemporaryDataConfirmation = expirationCheckService
             .getTemporaryDataConfirmationWithExpirationChecking(uuidFromUrl);
 
@@ -86,11 +87,11 @@ public class UserController {
                         emailService.prepareAndSendWelcomeEmail(user.getEmail(), user.getFirstName());
                     });
                 } catch (MailException e) {
-                    throw  new EmailSendException("Could not send email to "+user.getEmail(), HttpStatus.INTERNAL_SERVER_ERROR);
+                    throw new EmailSendException("Could not send email to " + user.getEmail(), HttpStatus.INTERNAL_SERVER_ERROR);
                 } finally {
                     emailExecutor.shutdown();
                 }
-                return new ResponseEntity<>("Your account has been successfully activated", HttpStatus.OK);
+                return new ResponseEntity<>(new InfoResponse("Your account has been successfully activated"), HttpStatus.OK);
             }
         } else {
 
@@ -126,8 +127,9 @@ public class UserController {
         return userService.getUser(principal);
     }
 
-    @PostMapping(value = "/update/password/{uuidFromUrl}")
-    public ResponseEntity saveUserPassword(@PathVariable String uuidFromUrl) {
+
+    @PostMapping(value = "/update/password")
+    public ResponseEntity saveUserPassword(@RequestBody String uuidFromUrl) {
         Optional<TemporaryDataConfirmation> checkedTemporaryDataConfirmation =
             expirationCheckService.getTemporaryDataConfirmationWithExpirationChecking(uuidFromUrl);
         if (checkedTemporaryDataConfirmation.isPresent()) {
@@ -140,13 +142,13 @@ public class UserController {
                 userService.updateUserEncodedPassword(newPassword, userEmail);
                 temporaryDataConfirmationService.delete(checkedTemporaryDataConfirmation.get());
 
-                return new  ResponseEntity<>("You are successfully updated password",HttpStatus.OK);
+                return new ResponseEntity<>(new InfoResponse("You are successfully updated password"), HttpStatus.OK);
             }
         } else {
-            return new  ResponseEntity<>("Error during password changing",HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Error during password changing", HttpStatus.BAD_REQUEST);
         }
 
-        return new  ResponseEntity<>("Error during password changing",HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("Error during password changing", HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping("/update/password/confirm")
@@ -160,21 +162,21 @@ public class UserController {
                 .makePasswordConfirmationEntity(uuid, forgetPasswordDTO.getNewPassword(), email));
         sendPasswordChangeConfirmationEmail(email, firstName, confirmUrl);
 
-        return new  ResponseEntity<>("Please, check your email",HttpStatus.OK);
+        return new ResponseEntity<>("Please, check your email", HttpStatus.OK);
     }
 
     @PostMapping("/forget/password/confirm")
-    public ResponseEntity forgetPasswordSendConfirmation(@RequestBody ForgetPasswordDTO forgetPasswordDTO) {
+    public ResponseEntity forgetPasswordSendConfirmation(@RequestBody LoginDTO forgetPasswordDTO) {
         final String uuid = UUID.randomUUID().toString().replace("-", "");
-        final String confirmUrl = "http://localhost:4200/user" + "/update/password/" + uuid;
+        final String confirmUrl = "http://localhost:4200/main/user" + "/forgetpass/" + uuid;
         String userEmail = forgetPasswordDTO.getEmail();
         String firstName = userService.getUserByEmail(userEmail).getFirstName();
         temporaryDataConfirmationService.save(
             temporaryDataConfirmationService
-                .makePasswordConfirmationEntity(uuid, forgetPasswordDTO.getNewPassword(), userEmail));
+                .makePasswordConfirmationEntity(uuid, forgetPasswordDTO.getPassword(), userEmail));
         sendPasswordChangeConfirmationEmail(userEmail, firstName, confirmUrl);
 
-        return new  ResponseEntity<>("Please, check your email",HttpStatus.OK);
+        return new ResponseEntity<>(new InfoResponse("Please, check your email "), HttpStatus.OK);
     }
 
     @PutMapping("/update-role")
@@ -190,9 +192,9 @@ public class UserController {
             emailExecutor.execute(() -> {
                 emailService.prepareAndSendConfirmPassEmail(userEmail, firstName, confirmUrl);
             });
-        }catch (MailException e) {
-            throw  new EmailSendException("Could not send email to"+userEmail, HttpStatus.INTERNAL_SERVER_ERROR);
-        }finally {
+        } catch (MailException e) {
+            throw new EmailSendException("Could not send email to " + userEmail, HttpStatus.INTERNAL_SERVER_ERROR);
+        } finally {
             emailExecutor.shutdown();
         }
     }

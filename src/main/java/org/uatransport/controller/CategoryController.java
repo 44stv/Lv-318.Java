@@ -39,8 +39,7 @@ public class CategoryController {
     }
 
     @GetMapping("/count")
-    public List<CategoryDTO> getWithCountOfTransits(SearchCategoryParam searchCategoryParam){
-        System.out.println(searchCategoryParam.getFirstNestedCategoryName()+searchCategoryParam.getSecondNestedCategoryName());
+    public List<CategoryDTO> getWithCountOfTransits(SearchCategoryParam searchCategoryParam) {
         return categoryService.getAllWithCountOfTransits(searchCategoryParam);
     }
 
@@ -49,7 +48,7 @@ public class CategoryController {
         ExtendableCategory savedCategory = categoryService.save(category);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-                .buildAndExpand(savedCategory.getId()).toUri();
+            .buildAndExpand(savedCategory.getId()).toUri();
 
         return ResponseEntity.created(location).build();
     }
