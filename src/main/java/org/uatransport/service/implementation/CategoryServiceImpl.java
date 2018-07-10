@@ -7,8 +7,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.uatransport.config.SearchCategoryParam;
 import org.uatransport.config.SearchSpecification;
 import org.uatransport.entity.ExtendableCategory;
+import org.uatransport.entity.dto.CategoryDTO;
 import org.uatransport.exception.ResourceNotFoundException;
 import org.uatransport.repository.CategoryRepository;
+import org.uatransport.repository.TransitRepository;
 import org.uatransport.service.CategoryService;
 
 import java.util.ArrayList;
@@ -18,6 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
+    private final TransitRepository transitRepository;
 
     @Override
     @Transactional
@@ -86,5 +89,25 @@ public class CategoryServiceImpl implements CategoryService {
         SearchSpecification specification = new SearchSpecification(searchCategoryParam);
 
         return categoryRepository.findAll(specification);
+    }
+
+    @Override
+    public List<CategoryDTO> getAllWithCountOfTransits(SearchCategoryParam searchCategoryParam) {
+        if (searchCategoryParam.isEmpty()) {
+            return new ArrayList<>();
+        }
+        SearchSpecification specification = new SearchSpecification(searchCategoryParam);
+        List<CategoryDTO> list = new ArrayList<>();
+        for(ExtendableCategory category : categoryRepository.findAll(specification)){
+            System.out.println(category);
+            CategoryDTO categoryDTO = new CategoryDTO(category.getId(),
+                category.getName(),
+                category.getNextLevelCategory(),
+                category.getIconURL(),
+                transitRepository.countAllByCategory_Id(category.getId()));
+            list.add(categoryDTO);
+            System.out.println(categoryDTO);
+        }
+        return list;
     }
 }

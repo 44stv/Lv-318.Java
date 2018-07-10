@@ -25,7 +25,7 @@ public class Question {
     @Enumerated(value = EnumType.STRING)
     @Column(name = "type", updatable = false)
 
-    private Question.QuestionType type;
+    private QuestionType type;
 
     @RequiredArgsConstructor
     public enum QuestionType {

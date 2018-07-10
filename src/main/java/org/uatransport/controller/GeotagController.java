@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.uatransport.entity.Geotag;
 import org.uatransport.service.GeotagService;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
@@ -21,5 +22,10 @@ public class GeotagController {
     @GetMapping
     public Geotag getByCoordinates(@RequestParam Double latitude, @RequestParam Double longtitude) {
         return geotagService.whereIAm(latitude, longtitude);
+    }
+
+    @PostMapping
+    public Geotag save(@RequestBody Geotag geotag) {
+        return geotagService.save(geotag);
     }
 }

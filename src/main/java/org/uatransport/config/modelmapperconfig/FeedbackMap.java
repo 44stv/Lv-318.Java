@@ -1,6 +1,8 @@
 package org.uatransport.config.modelmapperconfig;
 
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.Accessors;
 import org.modelmapper.Converter;
 import org.modelmapper.spi.MappingContext;
 import org.springframework.stereotype.Component;
@@ -16,11 +18,11 @@ public class FeedbackMap implements Converter<Feedback, FeedbackDTO> {
         Feedback source = mappingContext.getSource();
         FeedbackDTO destination = mappingContext.getDestination();
 
-        destination.setUserId(source.getUser().getId());
-        destination.setCriteriaId(source.getFeedbackCriteria().getId());
-        destination.setTransitId(source.getTransit().getId());
-        destination.setAnswer(source.getAnswer());
-        destination.setId(source.getId());
+        destination.setUserId(source.getUser().getId())
+            .setCriteriaId(source.getFeedbackCriteria().getId())
+            .setTransitId(source.getTransit().getId())
+            .setAnswer(source.getAnswer())
+            .setId(source.getId());
 
         return destination;
     }

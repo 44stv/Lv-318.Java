@@ -2,14 +2,14 @@ package org.uatransport.repository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.data.repository.PagingAndSortingRepository;
 import org.uatransport.entity.Transit;
 
 import java.util.List;
 
 public interface TransitRepository
-        extends PagingAndSortingRepository<Transit, Integer>, JpaSpecificationExecutor<Transit> {
+        extends JpaRepository<Transit, Integer>, JpaSpecificationExecutor<Transit> {
 
     Transit findByName(String name);
 
@@ -24,5 +24,7 @@ public interface TransitRepository
     List<Transit> findByCategoryNextLevelCategoryId(Integer id);
 
     Page<Transit> findByCategoryNextLevelCategoryName(String name, Pageable pageable);
+
+    Integer countAllByCategory_Id(Integer categoryId);
 
 }
