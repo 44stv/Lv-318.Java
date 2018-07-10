@@ -1,4 +1,4 @@
-package org.uatransport.security;
+package org.uatransport.entity.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,9 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SocialSignInRequest {
-    private String id;
+public class UpdateUserRoleDTO {
     private String email;
-    private String name;
-    private String provider;
-}
+    private String role;
+   }

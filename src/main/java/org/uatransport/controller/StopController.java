@@ -32,7 +32,13 @@ public class StopController {
     @GetMapping
     public List<Stop> getByTransitIdAndDirection(@RequestParam("id") Integer id,
             @RequestParam("dir") String direction) {
-        return stopService.getByTransitIdAndDirection(id, direction);
+        Stop.DIRECTION direction1;
+        if (direction.equalsIgnoreCase("forward")) {
+            direction1 = Stop.DIRECTION.FORWARD;
+        } else {
+            direction1 = Stop.DIRECTION.BACKWARD;
+        }
+        return stopService.getByTransitIdAndDirection(id, direction1);
     }
 
     @DeleteMapping("/{id}")

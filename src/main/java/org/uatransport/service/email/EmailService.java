@@ -1,5 +1,6 @@
 package org.uatransport.service.email;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class EmailService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EmailService.class);
@@ -45,7 +47,7 @@ public class EmailService {
         try {
             mailSender.send(messagePreparator);
         } catch (MailException e) {
-            System.out.println("Could not send email to : {} Error = {}" + recipient + e.getMessage());
+            LOGGER.error("Could not send email to : {} Error = {}" + recipient + e.getMessage());
         }
     }
 

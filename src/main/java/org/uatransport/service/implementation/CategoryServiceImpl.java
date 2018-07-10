@@ -41,7 +41,7 @@ public class CategoryServiceImpl implements CategoryService {
             categoryRepository.delete(extendableCategory);
         } catch (EmptyResultDataAccessException e) {
             throw new ResourceNotFoundException(
-                    String.format("Category with id '%s' not found", extendableCategory.getId()));
+                String.format("Category with id '%s' not found", extendableCategory.getId()));
         }
     }
 
@@ -65,14 +65,14 @@ public class CategoryServiceImpl implements CategoryService {
             return categoryRepository.save(categoryToUpdate);
         } else {
             throw new ResourceNotFoundException(
-                    String.format("Category with id '%s' not found", categoryToUpdate.getId()));
+                String.format("Category with id '%s' not found", categoryToUpdate.getId()));
         }
     }
 
     @Override
     public ExtendableCategory getById(Integer id) {
         return categoryRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(String.format("Category with id '%s' not found", id)));
+            .orElseThrow(() -> new ResourceNotFoundException(String.format("Category with id '%s' not found", id)));
     }
 
     @Override
@@ -98,15 +98,13 @@ public class CategoryServiceImpl implements CategoryService {
         }
         SearchSpecification specification = new SearchSpecification(searchCategoryParam);
         List<CategoryDTO> list = new ArrayList<>();
-        for(ExtendableCategory category : categoryRepository.findAll(specification)){
-            System.out.println(category);
+        for (ExtendableCategory category : categoryRepository.findAll(specification)) {
             CategoryDTO categoryDTO = new CategoryDTO(category.getId(),
                 category.getName(),
                 category.getNextLevelCategory(),
                 category.getIconURL(),
                 transitRepository.countAllByCategoryId(category.getId()));
             list.add(categoryDTO);
-            System.out.println(categoryDTO);
         }
         return list;
     }
