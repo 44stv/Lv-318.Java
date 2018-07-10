@@ -28,7 +28,11 @@ public class FeedbackDTO {
     }
 
     public static List<Feedback> toEntity(List<FeedbackDTO> feedbackDTOList) {
-        return feedbackDTOList.stream().map(FeedbackDTO::convertToEntity).collect(Collectors.toList());
+
+        return feedbackDTOList.stream()
+            .map(FeedbackDTO::convertToEntity)
+            .collect(Collectors.toList());
     }
+
 
 }

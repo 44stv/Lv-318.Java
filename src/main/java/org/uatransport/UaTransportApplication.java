@@ -5,6 +5,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 
+//@EntityScan(
+//    basePackageClasses = {UaTransportApplication.class, Jsr310JpaConverters.class}
+//)
 @SpringBootApplication
 @EnableCaching
 @Slf4j
