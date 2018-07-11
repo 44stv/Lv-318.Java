@@ -76,13 +76,13 @@ public class StopServiceImpl implements StopService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public Stop getByTransitIdAndStopNameAndDirection(Integer transitId, String street, String direction) {
+    public Stop getByTransitIdAndStopNameAndDirection(Integer transitId, String street, Stop.DIRECTION direction) {
         return stopRepository.findByTransitIdAndStopNameAndDirection(transitId, street, direction);
     }
 
     @Override
-    public List<Stop> getByTransitIdAndDirection(Integer id, String direction) {
-        if (direction.equals("forward")) {
+    public List<Stop> getByTransitIdAndDirection(Integer id, Stop.DIRECTION direction) {
+        if (direction.equals(Stop.DIRECTION.FORWARD)) {
             return stopRepository.findForwardStopsByTransitId(id);
         }
         return stopRepository.findBackwardStopsByTransitId(id);
@@ -90,7 +90,9 @@ public class StopServiceImpl implements StopService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public Integer getIndexByTransitIdAndStopNameAndDirection(Integer transitId, String street, String direction) {
+    public Integer getIndexByTransitIdAndStopNameAndDirection(Integer transitId, String street,
+            Stop.DIRECTION direction) {
+
         if (stopRepository.existsById(getByTransitIdAndStopNameAndDirection(transitId, street, direction).getId())) {
             return stopRepository.findIndexByTransitIdAndStopNameAndDirection(transitId, street, direction);
         } else {

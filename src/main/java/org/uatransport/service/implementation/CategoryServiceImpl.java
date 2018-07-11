@@ -10,7 +10,6 @@ import org.uatransport.entity.ExtendableCategory;
 import org.uatransport.entity.dto.CategoryDTO;
 import org.uatransport.exception.ResourceNotFoundException;
 import org.uatransport.repository.CategoryRepository;
-import org.uatransport.repository.FeedbackRepository;
 import org.uatransport.repository.TransitRepository;
 import org.uatransport.service.CategoryService;
 import org.uatransport.service.FeedbackService;
@@ -101,16 +100,12 @@ public class CategoryServiceImpl implements CategoryService {
         }
         SearchSpecification specification = new SearchSpecification(searchCategoryParam);
         List<CategoryDTO> list = new ArrayList<>();
-        for(ExtendableCategory category : categoryRepository.findAll(specification)){
-            System.out.println(category);
-            CategoryDTO categoryDTO = new CategoryDTO(category.getId(),
-                category.getName(),
-                category.getNextLevelCategory(),
-                category.getIconURL(),
-                transitRepository.countAllByCategory_Id(category.getId()),
+        for (ExtendableCategory category : categoryRepository.findAll(specification)) {
+            CategoryDTO categoryDTO = new CategoryDTO(category.getId(), category.getName(),
+                    category.getNextLevelCategory(), category.getIconURL(),
+                    transitRepository.countAllByCategoryId(category.getId()),
                 feedbackService.getRatingByCategoryId(category.getId()));
             list.add(categoryDTO);
-            System.out.println(categoryDTO);
         }
         return list;
     }

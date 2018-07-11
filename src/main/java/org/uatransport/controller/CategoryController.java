@@ -39,8 +39,7 @@ public class CategoryController {
     }
 
     @GetMapping("/count")
-    public List<CategoryDTO> getWithCountOfTransits(SearchCategoryParam searchCategoryParam){
-        System.out.println(searchCategoryParam.getFirstNestedCategoryName()+searchCategoryParam.getSecondNestedCategoryName());
+    public List<CategoryDTO> getWithCountOfTransits(SearchCategoryParam searchCategoryParam) {
         return categoryService.getAllWithCountOfTransits(searchCategoryParam);
     }
 

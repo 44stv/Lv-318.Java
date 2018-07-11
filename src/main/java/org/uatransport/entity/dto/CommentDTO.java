@@ -14,5 +14,5 @@ public class CommentDTO {
     private Integer transitId;
     private Integer parentCommentId;
     private boolean parent;
-//    private List<Comment> childrenComments;
+    // private List<Comment> childrenComments;
 }

@@ -22,8 +22,7 @@ public class GeotagServiceImpl implements GeotagService {
 
     @Override
     public List<Geotag> getAllGeotags() {
-        return Streams.stream(geotadRepository.findAll())
-            .collect(Collectors.toList());
+        return Streams.stream(geotadRepository.findAll()).collect(Collectors.toList());
     }
 
     @Override
@@ -31,18 +30,14 @@ public class GeotagServiceImpl implements GeotagService {
         Map<Geotag, Double> distances = distancesToGeotags(latitude, longtitude);
 
         if (longtitude == null || latitude == null) {
-            return geotadRepository.findById(1)
-                .orElseThrow(() -> new ResourceNotFoundException(String.format("Geotag with id '%s' not found", 1)));
+            return geotadRepository.findById(1).orElseThrow(
+                    () -> new ResourceNotFoundException(String.format("Geotag with id '%s' not found", 1)));
         }
 
-        Double minimalDistance = distances
-            .values()
-            .stream()
-            .mapToDouble(v -> v)
-            .min()
-            .orElseThrow(NoSuchElementException::new);
+        Double minimalDistance = distances.values().stream().mapToDouble(v -> v).min()
+                .orElseThrow(NoSuchElementException::new);
 
-        for (Map.Entry<Geotag, Double> item :distances.entrySet()){
+        for (Map.Entry<Geotag, Double> item : distances.entrySet()) {
             if (item.getValue().equals(minimalDistance)) {
                 return item.getKey();
             }
@@ -63,8 +58,10 @@ public class GeotagServiceImpl implements GeotagService {
     /**
      * Method to calculate distances from given point to all available geotags.
      *
-     * @param latitude   latitude of current point
-     * @param longtitude longtitude of current point
+     * @param latitude
+     *            latitude of current point
+     * @param longtitude
+     *            longtitude of current point
      * @return map, where keys are tags, values are distances from given point
      */
     private Map<Geotag, Double> distancesToGeotags(Double latitude, Double longtitude) {
@@ -91,9 +88,8 @@ public class GeotagServiceImpl implements GeotagService {
         Double latitudeDistance = Math.toRadians(lat2 - lat1);
         Double longtitudeDistance = Math.toRadians(lon2 - lon1);
 
-        Double a = Math.sin(latitudeDistance / 2) * Math.sin(latitudeDistance / 2)
-            + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
-            * Math.sin(longtitudeDistance / 2) * Math.sin(longtitudeDistance / 2);
+        Double a = Math.sin(latitudeDistance / 2) * Math.sin(latitudeDistance / 2) + Math.cos(Math.toRadians(lat1))
+                * Math.cos(Math.toRadians(lat2)) * Math.sin(longtitudeDistance / 2) * Math.sin(longtitudeDistance / 2);
 
         Double atanValue = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 

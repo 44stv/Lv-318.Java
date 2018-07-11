@@ -7,11 +7,10 @@ import org.springframework.web.bind.annotation.*;
 import org.uatransport.config.GlobalSearch;
 import org.uatransport.config.GlobalSearchSpecification;
 import org.uatransport.config.StopSearchSpecification;
-import org.uatransport.entity.Transit;
 import org.uatransport.entity.Stop;
-import org.uatransport.service.TransitService;
+import org.uatransport.entity.Transit;
 import org.uatransport.service.StopService;
-import org.springframework.http.ResponseEntity;
+import org.uatransport.service.TransitService;
 
 import java.util.List;
 

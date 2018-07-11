@@ -61,8 +61,8 @@ public class CommentServiceImpl implements CommentService {
     @Transactional(readOnly = true)
     public Comment getById(Integer id) {
         return commentRepository.getOne(id);
-//        return commentRepository.findById(id)
-//            .orElseThrow(() -> new ResourceNotFoundException(String.format("Comment with id '%s' not found", id)));
+        // return commentRepository.findById(id)
+        // .orElseThrow(() -> new ResourceNotFoundException(String.format("Comment with id '%s' not found", id)));
     }
 
     @Override
@@ -79,7 +79,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public List<Comment> getAllByParentId(Integer parentId) {
-        return commentRepository.findByParentCommentId(parentId);
+        return commentRepository.findByParentCommentIdOrderByCreatedDateDesc(parentId);
     }
 
     @Override
@@ -97,7 +97,7 @@ public class CommentServiceImpl implements CommentService {
             throw new ResourceNotFoundException(String.format("Comment with id '%s' not found", newComment.getId()));
         }
 
-        //check if admin or owner
+        // check if admin or owner
 
         if (!comment.canEdit()) {
             throw new TimeExpiredException(String.format("Time for updating comment with id '%s' expired", commentId));

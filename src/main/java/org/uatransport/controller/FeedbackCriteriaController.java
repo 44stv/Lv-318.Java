@@ -9,7 +9,6 @@ import org.uatransport.entity.Question;
 import org.uatransport.service.FeedbackCriteriaService;
 import org.uatransport.service.QuestionService;
 
-import javax.management.Query;
 import java.util.List;
 
 @RestController

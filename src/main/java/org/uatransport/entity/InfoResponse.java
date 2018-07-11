@@ -1,4 +1,4 @@
-package org.uatransport.entity.dto;
+package org.uatransport.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ForgetPasswordDTO {
-    String newPassword;
-    String email;
+public class InfoResponse {
+    private String response;
 }

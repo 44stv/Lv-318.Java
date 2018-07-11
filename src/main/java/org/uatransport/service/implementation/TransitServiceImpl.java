@@ -48,21 +48,21 @@ public class TransitServiceImpl implements TransitService {
         }
     }
 
-//    @Override
-//    @Transient
-//    public Transit upsert(Transit transit) {
-//        if (transit == null) {
-//            throw new IllegalArgumentException("Transit object should not be null");
-//        }
-//
-////        Integer categoryId = transit.getCategory().getId();
-//
-////        if (nonExtendableCategoryRepository.existsById(categoryId)) {
-//            return transitRepository.save(transit);
-////        } else {
-////            throw new ResourceNotFoundException(String.format("Category with id '%s' not found", categoryId));
-////        }
-//    }
+    // @Override
+    // @Transient
+    // public Transit upsert(Transit transit) {
+    // if (transit == null) {
+    // throw new IllegalArgumentException("Transit object should not be null");
+    // }
+    //
+    //// Integer categoryId = transit.getCategory().getId();
+    //
+    //// if (nonExtendableCategoryRepository.existsById(categoryId)) {
+    // return transitRepository.save(transit);
+    //// } else {
+    //// throw new ResourceNotFoundException(String.format("Category with id '%s' not found", categoryId));
+    //// }
+    // }
 
     @Override
     @Transactional
@@ -94,7 +94,7 @@ public class TransitServiceImpl implements TransitService {
             throw new IllegalArgumentException("Transit object should not be null");
         }
         if (transitRepository.existsById(transit.getId())) {
-            return transitRepository.save(transit); //DTO, get stops set stops
+            return transitRepository.save(transit); // DTO, get stops set stops
         } else {
             throw new ResourceNotFoundException(String.format("Transit with id '%s' not found", transit.getId()));
         }

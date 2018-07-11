@@ -72,9 +72,9 @@ public class TransitController {
         return new ResponseEntity<>(updatedTransit, HttpStatus.OK);
     }
 
-//    @PutMapping
-//    public ResponseEntity<Transit> upsertTransit(@RequestBody TransitDTO transitDTO) {
-//        Transit updatedTransit = transitService.upsert(modelMapper.map(transitDTO, Transit.class));
-//        return new ResponseEntity<>(updatedTransit, HttpStatus.OK);
-//    }
+    // @PutMapping
+    // public ResponseEntity<Transit> upsertTransit(@RequestBody TransitDTO transitDTO) {
+    // Transit updatedTransit = transitService.upsert(modelMapper.map(transitDTO, Transit.class));
+    // return new ResponseEntity<>(updatedTransit, HttpStatus.OK);
+    // }
 }

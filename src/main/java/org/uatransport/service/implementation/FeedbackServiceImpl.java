@@ -75,21 +75,21 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Override
     @Transactional(readOnly = true)
     public List<Feedback> getByTransitAndFeedbackCriteria(Integer transitId,
-                                                          FeedbackCriteria.FeedbackType feedbackType) {
+            FeedbackCriteria.FeedbackType feedbackType) {
         return feedbackRepository.findByTransitIdAndFeedbackCriteriaType(transitId, feedbackType);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<Feedback> getByTransitCategoryIdAndFeedbackCriteria(Integer transitCategoryId,
-                                                          FeedbackCriteria.FeedbackType feedbackType) {
+            FeedbackCriteria.FeedbackType feedbackType) {
         return feedbackRepository.findByTransitCategoryIdAndFeedbackCriteriaType(transitCategoryId, feedbackType);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<Feedback> getByTransitAndFeedbackCriteriaAndUserId(Integer transitId,
-                                                                   FeedbackCriteria.FeedbackType feedbackType, Integer userId) {
+            FeedbackCriteria.FeedbackType feedbackType, Integer userId) {
         return feedbackRepository.findByTransitIdAndFeedbackCriteriaTypeAndUserId(transitId, feedbackType, userId);
     }
 
@@ -104,7 +104,7 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Transactional(readOnly = true)
     public Double getRatingByCategoryId(Integer categoryId) {
         List<Feedback> feedbackList = getByTransitCategoryIdAndFeedbackCriteria(categoryId,
-            FeedbackCriteria.FeedbackType.RATING);
+                FeedbackCriteria.FeedbackType.RATING);
         return getAverageRate(feedbackList);
     }
 
@@ -112,17 +112,17 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Transactional(readOnly = true)
     public Double getRatingByTransitAndUser(Integer transitId, Integer userId) {
         List<Feedback> feedbackList = getByTransitAndFeedbackCriteriaAndUserId(transitId,
-            FeedbackCriteria.FeedbackType.RATING, userId);
+                FeedbackCriteria.FeedbackType.RATING, userId);
         return getAverageRate(feedbackList);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Map<Stop, Double> getStopCapacityMap(Integer transitId, String direction, Stop... stops) {
+    public Map<Stop, Double> getStopCapacityMap(Integer transitId, Stop.DIRECTION direction, Stop... stops) {
         List<Stop> stopList = stops.length > 0 ? Arrays.asList(stops)
-            : stopService.getByTransitIdAndDirection(transitId, direction);
-        Map<Stop, Double> capacityMap = new TreeMap<>(Comparator.comparingInt(stop ->
-                stopService.getIndexByTransitIdAndStopNameAndDirection(transitId, stop.getStreet(), direction)));
+                : stopService.getByTransitIdAndDirection(transitId, direction);
+        Map<Stop, Double> capacityMap = new TreeMap<>(Comparator.comparingInt(stop -> stopService
+                .getIndexByTransitIdAndStopNameAndDirection(transitId, stop.getStreet(), direction)));
         for (Stop stop : stopList) {
             capacityMap.put(stop, getCapacityByTransitAndStops(transitId, stop, direction));
         }
@@ -136,7 +136,7 @@ public class FeedbackServiceImpl implements FeedbackService {
         EnumMap<SimpleFeedback, Double> simpleFeedbackDoubleEnumMap = new EnumMap<>(SimpleFeedback.class);
         for (SimpleFeedback simpleFeedback : SimpleFeedback.values()) {
             double percentValue = 100 * countByValue(simpleFeedback, transitId)
-                / (double) countAllAccepterFeedBacks(transitId);
+                    / (double) countAllAccepterFeedBacks(transitId);
             simpleFeedbackDoubleEnumMap.put(simpleFeedback, percentValue);
         }
         return simpleFeedbackDoubleEnumMap;
@@ -150,13 +150,13 @@ public class FeedbackServiceImpl implements FeedbackService {
      */
     @Override
     public List<HeatMapDTO> getHeatMap(Integer transitId) {
-        List<Stop> stopList = stopService.getByTransitId(transitId);
-        Map<String, Double> capacityMap = new TreeMap<>(Comparator.comparingInt(
-                street -> stopService.getIndexByTransitIdAndStopNameAndDirection(transitId, street, "FORWARD")));
+        List<Stop> stopList = stopService.getByTransitIdAndDirection(transitId, Stop.DIRECTION.FORWARD);
+        Map<String, Double> capacityMap = new TreeMap<>(Comparator.comparingInt(street -> stopService
+                .getIndexByTransitIdAndStopNameAndDirection(transitId, street, Stop.DIRECTION.FORWARD)));
 
         Map<Integer, Double> hourCapacityMap = getHourCapacityMap(transitId);
         int averageHourCapacity = hourCapacityMap.values().stream().mapToInt(Number::intValue).sum();
-        Map<Stop, Double> stopCapacityMap = getStopCapacityMap(transitId, "FORWARD");
+        Map<Stop, Double> stopCapacityMap = getStopCapacityMap(transitId, Stop.DIRECTION.FORWARD);
 
         return valueToReturn(stopList, capacityMap, hourCapacityMap, averageHourCapacity, stopCapacityMap);
     }
@@ -186,6 +186,7 @@ public class FeedbackServiceImpl implements FeedbackService {
         }
         return accepterMap;
     }
+
     /**
      * Method to create specific form of list of data for heatmap.
      */
@@ -219,6 +220,7 @@ public class FeedbackServiceImpl implements FeedbackService {
      *            exact name of the object
      */
     private void heatMapDTOSetName(HeatMapDTO heatMapDTO, int i) {
+        // 10 is the first two-digit number
         if (i < 10) {
             heatMapDTO.setName("0" + i + ":00");
         } else {
@@ -246,62 +248,55 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     private Double getAverageCapacityByTransitAndHour(Integer transitId, final Integer feedbackHour) {
         return convertCapacityHourFeedBacks(transitId).stream()
-            .filter(capacityHourFeedback -> capacityHourFeedback.containsHour(feedbackHour))
-            .mapToInt(CapacityHourFeedback::getCapacity)
-            .average()
-            .orElse(0.0);
+                .filter(capacityHourFeedback -> capacityHourFeedback.containsHour(feedbackHour))
+                .mapToInt(CapacityHourFeedback::getCapacity).average().orElse(0.0);
     }
 
     private Double getAverageRate(List<Feedback> feedbackList) {
-        return feedbackList.stream()
-            .mapToDouble(new RatingConverter()::convert)
-            .average()
-            .orElse(0.0);
+        return feedbackList.stream().mapToDouble(new RatingConverter()::convert).average().orElse(0.0);
     }
 
     private List<CapacityHourFeedback> convertCapacityHourFeedBacks(Integer transitId) {
 
         return getByTransitAndFeedbackCriteria(transitId, FeedbackCriteria.FeedbackType.HOURS_CAPACITY).stream()
-            .map(feedback -> new FeedbackTypeConverter<>(CapacityHourFeedback.class).convert(feedback))
-            .collect(Collectors.toList());
+                .map(feedback -> new FeedbackTypeConverter<>(CapacityHourFeedback.class).convert(feedback))
+                .collect(Collectors.toList());
     }
 
-    private boolean existInStopIndexesRange(Integer transitId, Stop stop, String fromStop, String toStop, String direction) {
+    private boolean existInStopIndexesRange(Integer transitId, Stop stop, String fromStop, String toStop,
+            Stop.DIRECTION direction) {
         Integer fromStopIndex = stopService.getIndexByTransitIdAndStopNameAndDirection(transitId, fromStop, direction);
         Integer toStopIndex = stopService.getIndexByTransitIdAndStopNameAndDirection(transitId, toStop, direction);
-        Integer stopIndex = stopService.getIndexByTransitIdAndStopNameAndDirection(transitId, stop.getStreet(), direction);
+        Integer stopIndex = stopService.getIndexByTransitIdAndStopNameAndDirection(transitId, stop.getStreet(),
+                direction);
 
         return (fromStopIndex < toStopIndex) ? Range.closed(fromStopIndex, toStopIndex).contains(stopIndex)
-            : Range.closed(toStopIndex, fromStopIndex).contains(stopIndex);
+                : Range.closed(toStopIndex, fromStopIndex).contains(stopIndex);
     }
 
-    private Double getCapacityByTransitAndStops(Integer transitId, Stop stop, String direction) {
-        Predicate<CapacityRouteFeedback> existInRange = capacityRouteFeedback -> existInStopIndexesRange(transitId, stop,
-            capacityRouteFeedback.getFrom().getStreet(), capacityRouteFeedback.getTo().getStreet(), direction);
+    private Double getCapacityByTransitAndStops(Integer transitId, Stop stop, Stop.DIRECTION direction) {
+        Predicate<CapacityRouteFeedback> existInRange = capacityRouteFeedback -> existInStopIndexesRange(transitId,
+                stop, capacityRouteFeedback.getFrom().getStreet(), capacityRouteFeedback.getTo().getStreet(),
+                direction);
 
-        return convertCapacityRouteFeedBacks(transitId).stream()
-            .filter(existInRange)
-            .mapToInt(CapacityRouteFeedback::getCapacity)
-            .average()
-            .orElse(0.0);
+        return convertCapacityRouteFeedBacks(transitId).stream().filter(existInRange)
+                .mapToInt(CapacityRouteFeedback::getCapacity).average().orElse(0.0);
     }
 
     private List<CapacityRouteFeedback> convertCapacityRouteFeedBacks(Integer transitId) {
         return getByTransitAndFeedbackCriteria(transitId, FeedbackCriteria.FeedbackType.ROUTE_CAPACITY).stream()
-            .map(feedback -> new FeedbackTypeConverter<>(CapacityRouteFeedback.class).convert(feedback))
-            .collect(Collectors.toList());
+                .map(feedback -> new FeedbackTypeConverter<>(CapacityRouteFeedback.class).convert(feedback))
+                .collect(Collectors.toList());
     }
 
     private Long countByValue(SimpleFeedback answer, Integer transitId) {
-        return convertSimpleFeedBacks(transitId).stream()
-            .filter(simpleFeedback -> simpleFeedback == answer)
-            .count();
+        return convertSimpleFeedBacks(transitId).stream().filter(simpleFeedback -> simpleFeedback == answer).count();
     }
 
     private List<SimpleFeedback> convertSimpleFeedBacks(Integer transitId) {
         return getByTransitAndFeedbackCriteria(transitId, FeedbackCriteria.FeedbackType.SIMPLE).stream()
-            .map(feedback -> new FeedbackTypeConverter<>(SimpleFeedback.class).convert(feedback))
-            .collect(Collectors.toList());
+                .map(feedback -> new FeedbackTypeConverter<>(SimpleFeedback.class).convert(feedback))
+                .collect(Collectors.toList());
     }
 
     private Integer countAllAccepterFeedBacks(Integer transitId) {
