@@ -17,7 +17,7 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(of = "id")
 @Accessors(chain = true)
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class Comment {
 
     private static final long MAX_DELETE_TIME_MINUTES = 10;
@@ -52,7 +52,7 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(name = "parent_id")
-//    @JsonIgnore
+    // @JsonIgnore
     private Comment parentComment;
 
     @JsonIgnore
@@ -60,9 +60,9 @@ public class Comment {
     @OrderBy("created_date ASC")
     private List<Comment> childrenComments;
 
-//    @Lob
-//    List<byte[]> images;
-//    separate table for images
+    // @Lob
+    // List<byte[]> images;
+    // separate table for images
 
     public boolean canDelete() {
         return LocalDateTime.now().isBefore(maxDeleteTime());

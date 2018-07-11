@@ -17,7 +17,7 @@ public class StopSearchSpecification implements Specification<Stop> {
     private void filterBySearchName(Root<Stop> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
         if (!globalSearch.getGlobalSearch().isEmpty()) {
             Predicate stops = cb.like(cb.lower(root.get("street")),
-                "%" + globalSearch.getGlobalSearch().toLowerCase() + "%");
+                    "%" + globalSearch.getGlobalSearch().toLowerCase() + "%");
             predicates.add(stops);
         }
 
@@ -33,8 +33,8 @@ public class StopSearchSpecification implements Specification<Stop> {
         Predicate[] array = new Predicate[predicates.size()];
         predicates.toArray(array);
         return criteriaBuilder.and(array);
-//        query.distinct(true);
-//        return criteriaBuilder.like(criteriaBuilder.lower(root.get("street")),
-//            "%" + globalSearch.getGlobalSearch().toLowerCase() + "%");
+        // query.distinct(true);
+        // return criteriaBuilder.like(criteriaBuilder.lower(root.get("street")),
+        // "%" + globalSearch.getGlobalSearch().toLowerCase() + "%");
     }
 }

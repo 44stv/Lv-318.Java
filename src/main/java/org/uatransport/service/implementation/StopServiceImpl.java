@@ -43,7 +43,7 @@ public class StopServiceImpl implements StopService {
     @Transactional(readOnly = true)
     public Stop getById(Integer id) {
         return stopRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException(String.format("Stop with id '%s' not found", id)));
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("Stop with id '%s' not found", id)));
     }
 
     @Override
@@ -90,7 +90,8 @@ public class StopServiceImpl implements StopService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public Integer getIndexByTransitIdAndStopNameAndDirection(Integer transitId, String street, Stop.DIRECTION direction) {
+    public Integer getIndexByTransitIdAndStopNameAndDirection(Integer transitId, String street,
+            Stop.DIRECTION direction) {
 
         if (stopRepository.existsById(getByTransitIdAndStopNameAndDirection(transitId, street, direction).getId())) {
             return stopRepository.findIndexByTransitIdAndStopNameAndDirection(transitId, street, direction);

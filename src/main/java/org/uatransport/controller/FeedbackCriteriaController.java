@@ -30,7 +30,7 @@ public class FeedbackCriteriaController {
 
     @PutMapping("/{id}")
     public FeedbackCriteria updateFeedbackCriteria(@RequestBody FeedbackCriteria feedbackCriteria,
-                                                   @PathVariable Integer id) {
+            @PathVariable Integer id) {
         return feedbackCriteriaService.update(feedbackCriteria.setId(id));
     }
 
@@ -62,7 +62,7 @@ public class FeedbackCriteriaController {
 
     @GetMapping(params = "questionType")
     public List<FeedbackCriteria> getByQuestionsType(
-        @RequestParam(value = "questionType") Question.QuestionType questionType) {
+            @RequestParam(value = "questionType") Question.QuestionType questionType) {
         return feedbackCriteriaService.getByQuestionsType(questionType);
 
     }
@@ -80,7 +80,7 @@ public class FeedbackCriteriaController {
 
     @GetMapping("/categoryId/{categoryId}/type/{type}")
     public List<FeedbackCriteria> getByTypeAndCategoryId(@PathVariable(value = "categoryId") Integer categoryId,
-                                                         @PathVariable(value = "type") String type) {
+            @PathVariable(value = "type") String type) {
         return feedbackCriteriaService.getByTypeAndCategoryId(categoryId, type);
     }
 

@@ -10,5 +10,4 @@ public class TransitDTO {
     private String routeName;
     private String categoryIconURL;
 
-
 }

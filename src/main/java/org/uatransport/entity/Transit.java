@@ -33,10 +33,8 @@ public class Transit {
     private NonExtendableCategory category;
 
     @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(
-        name = "transit_stop",
-        joinColumns = { @JoinColumn(name = "transit_id") },
-        inverseJoinColumns = { @JoinColumn(name = "stop_id") })
+    @JoinTable(name = "transit_stop", joinColumns = { @JoinColumn(name = "transit_id") }, inverseJoinColumns = {
+            @JoinColumn(name = "stop_id") })
     @OrderColumn(name = "stop_index")
     private List<Stop> stops;
 

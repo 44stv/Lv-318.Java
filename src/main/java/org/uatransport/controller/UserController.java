@@ -85,7 +85,6 @@ public class UserController {
                 .getConfirmationType() == ConfirmationType.REGISTRATION_CONFIRM)) {
 
                 userService.activateUserByEmail(checkedTemporaryDataConfirmation.get().getUserEmail());
-
                 temporaryDataConfirmationService.delete(checkedTemporaryDataConfirmation.get());
 
                 ExecutorService emailExecutor = Executors.newSingleThreadExecutor();
@@ -94,11 +93,13 @@ public class UserController {
                         emailService.prepareAndSendWelcomeEmail(user.getEmail(), user.getFirstName());
                     });
                 } catch (MailException e) {
-                    throw new EmailSendException("Could not send email to " + user.getEmail(), HttpStatus.INTERNAL_SERVER_ERROR);
+                    throw new EmailSendException("Could not send email to " + user.getEmail(),
+                            HttpStatus.INTERNAL_SERVER_ERROR);
                 } finally {
                     emailExecutor.shutdown();
                 }
-                return new ResponseEntity<>(new InfoResponse("Your account has been successfully activated"), HttpStatus.OK);
+                return new ResponseEntity<>(new InfoResponse("Your account has been successfully activated"),
+                        HttpStatus.OK);
             }
         } else {
 
@@ -137,15 +138,14 @@ public class UserController {
         return userService.getUser(principal);
     }
 
-
     @PostMapping(value = "/update/password")
     public ResponseEntity saveUserPassword(@RequestBody String uuidFromUrl) {
-        Optional<TemporaryDataConfirmation> checkedTemporaryDataConfirmation =
-            expirationCheckService.getTemporaryDataConfirmationWithExpirationChecking(uuidFromUrl);
+        Optional<TemporaryDataConfirmation> checkedTemporaryDataConfirmation = expirationCheckService
+                .getTemporaryDataConfirmationWithExpirationChecking(uuidFromUrl);
         if (checkedTemporaryDataConfirmation.isPresent()) {
             if ((uuidFromUrl.equals(checkedTemporaryDataConfirmation.get().getUuid()))
-                && (checkedTemporaryDataConfirmation.get()
-                .getConfirmationType() == ConfirmationType.PASSWORD_CONFIRM)) {
+                    && (checkedTemporaryDataConfirmation.get()
+                            .getConfirmationType() == ConfirmationType.PASSWORD_CONFIRM)) {
                 String newPassword = checkedTemporaryDataConfirmation.get().getNewPassword();
                 String userEmail = checkedTemporaryDataConfirmation.get().getUserEmail();
 
@@ -172,18 +172,20 @@ public class UserController {
         temporaryDataConfirmationService.save(
             temporaryDataConfirmationService
                 .makePasswordConfirmationEntity(uuid, forgetPasswordDTO.getPassword(), userEmail));
-        ExecutorService emailExecutor = Executors.newSingleThreadExecutor();
-        try {
-            emailExecutor.execute(() -> {
-                emailService.prepareAndSendConfirmPassEmail(userEmail, firstName, confirmUrl);
-            });
-        } catch (MailException e) {
-            throw new EmailSendException("Could not send email to " + userEmail, HttpStatus.INTERNAL_SERVER_ERROR);
-        } finally {
-            emailExecutor.shutdown();
-        }
+        temporaryDataConfirmationService.save(temporaryDataConfirmationService.makePasswordConfirmationEntity(uuid,
+                forgetPasswordDTO.getPassword(), userEmail));
+            ExecutorService emailExecutor = Executors.newSingleThreadExecutor();
+            try {
+                emailExecutor.execute(() -> {
+                    emailService.prepareAndSendConfirmPassEmail(userEmail, firstName, confirmUrl);
+                });
+            } catch (MailException e) {
+                throw new EmailSendException("Could not send email to " + userEmail, HttpStatus.INTERNAL_SERVER_ERROR);
+            } finally {
+                emailExecutor.shutdown();
+            }
 
-        return new ResponseEntity<>(new InfoResponse("Please, check your email "), HttpStatus.OK);
+            return new ResponseEntity<>(new InfoResponse("Please, check your email "), HttpStatus.OK);
         }return new ResponseEntity<>(new InfoResponse("Password and PasswordConfirmation are not equals"), HttpStatus.BAD_REQUEST);
 
     }
@@ -241,5 +243,3 @@ public class UserController {
 
     }
 }
-
-

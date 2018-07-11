@@ -28,10 +28,10 @@ public interface FeedbackService {
     List<Feedback> getByTransitAndFeedbackCriteria(Integer transitId, FeedbackCriteria.FeedbackType feedbackType);
 
     List<Feedback> getByTransitCategoryIdAndFeedbackCriteria(Integer transitCategoryId,
-                                                             FeedbackCriteria.FeedbackType feedbackType);
+            FeedbackCriteria.FeedbackType feedbackType);
 
     List<Feedback> getByTransitAndFeedbackCriteriaAndUserId(Integer transitId,
-                                                            FeedbackCriteria.FeedbackType feedbackType, Integer userId);
+            FeedbackCriteria.FeedbackType feedbackType, Integer userId);
 
     Double getRatingByTransitId(Integer transitId);
 
@@ -44,7 +44,6 @@ public interface FeedbackService {
     Map<Stop, Double> getStopCapacityMap(Integer transitId, Stop.DIRECTION direction, Stop... stops);
 
     EnumMap<SimpleFeedback, Double> getSimpleAnswerPercentageMap(Integer transitId);
-
 
     List<HeatMapDTO> getHeatMap(Integer transitId);
 
