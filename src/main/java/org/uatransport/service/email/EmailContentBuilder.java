@@ -7,11 +7,14 @@ import org.thymeleaf.context.Context;
 
 @Service
 public class EmailContentBuilder {
+    private final TemplateEngine templateEngine;
 
     @Autowired
-    private TemplateEngine templateEngine;
+    public EmailContentBuilder(TemplateEngine templateEngine) {
+        this.templateEngine = templateEngine;
+    }
 
-    public String buildWelcomeHtml(String message) {
+    String buildWelcomeHtml(String message) {
         Context context = new Context();
         context.setVariable("message", message);
         return templateEngine.process("welcomeEmail.html", context);
@@ -23,7 +26,7 @@ public class EmailContentBuilder {
         context.setVariable("message", message);
         return templateEngine.process("confirmPasswordEmail.html", context);
     }
-    //TODO publick
+
 
     public String buildConfirmRegistrationHtml(String userName, String message) {
         Context context = new Context();
@@ -34,11 +37,11 @@ public class EmailContentBuilder {
 
     public String buildFriendInvitationHtml(String userName, String friendName, String invitationLink) {
         Context context = new Context();
+
         context.setVariable("userName", userName);
         context.setVariable("friendName", friendName);
         context.setVariable("invitationLink",invitationLink);
+
         return templateEngine.process("inviteFriendEmail.html", context);
     }
-
-
 }
