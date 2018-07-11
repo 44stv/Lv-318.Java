@@ -12,6 +12,7 @@ import org.uatransport.exception.ResourceNotFoundException;
 import org.uatransport.repository.CategoryRepository;
 import org.uatransport.repository.TransitRepository;
 import org.uatransport.service.CategoryService;
+import org.uatransport.service.FeedbackService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,7 @@ import java.util.List;
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final TransitRepository transitRepository;
+    private final FeedbackService feedbackService;
 
     @Override
     @Transactional
@@ -101,7 +103,8 @@ public class CategoryServiceImpl implements CategoryService {
         for (ExtendableCategory category : categoryRepository.findAll(specification)) {
             CategoryDTO categoryDTO = new CategoryDTO(category.getId(), category.getName(),
                     category.getNextLevelCategory(), category.getIconURL(),
-                    transitRepository.countAllByCategoryId(category.getId()));
+                    transitRepository.countAllByCategoryId(category.getId()),
+                feedbackService.getRatingByCategoryId(category.getId()));
             list.add(categoryDTO);
         }
         return list;
