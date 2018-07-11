@@ -50,7 +50,7 @@ public class UserController {
         String email = userDTO.getEmail();
         String firstName = userDTO.getFirstName();
         temporaryDataConfirmationService
-            .save(temporaryDataConfirmationService.makeRegistrationConfirmationEntity(uuid, email));
+                .save(temporaryDataConfirmationService.makeRegistrationConfirmationEntity(uuid, email));
         ExecutorService emailExecutor = Executors.newSingleThreadExecutor();
         try {
             emailExecutor.execute(() -> {
@@ -62,20 +62,21 @@ public class UserController {
         } finally {
             emailExecutor.shutdown();
         }
-        return ResponseEntity.status(HttpStatus.OK).body(new InfoResponse("Please check your email, and confirm registration"));
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new InfoResponse("Please check your email, and confirm registration"));
     }
 
     @PostMapping("/activate")
     public ResponseEntity activateUser(@RequestBody String uuidFromUrl) {
         Optional<TemporaryDataConfirmation> checkedTemporaryDataConfirmation = expirationCheckService
-            .getTemporaryDataConfirmationWithExpirationChecking(uuidFromUrl);
+                .getTemporaryDataConfirmationWithExpirationChecking(uuidFromUrl);
 
         if (checkedTemporaryDataConfirmation.isPresent()) {
             User user = userService.getUserByEmail(checkedTemporaryDataConfirmation.get().getUserEmail());
 
             if ((uuidFromUrl.equals(checkedTemporaryDataConfirmation.get().getUuid()))
-                && (checkedTemporaryDataConfirmation.get()
-                .getConfirmationType() == ConfirmationType.REGISTRATION_CONFIRM)) {
+                    && (checkedTemporaryDataConfirmation.get()
+                            .getConfirmationType() == ConfirmationType.REGISTRATION_CONFIRM)) {
 
                 userService.activateUserByEmail(checkedTemporaryDataConfirmation.get().getUserEmail());
                 temporaryDataConfirmationService.delete(checkedTemporaryDataConfirmation.get());
@@ -86,11 +87,13 @@ public class UserController {
                         emailService.prepareAndSendWelcomeEmail(user.getEmail(), user.getFirstName());
                     });
                 } catch (MailException e) {
-                    throw new EmailSendException("Could not send email to " + user.getEmail(), HttpStatus.INTERNAL_SERVER_ERROR);
+                    throw new EmailSendException("Could not send email to " + user.getEmail(),
+                            HttpStatus.INTERNAL_SERVER_ERROR);
                 } finally {
                     emailExecutor.shutdown();
                 }
-                return new ResponseEntity<>(new InfoResponse("Your account has been successfully activated"), HttpStatus.OK);
+                return new ResponseEntity<>(new InfoResponse("Your account has been successfully activated"),
+                        HttpStatus.OK);
             }
         } else {
 
@@ -126,15 +129,14 @@ public class UserController {
         return userService.getUser(principal);
     }
 
-
     @PostMapping(value = "/update/password")
     public ResponseEntity saveUserPassword(@RequestBody String uuidFromUrl) {
-        Optional<TemporaryDataConfirmation> checkedTemporaryDataConfirmation =
-            expirationCheckService.getTemporaryDataConfirmationWithExpirationChecking(uuidFromUrl);
+        Optional<TemporaryDataConfirmation> checkedTemporaryDataConfirmation = expirationCheckService
+                .getTemporaryDataConfirmationWithExpirationChecking(uuidFromUrl);
         if (checkedTemporaryDataConfirmation.isPresent()) {
             if ((uuidFromUrl.equals(checkedTemporaryDataConfirmation.get().getUuid()))
-                && (checkedTemporaryDataConfirmation.get()
-                .getConfirmationType() == ConfirmationType.PASSWORD_CONFIRM)) {
+                    && (checkedTemporaryDataConfirmation.get()
+                            .getConfirmationType() == ConfirmationType.PASSWORD_CONFIRM)) {
                 String newPassword = checkedTemporaryDataConfirmation.get().getNewPassword();
                 String userEmail = checkedTemporaryDataConfirmation.get().getUserEmail();
 
@@ -156,9 +158,8 @@ public class UserController {
         final String confirmUrl = "http://localhost:4200/user" + "/update/password/" + uuid;
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         String firstName = userService.getUserByEmail(email).getFirstName();
-        temporaryDataConfirmationService.save(
-            temporaryDataConfirmationService
-                .makePasswordConfirmationEntity(uuid, forgetPasswordDTO.getNewPassword(), email));
+        temporaryDataConfirmationService.save(temporaryDataConfirmationService.makePasswordConfirmationEntity(uuid,
+                forgetPasswordDTO.getNewPassword(), email));
         sendPasswordChangeConfirmationEmail(email, firstName, confirmUrl);
 
         return new ResponseEntity<>("Please, check your email", HttpStatus.OK);
@@ -170,9 +171,8 @@ public class UserController {
         final String confirmUrl = "http://localhost:4200/main/user" + "/forgetpass/" + uuid;
         String userEmail = forgetPasswordDTO.getEmail();
         String firstName = userService.getUserByEmail(userEmail).getFirstName();
-        temporaryDataConfirmationService.save(
-            temporaryDataConfirmationService
-                .makePasswordConfirmationEntity(uuid, forgetPasswordDTO.getPassword(), userEmail));
+        temporaryDataConfirmationService.save(temporaryDataConfirmationService.makePasswordConfirmationEntity(uuid,
+                forgetPasswordDTO.getPassword(), userEmail));
         sendPasswordChangeConfirmationEmail(userEmail, firstName, confirmUrl);
 
         return new ResponseEntity<>(new InfoResponse("Please, check your email "), HttpStatus.OK);
@@ -182,7 +182,7 @@ public class UserController {
     public ResponseEntity updateUserRole(@RequestBody UpdateUserRoleDTO updateUserRoleDTO) {
         String role = updateUserRoleDTO.getRole();
         String email = updateUserRoleDTO.getEmail();
-        return new ResponseEntity<>(userService.updateUserRole(role,email), HttpStatus.OK);
+        return new ResponseEntity<>(userService.updateUserRole(role, email), HttpStatus.OK);
     }
 
     private void sendPasswordChangeConfirmationEmail(String userEmail, String firstName, String confirmUrl) {
@@ -199,16 +199,19 @@ public class UserController {
     }
 
     @PostMapping("/social")
-    public ResponseEntity socialSignIn(@RequestBody UserDTO userDTO) {
+    public ResponseEntity socialSignIn(@RequestBody UserDTO userDTO, HttpServletResponse response) {
+        String token;
+        if (userService.existUserByEmail(userDTO.getEmail())) {
 
-        if(userService.existUserByEmail(userDTO.getEmail())){
-            //
+            token = userService.singInWithSocial(userDTO);
+            response.setHeader("Authorization", token);
+            return ResponseEntity.ok(new TokenModel(token));
         }
-        else {
-            userService.signup(userDTO);
+        else if (!(userService.existUserByEmail(userDTO.getEmail()))) {
+            token = userService.singUpWithSocial(userDTO);
+            response.setHeader("Authorization", token);
+            return ResponseEntity.ok(new TokenModel(token));
         }
-        return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity(HttpStatus.OK);
     }
 }
-
-

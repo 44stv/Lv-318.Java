@@ -28,4 +28,8 @@ public interface UserService {
 
     boolean existUserByEmail(String email);
 
+    String singInWithSocial(UserDTO userDTO);
+
+    String singUpWithSocial(UserDTO userDTO);
+
 }

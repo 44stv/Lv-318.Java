@@ -22,6 +22,8 @@ public class Question {
 
     private Integer weight;
 
+    private Integer priority;
+
     @Enumerated(value = EnumType.STRING)
     @Column(name = "type", updatable = false)
 
