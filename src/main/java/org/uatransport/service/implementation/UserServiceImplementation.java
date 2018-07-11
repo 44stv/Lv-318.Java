@@ -129,23 +129,6 @@ public class UserServiceImplementation implements UserService {
     }
 
     @Override
-    public String singInWithSocial(UserDTO userDTO) {
-        String username = userDTO.getEmail();
-        String provider = userDTO.getProvider();
-        String password = userDTO.getPassword();
-        if (userRepository.findProviderByEmail(username).equalsIgnoreCase(provider)) {
-            try {
-                authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-                return jwtTokenProvider.createToken(username, userRepository.findByEmail(username).getRole());
-            } catch (AuthenticationException e) {
-                throw new SecurityJwtException("Can`t login", HttpStatus.UNPROCESSABLE_ENTITY);
-            }
-        }
-        return "Can`t login";
-    }
-
-
-    @Override
     public String singUpWithSocial(UserDTO userDTO) {
         User user = new User();
         String[] splitStr = userDTO.getFirstName().split("\\s+");
@@ -161,5 +144,20 @@ public class UserServiceImplementation implements UserService {
         user.setProvider(userDTO.getProvider());
         userRepository.save(user);
         return jwtTokenProvider.createToken(user.getEmail(), user.getRole());
+    }
+    @Override
+    public String singInWithSocial(UserDTO userDTO) {
+        String username = userDTO.getEmail();
+        String provider = userDTO.getProvider();
+        String password = userDTO.getPassword();
+        if (userRepository.findProviderByEmail(username).equalsIgnoreCase(provider)) {
+            try {
+                authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+                return jwtTokenProvider.createToken(username, userRepository.findByEmail(username).getRole());
+            } catch (AuthenticationException e) {
+                throw new SecurityJwtException("Can`t login", HttpStatus.UNPROCESSABLE_ENTITY);
+            }
+        }
+        return "Can`t login";
     }
 }

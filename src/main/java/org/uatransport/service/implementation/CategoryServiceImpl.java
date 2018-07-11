@@ -101,7 +101,7 @@ public class CategoryServiceImpl implements CategoryService {
         for (ExtendableCategory category : categoryRepository.findAll(specification)) {
             CategoryDTO categoryDTO = new CategoryDTO(category.getId(), category.getName(),
                     category.getNextLevelCategory(), category.getIconURL(),
-                    transitRepository.countAllByCategory_Id(category.getId()));
+                    transitRepository.countAllByCategoryId(category.getId()));
             list.add(categoryDTO);
         }
         return list;

@@ -24,6 +24,6 @@ public interface TransitRepository extends JpaRepository<Transit, Integer>, JpaS
 
     Page<Transit> findByCategoryNextLevelCategoryName(String name, Pageable pageable);
 
-    Integer countAllByCategory_Id(Integer categoryId);
+    Integer countAllByCategoryId(Integer categoryId);
 
 }
