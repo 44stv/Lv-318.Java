@@ -93,7 +93,7 @@ public class StopServiceImpl implements StopService {
     public Integer getIndexByTransitIdAndStopNameAndDirection(Integer transitId, String street,
             Stop.DIRECTION direction) {
 
-            return stopRepository.findIndexByTransitIdAndStopNameAndDirection(transitId, street, direction);
+        return stopRepository.findIndexByTransitIdAndStopNameAndDirection(transitId, street, direction);
 
     }
 
