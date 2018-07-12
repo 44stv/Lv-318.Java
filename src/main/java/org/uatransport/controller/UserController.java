@@ -190,7 +190,8 @@ public class UserController {
 
     }
 
-////Exception
+////Exception fix
+
     @PostMapping("/profile/update/password")
     public ResponseEntity updatePassword(@RequestBody UpdatePasswordDTO updatePasswordDTO, Principal principal) {
         userValidatorService.checkPasswords(updatePasswordDTO.getNewPassword(), updatePasswordDTO.getPasswordConfirmation());
@@ -198,7 +199,8 @@ public class UserController {
             updatePasswordDTO.getOldPassword(),
             updatePasswordDTO.getNewPassword())) {
             return new ResponseEntity<>(new InfoResponse("Password changed successfully"), HttpStatus.OK);
-        } else return new ResponseEntity<>(new InfoResponse("Invalid old password"), HttpStatus.BAD_REQUEST);
+        } else
+            return new ResponseEntity<>(new InfoResponse("Invalid old password"), HttpStatus.BAD_REQUEST);
 
     }
 }
