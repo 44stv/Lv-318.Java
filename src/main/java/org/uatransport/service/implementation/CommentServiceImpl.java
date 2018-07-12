@@ -74,12 +74,12 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional(readOnly = true)
     public List<Comment> getAllTopLevel(Integer transitId) {
-        return commentRepository.findByTransitIdAndLevel(transitId, 1);
+        return commentRepository.findByTransitIdAndLevelOrderByCreatedDateDesc(transitId, 1);
     }
 
     @Override
     public List<Comment> getAllByParentId(Integer parentId) {
-        return commentRepository.findByParentCommentIdOrderByCreatedDateDesc(parentId);
+        return commentRepository.findByParentCommentIdOrderByCreatedDateAsc(parentId);
     }
 
     @Override
