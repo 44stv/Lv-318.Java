@@ -26,7 +26,7 @@ public class CategoryServiceImpl implements CategoryService {
     @NonNull
     private TransitRepository transitRepository;
     @NonNull
-    private final FeedbackService feedbackService;
+    private  FeedbackService feedbackService;
 
     @Override
     @Transactional

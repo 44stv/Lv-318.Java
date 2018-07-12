@@ -30,12 +30,13 @@ public class EwayRoutesListSaver {
     private final CategoryService categoryService;
     private final StopService stopService;
     private RateLimiter rateLimiter = RateLimiter.create(1.0 / 10);
+    private List<String> busNumbers;
 
     void convertAndSaveEwayRoutes() {
         for (EwayRoute route : getTransitsObject().getRoutesList().getRoute()) {
             Transit transit = new Transit();
-            transit.setCategory(getCategoryByTransportType(route.getTransport()));
             transit.setName(route.getTitle());
+            transit.setCategory(getCategoryByTransportType(route.getTransport()));
             transit.setStops(convertAndSaveStops(route.getId().toString()));
             if (transitService.getByNameAndCategoryName(transit.getName(), transit.getCategory().getName()) == null) {
                 transitService.add(transit);
