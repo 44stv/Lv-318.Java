@@ -94,9 +94,8 @@ public class FeedbackController {
      *
      * @param transitId id of specified transit
      */
-    @GetMapping(value = "/heat-map/{transitId}")
-    public List<HeatMapDTO> getHeatMapData(@PathVariable Integer transitId, @RequestParam(value = "stop-list[]", required = false) List<Stop> stopList) {
-        Stop[] stopsVarArg = stopList.toArray(new Stop[stopList.size()]);
-        return feedbackService.getHeatMap(transitId, stopsVarArg);
+    @PostMapping(value = "/heat-map/{transitId}")
+    public List<HeatMapDTO> getHeatMapData(@PathVariable Integer transitId, @RequestBody( required = false ) Stop... stopList) {
+        return feedbackService.getHeatMap(transitId, stopList);
     }
 }
