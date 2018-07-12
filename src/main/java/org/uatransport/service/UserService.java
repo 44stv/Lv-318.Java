@@ -1,5 +1,6 @@
 package org.uatransport.service;
 
+import org.uatransport.entity.TokenModel;
 import org.uatransport.entity.User;
 import org.uatransport.entity.dto.LoginDTO;
 import org.uatransport.entity.dto.UserDTO;
@@ -14,9 +15,9 @@ public interface UserService {
 
     User getUser(Principal principal);
 
-    String signin(LoginDTO loginDTO);
+    TokenModel signin(LoginDTO loginDTO);
 
-    String signup(UserDTO user);
+    TokenModel signup(UserDTO user);
 
     User getUserByEmail(String userEmail);
 

@@ -3,14 +3,17 @@ package org.uatransport.service.implementation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.uatransport.entity.Role;
+import org.uatransport.entity.TokenModel;
 import org.uatransport.entity.User;
 import org.uatransport.entity.dto.LoginDTO;
 import org.uatransport.entity.dto.UserDTO;
@@ -38,19 +41,21 @@ public class UserServiceImplementation implements UserService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    public String signin(LoginDTO loginDTO) {
+
+    public TokenModel signin(LoginDTO loginDTO) {
         String username = loginDTO.getEmail();
         String password = loginDTO.getPassword();
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-            return jwtTokenProvider.createToken(username, userRepository.findByEmail(username).getRole());
+            return new TokenModel(jwtTokenProvider.createAccessToken(username,userRepository.findByEmail(username).getRole(),userRepository.findByEmail(username).getId()),
+                jwtTokenProvider.createRefreshToken(username));
         } catch (AuthenticationException e) {
             throw new SecurityJwtException("Invalid username/password supplied", HttpStatus.UNPROCESSABLE_ENTITY);
 
         }
     }
 
-    public String signup(UserDTO userDTO) {
+    public TokenModel signup(UserDTO userDTO) {
 
         User user = new User();
         user.setFirstName(userDTO.getFirstName());
@@ -59,7 +64,7 @@ public class UserServiceImplementation implements UserService {
         user.setPassword(bcryptEncoder.encode(userDTO.getPassword()));
         user.setRole(Role.UNACTIVATED);
         userRepository.save(user);
-        return jwtTokenProvider.createToken(user.getEmail(), user.getRole());
+       return new TokenModel(jwtTokenProvider.createAccessToken(user.getEmail(),user.getRole(),user.getId()),jwtTokenProvider.createRefreshToken(user.getEmail()));
 
     }
 
@@ -148,4 +153,11 @@ public class UserServiceImplementation implements UserService {
         }else return false;
 
     }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder(12);
+    }
+
+
 }

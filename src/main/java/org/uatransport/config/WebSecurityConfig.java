@@ -14,6 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.uatransport.security.JwtTokenFilterConfigurer;
 import org.uatransport.security.JwtTokenProvider;
+import org.uatransport.service.UserService;
 
 @Configuration
 @RequiredArgsConstructor
@@ -21,6 +22,8 @@ import org.uatransport.security.JwtTokenProvider;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final JwtTokenProvider jwtTokenProvider;
+
+
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -31,18 +34,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests()
 
-                .antMatchers("/user/signin", "/user/activate/**", "/user/**", "/user/signup", "/stop/**", "/transit/**",
-                        "/category/**", "/feedback/**", "/feedback-criteria/**", "/question/**", "/location/**",
-                        "/actuator/health", "/search/**", "/comment/**")
-                .permitAll().antMatchers(HttpMethod.OPTIONS, "/**").permitAll().anyRequest().authenticated();
+                .antMatchers("/user/**").
+            permitAll().antMatchers(HttpMethod.OPTIONS, "/**").permitAll().anyRequest().authenticated();
 
         http.apply(new JwtTokenFilterConfigurer(jwtTokenProvider));
     }
 
-    @Bean
+    /*@Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(12);
-    }
+    }*/
 
     @Bean
     public AuthenticationManager authenticationManagerBean() throws Exception {

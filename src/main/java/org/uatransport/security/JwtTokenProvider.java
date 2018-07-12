@@ -37,15 +37,26 @@ public class JwtTokenProvider {
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
     }
 
-    public String createToken(String username, Role role) {
+    public String createAccessToken(String username, Role role, Integer id) {
 
         Claims claims = Jwts.claims().setSubject(username);
         claims.put("auth", role.getAuthority());
+        claims.put("id",id);
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityInMilliseconds);
 
         return Jwts.builder().setClaims(claims).setIssuedAt(now).setExpiration(validity)
                 .signWith(SignatureAlgorithm.HS256, secretKey).compact();
+    }
+
+    public String createRefreshToken(String username) {
+
+        Claims claims = Jwts.claims().setSubject(username);
+        Date now = new Date();
+        Date validity = new Date(now.getTime() + validityInMilliseconds);
+
+        return Jwts.builder().setClaims(claims).setIssuedAt(now).setExpiration(validity)
+            .signWith(SignatureAlgorithm.HS256, secretKey).compact();
     }
 
     public Authentication getAuthentication(String token) {
@@ -57,12 +68,13 @@ public class JwtTokenProvider {
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
     }
 
-    public String resolveToken(HttpServletRequest req) {
-        String bearerToken = req.getHeader("Authorization");
-        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7, bearerToken.length());
-        }
-        return null;
+    public String resolveAccessToken(HttpServletRequest req) {
+        String accessToken = req.getHeader("Access-token");
+        return accessToken;
+    }
+    public String resolveRefreshToken(HttpServletRequest req) {
+        String accessToken = req.getHeader("Refresh-token");
+        return accessToken;
     }
 
     public boolean validateToken(String token) {
@@ -70,8 +82,15 @@ public class JwtTokenProvider {
             Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
             return true;
         } catch (JwtException | IllegalArgumentException e) {
-            throw new SecurityJwtException("Expired or invalid JWT token", HttpStatus.INTERNAL_SERVER_ERROR);
+           // throw new SecurityJwtException("Expired or invalid JWT token", HttpStatus.INTERNAL_SERVER_ERROR);
+            return false;
 
         }
+    }
+
+    //TODO
+    public boolean checkExpiration(String accessToken) {
+
+        return false;
     }
 }

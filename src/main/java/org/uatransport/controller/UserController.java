@@ -104,9 +104,8 @@ public class UserController {
     public ResponseEntity signin(@RequestBody LoginDTO loginDTO, HttpServletResponse response) {
             userValidatorService.validateForActivating(loginDTO.getEmail());
             userValidatorService.validateUserOnLogin(loginDTO);
-            String token = userService.signin(loginDTO);
-            response.setHeader("Authorization", token);
-            return ResponseEntity.ok(new TokenModel(token));
+            TokenModel token = userService.signin(loginDTO);
+            return ResponseEntity.ok(new TokenResponse(token.getAccessToken(),token.getRefreshToken()));
 
         }
 
