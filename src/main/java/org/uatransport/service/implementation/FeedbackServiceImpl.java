@@ -176,7 +176,7 @@ public class FeedbackServiceImpl implements FeedbackService {
      */
     @Override
     public List<HeatMapDTO> getHeatMap(Integer transitId, Stop... stops) {
-        List<Stop> stopList = stopService.getByTransitIdAndDirection(transitId, Stop.DIRECTION.FORWARD);
+        List<Stop> stopList = stops.length > 0 ? Arrays.asList(stops)
         Map<String, Double> capacityMap = new TreeMap<>(Comparator.comparingInt(street -> stopService
             .getIndexByTransitIdAndStopNameAndDirection(transitId, street, Stop.DIRECTION.FORWARD)));
 
