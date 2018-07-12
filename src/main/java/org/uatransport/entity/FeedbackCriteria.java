@@ -29,7 +29,7 @@ public class FeedbackCriteria {
 
     @RequiredArgsConstructor
     public enum FeedbackType {
-        RATING, ROUTE_CAPACITY, SIMPLE, HOURS_CAPACITY
+        RATING, ROUTE_CAPACITY, SIMPLE, HOURS_CAPACITY, QUALITY
     }
 
 }
