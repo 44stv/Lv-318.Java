@@ -24,6 +24,7 @@ import org.uatransport.service.converter.model.CapacityRouteFeedback;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
+import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 import java.util.stream.Stream;
@@ -128,15 +129,15 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Override
     @Transactional(readOnly = true)
     public Map<Stop, Double> getStopCapacityMap(Integer transitId, Stop.DIRECTION direction, Stop... stops) {
-
+//        List<Stop> stopList = new ArrayList<>(stopService.getByTransitIdAndDirection(transitId,direction));
         List<Stop> stopList = stops.length > 0 ? Arrays.asList(stops)
             : stopService.getByTransitIdAndDirection(transitId, direction);
         List<CapacityRouteFeedback> capacityRouteFeedbackList = convertCapacityRouteFeedBacks(transitId);
 
-        Map<Stop, Double> capacityMap = new TreeMap<>(Comparator.comparingInt(stop -> stopService
-            .getIndexByTransitIdAndStopNameAndDirection(transitId, stop.getStreet(), direction)));
+        Map<Stop, Double> capacityMap = new TreeMap<>(Comparator.comparingInt(stopList::indexOf));
+
         for (Stop stop : stopList) {
-            capacityMap.put(stop, getCapacityByTransitAndStops(transitId, stop, direction, capacityRouteFeedbackList));
+            capacityMap.put(stop, getCapacityByTransitAndStops(transitId, stop, direction, capacityRouteFeedbackList, stopList));
         }
         return capacityMap;
     }
@@ -177,12 +178,11 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Override
     public List<HeatMapDTO> getHeatMap(Integer transitId) {
         List<Stop> stopList = stopService.getByTransitIdAndDirection(transitId, Stop.DIRECTION.FORWARD);
-        Map<String, Double> capacityMap = new TreeMap<>(Comparator.comparingInt(street -> stopService
-            .getIndexByTransitIdAndStopNameAndDirection(transitId, street, Stop.DIRECTION.FORWARD)));
+        Map<String, Double> capacityMap = new TreeMap<>(Comparator.comparingInt(street->stopList.stream().map(Stop::getStreet).collect(Collectors.toList()).indexOf(street)));
 
         Map<Integer, Double> hourCapacityMap = getHourCapacityMap(transitId);
         int averageHourCapacity = hourCapacityMap.values().stream().mapToInt(Number::intValue).sum();
-        Map<Stop, Double> stopCapacityMap = getStopCapacityMap(transitId, Stop.DIRECTION.FORWARD);
+        Map<Stop, Double> stopCapacityMap = getStopCapacityMap(transitId, Stop.DIRECTION.FORWARD );
 
         return valueToReturn(stopList, capacityMap, hourCapacityMap, averageHourCapacity, stopCapacityMap);
     }
@@ -296,20 +296,20 @@ public class FeedbackServiceImpl implements FeedbackService {
     }
 
     private boolean existInStopIndexesRange(Integer transitId, Integer stopIndex,
-                                            String fromStop, String toStop, Stop.DIRECTION direction) {
-        Integer fromStopIndex = stopService.getIndexByTransitIdAndStopNameAndDirection(transitId, fromStop, direction);
-        Integer toStopIndex = stopService.getIndexByTransitIdAndStopNameAndDirection(transitId, toStop, direction);
+                                            String fromStop, String toStop, Stop.DIRECTION direction,List<Stop> stopList) {
+        Integer fromStopIndex = stopList.indexOf(fromStop);
+        Integer toStopIndex = stopList.indexOf(toStop);
 
         return (fromStopIndex < toStopIndex) ? Range.closed(fromStopIndex, toStopIndex).contains(stopIndex)
             : Range.closed(toStopIndex, fromStopIndex).contains(stopIndex);
     }
 
     private Double getCapacityByTransitAndStops(Integer transitId, Stop stop, Stop.DIRECTION direction,
-                                                List<CapacityRouteFeedback> capacityRouteFeedbackList) {
-        Integer stopIndex = stopService.getIndexByTransitIdAndStopNameAndDirection(transitId, stop.getStreet(), direction);
+                                                List<CapacityRouteFeedback> capacityRouteFeedbackList ,List<Stop> stopList) {
+        Integer stopIndex = stopList.indexOf(stop);
         Predicate<CapacityRouteFeedback> existInRange = capacityRouteFeedback -> existInStopIndexesRange(transitId,
             stopIndex, capacityRouteFeedback.getFrom().getStreet(), capacityRouteFeedback.getTo().getStreet(),
-            direction);
+            direction , stopList);
 
         return capacityRouteFeedbackList.stream()
             .filter(existInRange)
