@@ -127,4 +127,25 @@ public class UserServiceImplementation implements UserService {
     public boolean existUserByEmail(String email) {
         return userRepository.existsByEmail(email);
     }
+
+    @Override
+    @Transactional
+    public void deleteByEmail(String userEmail) {
+
+        System.out.println(userRepository.findByEmail(userEmail));
+
+        if(userRepository.findByEmail(userEmail).getRole() == Role.UNACTIVATED){
+            userRepository.deleteByEmail(userEmail);
+        }
+    }
+
+    @Override
+    public boolean updatePassword(String name, String oldPassword, String newPassword) {
+
+        if(bcryptEncoder.matches(oldPassword,userRepository.findByEmail(name).getPassword())){
+         userRepository.save(userRepository.findByEmail(name).setPassword(bcryptEncoder.encode(newPassword)));
+         return true;
+        }else return false;
+
+    }
 }
