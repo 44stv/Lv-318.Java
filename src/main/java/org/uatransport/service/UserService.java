@@ -28,4 +28,7 @@ public interface UserService {
 
     boolean existUserByEmail(String email);
 
+    void deleteByEmail(String userEmail);
+
+    boolean updatePassword(String name, String oldPassword, String newPassword);
 }
