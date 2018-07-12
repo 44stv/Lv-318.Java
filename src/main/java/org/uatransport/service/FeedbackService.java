@@ -45,6 +45,6 @@ public interface FeedbackService {
 
     EnumMap<SimpleFeedback, Double> getSimpleAnswerPercentageMap(Integer transitId);
 
-    List<HeatMapDTO> getHeatMap(Integer transitId);
+    List<HeatMapDTO> getHeatMap(Integer transitId, Stop... stops);
 
 }
