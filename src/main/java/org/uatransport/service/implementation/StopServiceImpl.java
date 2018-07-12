@@ -93,11 +93,8 @@ public class StopServiceImpl implements StopService {
     public Integer getIndexByTransitIdAndStopNameAndDirection(Integer transitId, String street,
             Stop.DIRECTION direction) {
 
-        if (stopRepository.existsById(getByTransitIdAndStopNameAndDirection(transitId, street, direction).getId())) {
             return stopRepository.findIndexByTransitIdAndStopNameAndDirection(transitId, street, direction);
-        } else {
-            throw new ResourceNotFoundException("Stop  not found");
-        }
+
     }
 
     @Override

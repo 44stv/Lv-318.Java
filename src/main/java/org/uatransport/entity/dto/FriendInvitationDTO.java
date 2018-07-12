@@ -7,8 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ForgetPasswordDTO {
-    private String email;
-    private String password;
-    private String passwordConfirmation;
+public class FriendInvitationDTO {
+    private String friendName;
+    private String friendEmail;
 }

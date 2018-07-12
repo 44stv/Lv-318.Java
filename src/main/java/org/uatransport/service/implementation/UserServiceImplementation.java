@@ -43,14 +43,14 @@ public class UserServiceImplementation implements UserService {
         String password = loginDTO.getPassword();
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-            return jwtTokenProvider.createToken(username, userRepository.findByEmail(username).getRole());
+            return jwtTokenProvider.createToken(username, userRepository.findByEmail(username).getRole(),userRepository.findByEmail(username).getId());
         } catch (AuthenticationException e) {
             throw new SecurityJwtException("Invalid username/password supplied", HttpStatus.UNPROCESSABLE_ENTITY);
 
         }
     }
 
-    public String signup(UserDTO userDTO) {
+    public boolean signup(UserDTO userDTO) {
 
         User user = new User();
         user.setFirstName(userDTO.getFirstName());
@@ -59,7 +59,7 @@ public class UserServiceImplementation implements UserService {
         user.setPassword(bcryptEncoder.encode(userDTO.getPassword()));
         user.setRole(Role.UNACTIVATED);
         userRepository.save(user);
-        return jwtTokenProvider.createToken(user.getEmail(), user.getRole());
+        return true;
 
     }
 
@@ -143,7 +143,7 @@ public class UserServiceImplementation implements UserService {
         user.setPassword(userDTO.getPassword());
         user.setProvider(userDTO.getProvider());
         userRepository.save(user);
-        return jwtTokenProvider.createToken(user.getEmail(), user.getRole());
+        return jwtTokenProvider.createToken(user.getEmail(), user.getRole(),user.getId());
     }
     @Override
     public String singInWithSocial(UserDTO userDTO) {
@@ -153,11 +153,32 @@ public class UserServiceImplementation implements UserService {
         if (userRepository.findProviderByEmail(username).equalsIgnoreCase(provider)) {
             try {
                 authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-                return jwtTokenProvider.createToken(username, userRepository.findByEmail(username).getRole());
+                return jwtTokenProvider.createToken(username, userRepository.findByEmail(username).getRole(), userRepository.findByEmail(username).getId());
             } catch (AuthenticationException e) {
                 throw new SecurityJwtException("Can`t login", HttpStatus.UNPROCESSABLE_ENTITY);
             }
         }
         return "Can`t login";
+    }
+
+    @Override
+    @Transactional
+    public void deleteByEmail(String userEmail) {
+
+        System.out.println(userRepository.findByEmail(userEmail));
+
+        if(userRepository.findByEmail(userEmail).getRole() == Role.UNACTIVATED){
+            userRepository.deleteByEmail(userEmail);
+        }
+    }
+
+    @Override
+    public boolean updatePassword(String name, String oldPassword, String newPassword) {
+
+        if(bcryptEncoder.matches(oldPassword,userRepository.findByEmail(name).getPassword())){
+         userRepository.save(userRepository.findByEmail(name).setPassword(bcryptEncoder.encode(newPassword)));
+         return true;
+        }else return false;
+
     }
 }
