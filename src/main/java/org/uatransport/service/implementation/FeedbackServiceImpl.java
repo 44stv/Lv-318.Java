@@ -179,10 +179,10 @@ public class FeedbackServiceImpl implements FeedbackService {
      *
      */
     private double safeDivision(Long divided, double divider) {
-        if (divided == 0) {
+        if (divider == 0) {
             return 0;
         }
-        return divider/divider;
+        return divided/divider;
     }
 
     /**
