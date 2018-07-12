@@ -22,6 +22,8 @@ public class Question {
 
     private Integer weight;
 
+    private Integer priority;
+
     @Enumerated(value = EnumType.STRING)
     @Column(name = "type", updatable = false)
 
@@ -29,7 +31,7 @@ public class Question {
 
     @RequiredArgsConstructor
     public enum QuestionType {
-        SIMPLE, STOP, TIME, PERCENTAGE
+        SIMPLE, STOP, TIME, PERCENTAGE, QUANTITY_LOAD
     }
 
 }
