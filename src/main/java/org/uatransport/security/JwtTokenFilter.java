@@ -1,10 +1,12 @@
 package org.uatransport.security;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.uatransport.entity.Role;
 import org.uatransport.exception.SecurityJwtException;
@@ -17,17 +19,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+@Component
+@RequiredArgsConstructor
 public class JwtTokenFilter extends OncePerRequestFilter {
 
-    private JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    @Autowired
-    private UserRepository userRepository;
+   // @Autowired
+    private final UserRepository userRepository;
 
-    public JwtTokenFilter(JwtTokenProvider jwtTokenProvider) {
+    /*public JwtTokenFilter(JwtTokenProvider jwtTokenProvider, ) {
         this.jwtTokenProvider = jwtTokenProvider;
 
-    }
+    }*/
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -35,10 +39,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
      String accessToken = jwtTokenProvider.resolveAccessToken(request);
      String refreshToken = jwtTokenProvider.resolveRefreshToken(request);
-        String userName=jwtTokenProvider.getUsername(refreshToken);
-        ///removeAlreadyFiltredAttributes
-        Role role = userRepository.findByEmail(userName).getRole();
-        Integer id = userRepository.findByEmail(userName).getId();
+
      try {
          if(accessToken!=null&& jwtTokenProvider.validateToken(accessToken)){
              Authentication auth = jwtTokenProvider.getAuthentication(accessToken);
@@ -46,8 +47,12 @@ public class JwtTokenFilter extends OncePerRequestFilter {
          }
          else if(refreshToken!=null&&jwtTokenProvider.validateToken(refreshToken)&&!jwtTokenProvider.validateToken(accessToken)){
              //checkExpiration(accessToken)
-             response.addHeader("Access-token",jwtTokenProvider.createAccessToken(userName, role,id ));
-             response.addHeader("Refresh-token", jwtTokenProvider.createRefreshToken(userName));
+             String userName=jwtTokenProvider.getUsername(refreshToken);
+             ///removeAlreadyFiltredAttributes
+             Role role = userRepository.findByEmail(userName).getRole();
+             Integer id = userRepository.findByEmail(userName).getId();
+             response.setHeader("Access-token",jwtTokenProvider.createAccessToken(userName, role,id ));
+             response.setHeader("Refresh-token", jwtTokenProvider.createRefreshToken(userName));
          }
      }catch (SecurityJwtException e) {
          throw new SecurityJwtException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
