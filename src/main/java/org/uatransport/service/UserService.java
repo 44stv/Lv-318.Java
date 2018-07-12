@@ -16,7 +16,7 @@ public interface UserService {
 
     String signin(LoginDTO loginDTO);
 
-    String signup(UserDTO user);
+    boolean signup(UserDTO user);
 
     User getUserByEmail(String userEmail);
 
