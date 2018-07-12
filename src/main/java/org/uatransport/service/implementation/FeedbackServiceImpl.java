@@ -138,8 +138,8 @@ public class FeedbackServiceImpl implements FeedbackService {
     public EnumMap<SimpleFeedback, Double> getSimpleAnswerPercentageMap(Integer transitId) {
         EnumMap<SimpleFeedback, Double> simpleFeedbackDoubleEnumMap = new EnumMap<>(SimpleFeedback.class);
         for (SimpleFeedback simpleFeedback : SimpleFeedback.values()) {
-            double percentValue = 100 * countByValue(simpleFeedback, transitId)
-                / (double) countAllAccepterFeedBacks(transitId);
+
+            double percentValue = 100 * safeDivision(countByValue(simpleFeedback, transitId), (double) countAllAccepterFeedBacks(transitId));
             simpleFeedbackDoubleEnumMap.put(simpleFeedback, percentValue);
         }
         return simpleFeedbackDoubleEnumMap;
@@ -172,6 +172,17 @@ public class FeedbackServiceImpl implements FeedbackService {
             capacityMap.put(hour, getAverageCapacityByTransitAndHour(hour, capacityHourFeedbackList));
         }
         return capacityMap;
+    }
+
+    /**
+     * Method to divide divided by divider with avoiding dividing by zero.
+     *
+     */
+    private double safeDivision(Long divided, double divider) {
+        if (divided == 0) {
+            return 0;
+        }
+        return divider/divider;
     }
 
     /**
