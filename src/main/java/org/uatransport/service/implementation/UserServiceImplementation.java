@@ -43,14 +43,14 @@ public class UserServiceImplementation implements UserService {
         String password = loginDTO.getPassword();
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-            return jwtTokenProvider.createToken(username, userRepository.findByEmail(username).getRole());
+            return jwtTokenProvider.createToken(username, userRepository.findByEmail(username).getRole(),userRepository.findByEmail(username).getId());
         } catch (AuthenticationException e) {
             throw new SecurityJwtException("Invalid username/password supplied", HttpStatus.UNPROCESSABLE_ENTITY);
 
         }
     }
 
-    public String signup(UserDTO userDTO) {
+    public boolean signup(UserDTO userDTO) {
 
         User user = new User();
         user.setFirstName(userDTO.getFirstName());
@@ -59,7 +59,7 @@ public class UserServiceImplementation implements UserService {
         user.setPassword(bcryptEncoder.encode(userDTO.getPassword()));
         user.setRole(Role.UNACTIVATED);
         userRepository.save(user);
-        return jwtTokenProvider.createToken(user.getEmail(), user.getRole());
+        return true;
 
     }
 
