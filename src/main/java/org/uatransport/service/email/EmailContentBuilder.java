@@ -27,7 +27,6 @@ public class EmailContentBuilder {
         return templateEngine.process("confirmPasswordEmail.html", context);
     }
 
-
     public String buildConfirmRegistrationHtml(String firstName, String confirmUrl) {
         Context context = new Context();
         context.setVariable("firstName", firstName);

@@ -54,6 +54,11 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
+    public List<Question> getByPriority(Integer priority) {
+        return questionRepository.findByPriority(priority);
+    }
+
+    @Override
     public List<Question> getByName(String name) {
         return questionRepository.findByName(name);
     }

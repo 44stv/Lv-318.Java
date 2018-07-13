@@ -28,4 +28,6 @@ public interface FeedbackCriteriaRepository extends JpaRepository<FeedbackCriter
 
     List<FeedbackCriteria> findByQuestionsWeight(Integer weight);
 
+    List<FeedbackCriteria> findByQuestionsPriority(Integer priority);
+
 }

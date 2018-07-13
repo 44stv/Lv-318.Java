@@ -9,5 +9,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     boolean existsByEmail(String email);
 
+    String findProviderByEmail(String email);
+
     void deleteByEmail(String email);
 }
