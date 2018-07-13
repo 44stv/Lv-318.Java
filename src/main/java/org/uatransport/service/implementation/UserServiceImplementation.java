@@ -41,9 +41,11 @@ public class UserServiceImplementation implements UserService {
     public String signin(LoginDTO loginDTO) {
         String username = loginDTO.getEmail();
         String password = loginDTO.getPassword();
+        Role role = userRepository.findByEmail(username).getRole();
+        Integer id = userRepository.findByEmail(username).getId();
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-            return jwtTokenProvider.createToken(username, userRepository.findByEmail(username).getRole(),userRepository.findByEmail(username).getId());
+            return jwtTokenProvider.createToken(username, role,id);
         } catch (AuthenticationException e) {
             throw new SecurityJwtException("Invalid username/password supplied", HttpStatus.UNPROCESSABLE_ENTITY);
 
