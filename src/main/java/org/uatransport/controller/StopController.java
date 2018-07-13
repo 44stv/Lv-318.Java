@@ -47,15 +47,18 @@ public class StopController {
     }
 
     @PostMapping("/{id}")
-    public ResponseEntity<Stop> add(@RequestBody(required = false) Stop stop, @PathVariable Integer id) {
+    public ResponseEntity add(@RequestBody(required = false) Stop stop, @PathVariable Integer id) {
         Stop savedPoint = stopService.save(stop);
         Transit transitToUpdate = transitService.getById(id);
-        transitToUpdate.getStops().add(stop);
-        transitService.update(transitToUpdate);
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest().query("id={id}")
-                .buildAndExpand(savedPoint.getId()).toUri();
-
-        return ResponseEntity.created(location).build();
+        if (!transitToUpdate.getStops().contains(stop)) {
+            transitToUpdate.getStops().add(stop);
+            transitService.update(transitToUpdate);
+            URI location = ServletUriComponentsBuilder.fromCurrentRequest().query("id={id}")
+                    .buildAndExpand(savedPoint.getId()).toUri();
+            return ResponseEntity.created(location).build();
+        } else {
+            return ResponseEntity.unprocessableEntity().build();
+        }
     }
 
     @PutMapping("/{id}")

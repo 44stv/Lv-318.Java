@@ -109,4 +109,9 @@ public class FeedbackCriteriaServiceImpl implements FeedbackCriteriaService {
         return feedbackCriteriaRepository.findByQuestionsType(type);
     }
 
+    @Override
+    public List<FeedbackCriteria> getByQuestionsPriority(Integer priority) {
+        return feedbackCriteriaRepository.findByQuestionsPriority(priority);
+    }
+
 }
