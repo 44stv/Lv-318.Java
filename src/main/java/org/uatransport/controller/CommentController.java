@@ -23,9 +23,8 @@ public class CommentController {
     // @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping
     public ResponseEntity<CommentDTO> addComment(@RequestBody Comment comment,
-                                                 @RequestParam(value = "transitId") Integer transitId,
-                                                 @RequestParam(value = "userId") Integer userId,
-                                                 @RequestParam(value = "parentId", required = false) Integer parentId) {
+            @RequestParam(value = "transitId") Integer transitId, @RequestParam(value = "userId") Integer userId,
+            @RequestParam(value = "parentId", required = false) Integer parentId) {
         Comment addedComment = commentService.add(comment, transitId, userId, parentId);
         return new ResponseEntity<>(modelMapper.map(addedComment, CommentDTO.class), HttpStatus.CREATED);
     }
