@@ -48,22 +48,6 @@ public class TransitServiceImpl implements TransitService {
         }
     }
 
-    // @Override
-    // @Transient
-    // public Transit upsert(Transit transit) {
-    // if (transit == null) {
-    // throw new IllegalArgumentException("Transit object should not be null");
-    // }
-    //
-    //// Integer categoryId = transit.getCategory().getId();
-    //
-    //// if (nonExtendableCategoryRepository.existsById(categoryId)) {
-    // return transitRepository.save(transit);
-    //// } else {
-    //// throw new ResourceNotFoundException(String.format("Category with id '%s' not found", categoryId));
-    //// }
-    // }
-
     @Override
     @Transactional
     public void delete(Integer id) {
@@ -105,15 +89,6 @@ public class TransitServiceImpl implements TransitService {
     public Transit getById(Integer id) {
         return transitRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("Transit with id '%s' not found", id)));
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Transit getByName(String name) {
-        if (Strings.isNullOrEmpty(name)) {
-            throw new IllegalArgumentException("Name should not be empty");
-        }
-        return transitRepository.findByName(name);
     }
 
     @Override

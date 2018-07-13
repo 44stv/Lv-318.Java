@@ -168,8 +168,7 @@ public class UserController {
             token = userService.singInWithSocial(userDTO);
             response.setHeader("Authorization", token);
             return ResponseEntity.ok(new TokenModel(token));
-        }
-        else if (!(userService.existUserByEmail(userDTO.getEmail()))) {
+        } else if (!(userService.existUserByEmail(userDTO.getEmail()))) {
             token = userService.singUpWithSocial(userDTO);
             response.setHeader("Authorization", token);
             return ResponseEntity.ok(new TokenModel(token));
