@@ -32,4 +32,6 @@ public interface FeedbackCriteriaService {
 
     List<FeedbackCriteria> getByQuestionsType(Question.QuestionType type);
 
+    List<FeedbackCriteria> getByQuestionsPriority(Integer priority);
+
 }

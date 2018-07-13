@@ -161,14 +161,20 @@ public class UserController {
     }
 
     @PostMapping("/social")
-    public ResponseEntity socialSignIn(@RequestBody UserDTO userDTO) {
-
+    public ResponseEntity socialSignIn(@RequestBody UserDTO userDTO, HttpServletResponse response) {
+        String token;
         if (userService.existUserByEmail(userDTO.getEmail())) {
-            //
-        } else {
-            userService.signup(userDTO);
+
+            token = userService.singInWithSocial(userDTO);
+            response.setHeader("Authorization", token);
+            return ResponseEntity.ok(new TokenModel(token));
         }
-        return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+        else if (!(userService.existUserByEmail(userDTO.getEmail()))) {
+            token = userService.singUpWithSocial(userDTO);
+            response.setHeader("Authorization", token);
+            return ResponseEntity.ok(new TokenModel(token));
+        }
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @PostMapping("/invite")
