@@ -7,27 +7,41 @@ import org.thymeleaf.context.Context;
 
 @Service
 public class EmailContentBuilder {
+    private final TemplateEngine templateEngine;
 
     @Autowired
-    private TemplateEngine templateEngine;
+    public EmailContentBuilder(TemplateEngine templateEngine) {
+        this.templateEngine = templateEngine;
+    }
 
-    public String buildWelcomeHtml(String message) {
+    String buildWelcomeHtml(String firstName) {
         Context context = new Context();
-        context.setVariable("message", message);
+        context.setVariable("firstName", firstName);
         return templateEngine.process("welcomeEmail.html", context);
     }
 
-    public String buildConfirmPassHtml(String userName, String message) {
+    public String buildConfirmPassHtml(String firstName, String confirmUrl) {
         Context context = new Context();
-        context.setVariable("userName", userName);
-        context.setVariable("message", message);
+        context.setVariable("firstName", firstName);
+        context.setVariable("confirmUrl", confirmUrl);
         return templateEngine.process("confirmPasswordEmail.html", context);
     }
 
-    public String buildConfirmRegistrationHtml(String userName, String message) {
+
+    public String buildConfirmRegistrationHtml(String firstName, String confirmUrl) {
         Context context = new Context();
-        context.setVariable("userName", userName);
-        context.setVariable("message", message);
+        context.setVariable("firstName", firstName);
+        context.setVariable("confirmUrl", confirmUrl);
         return templateEngine.process("confirmRegistrationEmail.html", context);
+    }
+
+    public String buildFriendInvitationHtml(String userName, String friendName, String invitationLink) {
+        Context context = new Context();
+
+        context.setVariable("userName", userName);
+        context.setVariable("friendName", friendName);
+        context.setVariable("invitationLink", invitationLink);
+
+        return templateEngine.process("inviteFriendEmail.html", context);
     }
 }

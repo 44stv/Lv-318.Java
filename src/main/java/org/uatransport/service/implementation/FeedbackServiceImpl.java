@@ -1,5 +1,7 @@
 package org.uatransport.service.implementation;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Range;
 import com.google.common.collect.Streams;
 import lombok.RequiredArgsConstructor;
@@ -22,12 +24,8 @@ import org.uatransport.service.converter.model.CapacityHourFeedback;
 import org.uatransport.service.converter.model.CapacityRouteFeedback;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Predicate;
-import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
-import java.util.stream.Stream;
 
 @Service
 @Transactional
@@ -101,7 +99,14 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Transactional(readOnly = true)
     public Double getRatingByTransitId(Integer transitId) {
 
-        return getAverageRate(getByTransitAndFeedbackCriteria(transitId, FeedbackCriteria.FeedbackType.RATING));
+        List<Feedback> feedbackList = getByTransitAndFeedbackCriteria(transitId,
+            FeedbackCriteria.FeedbackType.RATING);
+        List<Feedback> quantityFeedbackList = getByTransitAndFeedbackCriteria(transitId,
+            FeedbackCriteria.FeedbackType.QUALITY);
+
+        return DoubleStream.of(getAverageRate(feedbackList), getAverageQualityRate(quantityFeedbackList))
+            .average()
+            .orElse(0.0);
     }
 
     @Override
@@ -122,6 +127,7 @@ public class FeedbackServiceImpl implements FeedbackService {
             FeedbackCriteria.FeedbackType.QUALITY, userId);
 
         return DoubleStream.of(getAverageRate(feedbackList), getAverageQualityRate(quantityFeedbackList))
+            .filter(rate -> rate > 0)
             .average()
             .orElse(0.0);
     }
@@ -136,6 +142,7 @@ public class FeedbackServiceImpl implements FeedbackService {
 
         Map<Stop, Double> capacityMap = new TreeMap<>(Comparator.comparingInt(stopList::indexOf));
 
+//        ImmutableMap<Double, Stop> doubleStopImmutableMap = Maps.uniqueIndex(stopList, stop -> getCapacityByTransitAndStops(stop, capacityRouteFeedbackList, stopList));
         for (Stop stop : stopList) {
             capacityMap.put(stop, getCapacityByTransitAndStops(stop, capacityRouteFeedbackList, stopList));
         }
@@ -176,13 +183,14 @@ public class FeedbackServiceImpl implements FeedbackService {
      * @param transitId id of specified transit
      */
     @Override
-    public List<HeatMapDTO> getHeatMap(Integer transitId) {
-        List<Stop> stopList = stopService.getByTransitIdAndDirection(transitId, Stop.DIRECTION.FORWARD);
+    public List<HeatMapDTO> getHeatMap(Integer transitId, Stop... stops) {
+        List<Stop> stopList = stops.length > 0 ? Arrays.asList(stops)
+            : stopService.getByTransitIdAndDirection(transitId, Stop.DIRECTION.FORWARD);
         Map<String, Double> capacityMap = new TreeMap<>(Comparator.comparingInt(street -> stopList.stream().map(Stop::getStreet).collect(Collectors.toList()).indexOf(street)));
 
         Map<Integer, Double> hourCapacityMap = getHourCapacityMap(transitId);
         int averageHourCapacity = hourCapacityMap.values().stream().mapToInt(Number::intValue).sum();
-        Map<Stop, Double> stopCapacityMap = getStopCapacityMap(transitId, Stop.DIRECTION.FORWARD);
+        Map<Stop, Double> stopCapacityMap = getStopCapacityMap(transitId, Stop.DIRECTION.FORWARD, stops);
 
         return valueToReturn(stopList, capacityMap, hourCapacityMap, averageHourCapacity, stopCapacityMap);
     }
@@ -198,20 +206,6 @@ public class FeedbackServiceImpl implements FeedbackService {
         return divided / divider;
     }
 
-    /**
-     * Method to return default value in case of absence of proper data.
-     *
-     * @param accepterMap EnumMap which should be checked
-     */
-    private EnumMap<SimpleFeedback, Double> returnAccepterMapNonZeroValue(EnumMap<SimpleFeedback, Double> accepterMap) {
-        boolean isZero = false;
-        AtomicReference<Double> valueInMap = new AtomicReference<>((double) 0);
-        accepterMap.forEach((key, value) -> valueInMap.updateAndGet(v -> v + value));
-        if (valueInMap.get() == 0) {
-            accepterMap.put(SimpleFeedback.YES, (double) 1);
-        }
-        return accepterMap;
-    }
 
     /**
      * Method to create specific form of list of data for heatmap.
@@ -225,7 +219,7 @@ public class FeedbackServiceImpl implements FeedbackService {
 
             Double capacityFromHourCapacityMap = hourCapacityMap.get(i);
 
-            mapGegeration(stopList, capacityMap, averageHourCapacity, stopCapacityMap, capacityFromHourCapacityMap);
+            mapGeneration(stopList, capacityMap, averageHourCapacity, stopCapacityMap, capacityFromHourCapacityMap);
 
             heatMapDTOSetName(heatMapDTO, i);
 
@@ -255,7 +249,7 @@ public class FeedbackServiceImpl implements FeedbackService {
     /**
      * Method to write proper data to the capacity map
      */
-    private void mapGegeration(List<Stop> stopList, Map<String, Double> capacityMap, int averageHourCapacity,
+    private void mapGeneration(List<Stop> stopList, Map<String, Double> capacityMap, int averageHourCapacity,
                                Map<Stop, Double> stopCapacityMap, Double capacityFromHourCapacityMap) {
         for (Stop stop : stopList) {
             Double valueToSaveInMap;
@@ -298,7 +292,7 @@ public class FeedbackServiceImpl implements FeedbackService {
 
         return (fromStopIndex < toStopIndex) ? Range.closed(fromStopIndex, toStopIndex).contains(stopIndex)
             : Range.closed(toStopIndex, fromStopIndex).contains(stopIndex);
-    }
+}
 
     private Double getCapacityByTransitAndStops(Stop stop, List<CapacityRouteFeedback> capacityRouteFeedbackList,
                                                 List<Stop> stopList) {
@@ -306,7 +300,7 @@ public class FeedbackServiceImpl implements FeedbackService {
 
         return capacityRouteFeedbackList.stream()
             .filter(feedback -> existInStopIndexesRange(stopIndex, stopList.indexOf(feedback.getFrom()),
-                                                        stopList.indexOf(feedback.getTo())))
+                stopList.indexOf(feedback.getTo())))
             .mapToInt(CapacityRouteFeedback::getCapacity)
             .average()
             .orElse(0.0);
