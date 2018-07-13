@@ -5,7 +5,6 @@ public class UserValidationException extends RuntimeException {
 
     private final String message;
 
-
     public UserValidationException(String message) {
         this.message = message;
 

@@ -98,7 +98,8 @@ public class EmailService {
         }
     }
 
-    public void prepareAndSendFriendInvitationEmail(String friendEmail, String userName, String friendName, String invitationLink) {
+    public void prepareAndSendFriendInvitationEmail(String friendEmail, String userName, String friendName,
+            String invitationLink) {
         ExecutorService emailExecutor = Executors.newSingleThreadExecutor();
         try {
             emailExecutor.execute(() -> {
@@ -107,7 +108,8 @@ public class EmailService {
                     messageHelper.setFrom(emailFrom);
                     messageHelper.setTo(friendEmail);
                     messageHelper.setSubject(invitation);
-                    String content = emailContentBuilder.buildFriendInvitationHtml(userName, friendName, invitationLink);
+                    String content = emailContentBuilder.buildFriendInvitationHtml(userName, friendName,
+                            invitationLink);
                     messageHelper.setText(content, true);
                 };
                 mailSender.send(messagePreparator);
@@ -116,6 +118,5 @@ public class EmailService {
             emailExecutor.shutdown();
         }
     }
-
 
 }
