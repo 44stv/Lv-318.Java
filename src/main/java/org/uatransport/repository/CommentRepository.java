@@ -11,8 +11,8 @@ public interface CommentRepository extends JpaRepository<Comment, Integer> {
 
     List<Comment> findByUserId(Integer userId);
 
-    List<Comment> findByTransitIdAndLevel(Integer transitId, Integer level);
+    List<Comment> findByTransitIdAndLevelOrderByCreatedDateDesc(Integer transitId, Integer level);
 
-    List<Comment> findByParentCommentIdOrderByCreatedDateDesc(Integer parentId);
+    List<Comment> findByParentCommentIdOrderByCreatedDateAsc(Integer parentId);
 
 }

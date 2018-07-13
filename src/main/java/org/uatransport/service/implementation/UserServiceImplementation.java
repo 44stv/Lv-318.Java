@@ -145,8 +145,9 @@ public class UserServiceImplementation implements UserService {
         user.setPassword(userDTO.getPassword());
         user.setProvider(userDTO.getProvider());
         userRepository.save(user);
-        return jwtTokenProvider.createToken(user.getEmail(), user.getRole(),user.getId());
+        return jwtTokenProvider.createToken(user.getEmail(), user.getRole(), user.getId());
     }
+
     @Override
     public String singInWithSocial(UserDTO userDTO) {
         String username = userDTO.getEmail();
@@ -155,7 +156,8 @@ public class UserServiceImplementation implements UserService {
         if (userRepository.findProviderByEmail(username).equalsIgnoreCase(provider)) {
             try {
                 authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-                return jwtTokenProvider.createToken(username, userRepository.findByEmail(username).getRole(), userRepository.findByEmail(username).getId());
+                return jwtTokenProvider.createToken(username, userRepository.findByEmail(username).getRole(),
+                        userRepository.findByEmail(username).getId());
             } catch (AuthenticationException e) {
                 throw new SecurityJwtException("Can`t login", HttpStatus.UNPROCESSABLE_ENTITY);
             }
