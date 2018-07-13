@@ -16,8 +16,6 @@ public interface TransitService {
 
     Transit getById(Integer id);
 
-    Transit getByName(String name);
-
     Transit getByNameAndCategoryName(String name, String categoryName);
 
     Page<Transit> getAllByCategoryIdByPage(Integer id, Pageable pageable);
@@ -31,8 +29,6 @@ public interface TransitService {
     List<Transit> getAll(Specification specification);
 
     Transit update(Transit transit);
-
-    // Transit upsert(Transit transit);
 
     void delete(Integer id);
 

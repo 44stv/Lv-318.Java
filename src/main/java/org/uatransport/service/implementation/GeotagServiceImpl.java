@@ -68,9 +68,8 @@ public class GeotagServiceImpl implements GeotagService {
 
         Map<Geotag, Double> mapOfDistances = new HashMap<>();
 
-        Streams.stream(geotadRepository.findAll()).forEach(data -> {
-            mapOfDistances.put(data, distance(data.getLatitude(), data.getLongtitude(), latitude, longtitude));
-        });
+        Streams.stream(geotadRepository.findAll()).forEach(data -> mapOfDistances.put(data,
+                distance(data.getLatitude(), data.getLongtitude(), latitude, longtitude)));
 
         return mapOfDistances;
     }
