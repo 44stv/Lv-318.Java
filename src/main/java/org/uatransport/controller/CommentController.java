@@ -20,7 +20,6 @@ public class CommentController {
     private final ModelMapper modelMapper;
     private final CommentService commentService;
 
-    // @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping
     public ResponseEntity<CommentDTO> addComment(@RequestBody Comment comment,
             @RequestParam(value = "transitId") Integer transitId, @RequestParam(value = "userId") Integer userId,
@@ -28,12 +27,6 @@ public class CommentController {
         Comment addedComment = commentService.add(comment, transitId, userId, parentId);
         return new ResponseEntity<>(modelMapper.map(addedComment, CommentDTO.class), HttpStatus.CREATED);
     }
-
-    // test
-    // @GetMapping("/{id}")
-    // public CommentDTO getComment(@PathVariable Integer id) {
-    // return modelMapper.map(commentService.getById(id), CommentDTO.class);
-    // }
 
     @GetMapping("/{transitId}")
     public List<CommentDTO> getTransitComments(@PathVariable Integer transitId) {
