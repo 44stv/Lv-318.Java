@@ -45,7 +45,12 @@ public class UserServiceImplementation implements UserService {
         Integer id = userRepository.findByEmail(username).getId();
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+<<<<<<< HEAD
             return jwtTokenProvider.createToken(username, role,id);
+=======
+            return jwtTokenProvider.createToken(username, userRepository.findByEmail(username).getRole(),
+                    userRepository.findByEmail(username).getId());
+>>>>>>> 7691328991ad66bba87f8eb5f030f57eccb50799
         } catch (AuthenticationException e) {
             throw new SecurityJwtException("Invalid username/password supplied", HttpStatus.UNPROCESSABLE_ENTITY);
 
@@ -167,9 +172,7 @@ public class UserServiceImplementation implements UserService {
     @Transactional
     public void deleteByEmail(String userEmail) {
 
-        System.out.println(userRepository.findByEmail(userEmail));
-
-        if(userRepository.findByEmail(userEmail).getRole() == Role.UNACTIVATED){
+        if (userRepository.findByEmail(userEmail).getRole() == Role.UNACTIVATED) {
             userRepository.deleteByEmail(userEmail);
         }
     }
@@ -177,10 +180,12 @@ public class UserServiceImplementation implements UserService {
     @Override
     public boolean updatePassword(String name, String oldPassword, String newPassword) {
 
-        if(bcryptEncoder.matches(oldPassword,userRepository.findByEmail(name).getPassword())){
-         userRepository.save(userRepository.findByEmail(name).setPassword(bcryptEncoder.encode(newPassword)));
-         return true;
-        }else return false;
+        if (bcryptEncoder.matches(oldPassword, userRepository.findByEmail(name).getPassword())) {
+            userRepository.save(userRepository.findByEmail(name).setPassword(bcryptEncoder.encode(newPassword)));
+            return true;
+        } else {
+            return false;
+        }
 
     }
 }
