@@ -45,12 +45,7 @@ public class UserServiceImplementation implements UserService {
         Integer id = userRepository.findByEmail(username).getId();
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-<<<<<<< HEAD
             return jwtTokenProvider.createToken(username, role,id);
-=======
-            return jwtTokenProvider.createToken(username, userRepository.findByEmail(username).getRole(),
-                    userRepository.findByEmail(username).getId());
->>>>>>> 7691328991ad66bba87f8eb5f030f57eccb50799
         } catch (AuthenticationException e) {
             throw new SecurityJwtException("Invalid username/password supplied", HttpStatus.UNPROCESSABLE_ENTITY);
 
