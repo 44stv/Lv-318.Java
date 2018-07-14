@@ -8,10 +8,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.uatransport.entity.Feedback;
 import org.uatransport.entity.Transit;
 import org.uatransport.entity.dto.TransitDTO;
+import org.uatransport.service.FeedbackService;
 import org.uatransport.service.TransitService;
 
+import javax.websocket.server.PathParam;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,6 +24,7 @@ import java.util.stream.Collectors;
 public class TransitController {
     private final TransitService transitService;
     private final ModelMapper modelMapper;
+    private final FeedbackService feedbackService;
 
     @GetMapping("/{id}")
     public TransitDTO getTransitById(@PathVariable Integer id) {
@@ -77,4 +81,15 @@ public class TransitController {
     // Transit updatedTransit = transitService.upsert(modelMapper.map(transitDTO, Transit.class));
     // return new ResponseEntity<>(updatedTransit, HttpStatus.OK);
     // }
+
+    @GetMapping("/user/{id}")
+    public List<TransitDTO> getAllTransitsByUserId(@PathVariable Integer id) {
+        /*return transitService.getAll().stream().map(transit -> modelMapper.map(transit, TransitDTO.class))
+            .collect(Collectors.toList());*/
+
+        List<Transit> transits = feedbackService.getByUserId(id).stream().map(feedback -> feedback.getTransit()).collect(Collectors.toList());
+      return transits.stream().map(transit -> modelMapper.map(transit,TransitDTO.class)).collect(Collectors.toList());
+
+    }
+
 }
