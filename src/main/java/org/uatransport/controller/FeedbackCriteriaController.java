@@ -60,6 +60,12 @@ public class FeedbackCriteriaController {
 
     }
 
+    @GetMapping(params = "questionPriority")
+    public List<FeedbackCriteria> getByQuestionsPriority(@RequestParam(value = "priority") Integer priority) {
+        return feedbackCriteriaService.getByQuestionsId(priority);
+
+    }
+
     @GetMapping(params = "questionType")
     public List<FeedbackCriteria> getByQuestionsType(
             @RequestParam(value = "questionType") Question.QuestionType questionType) {

@@ -10,13 +10,15 @@ public interface UserService {
 
     User update(User user);
 
+    User getById(Integer id);
+
     void deleteById(int id);
 
     User getUser(Principal principal);
 
     String signin(LoginDTO loginDTO);
 
-    String signup(UserDTO user);
+    boolean signup(UserDTO user);
 
     User getUserByEmail(String userEmail);
 
@@ -27,5 +29,13 @@ public interface UserService {
     User updateUserRole(String role, String email);
 
     boolean existUserByEmail(String email);
+
+    void deleteByEmail(String userEmail);
+
+    boolean updatePassword(String name, String oldPassword, String newPassword);
+
+    String singInWithSocial(UserDTO userDTO);
+
+    String singUpWithSocial(UserDTO userDTO);
 
 }

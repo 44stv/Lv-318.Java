@@ -1,5 +1,6 @@
 package org.uatransport.service.implementation;
 
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -19,8 +20,10 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
-    private final CategoryRepository categoryRepository;
-    private final TransitRepository transitRepository;
+    @NonNull
+    private CategoryRepository categoryRepository;
+    @NonNull
+    private TransitRepository transitRepository;
 
     @Override
     @Transactional

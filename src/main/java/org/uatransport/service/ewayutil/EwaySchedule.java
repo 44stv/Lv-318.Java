@@ -13,8 +13,8 @@ public class EwaySchedule extends QuartzJobBean {
     private ConfigurableApplicationContext appContext;
 
     @Override
-    public void executeInternal(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        EwayRoutesListSaver saver = (EwayRoutesListSaver) appContext.getBean(EwayRoutesListSaver.class);
+    public void executeInternal(JobExecutionContext jobExecutionContext) {
+        EwayRoutesListSaver saver = appContext.getBean(EwayRoutesListSaver.class);
         saver.convertAndSaveEwayRoutes();
     }
 
@@ -30,7 +30,7 @@ public class EwaySchedule extends QuartzJobBean {
      */
     @Bean
     public Trigger routesListSaverJobTrigger() {
-        SimpleScheduleBuilder scheduleBuilder = SimpleScheduleBuilder.simpleSchedule().repeatForever();
+        SimpleScheduleBuilder.simpleSchedule().repeatForever();
         return TriggerBuilder.newTrigger().forJob(jobDetail()).withIdentity("jobTrigger")
                 .withDescription("Update list of transit and stops")
                 .withSchedule(CronScheduleBuilder.cronSchedule("0 0 1 ? * SUN")).build();
