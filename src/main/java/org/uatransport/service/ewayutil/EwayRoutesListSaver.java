@@ -11,7 +11,7 @@ import org.uatransport.config.SearchCategoryParam;
 import org.uatransport.entity.NonExtendableCategory;
 import org.uatransport.entity.Stop;
 import org.uatransport.entity.Transit;
-import org.uatransport.exception.ResourceNotFoundException;;
+import org.uatransport.exception.ResourceNotFoundException;
 import org.uatransport.service.CategoryService;
 import org.uatransport.service.StopService;
 import org.uatransport.service.TransitService;

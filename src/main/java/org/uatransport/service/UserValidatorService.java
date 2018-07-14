@@ -23,8 +23,8 @@ public interface UserValidatorService {
 
     boolean validateUserOnLogin(LoginDTO loginDTO) throws UserValidationException;
 
-    //TODO
+    // TODO
     boolean validateForUnactivating(String email);
 
-  void validateForActivating(String email) throws UserValidationException;
+    void validateForActivating(String email) throws UserValidationException;
 }
