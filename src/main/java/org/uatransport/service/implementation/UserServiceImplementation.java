@@ -1,8 +1,11 @@
 package org.uatransport.service.implementation;
 
+import com.google.common.base.Strings;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -150,6 +153,33 @@ public class UserServiceImplementation implements UserService {
         user.setProvider(userDTO.getProvider());
         userRepository.save(user);
         return jwtTokenProvider.createToken(user.getEmail(), user.getRole(), user.getId());
+    }
+
+    @Override
+    public Page<User> getAllUsers(Pageable pageable) {
+        return userRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<User> getByRole(String role, Pageable pageable) {
+        if (Strings.isNullOrEmpty(role)) {
+            throw new IllegalArgumentException("Role value should not be empty");
+        }
+        Role role1;
+        switch (role.toLowerCase()) {
+            case "manager":
+                role1 = Role.MANAGER;
+                break;
+            case "user":
+                role1 = Role.USER;
+                break;
+            case "admin":
+                role1 = Role.ADMIN;
+                break;
+            default:
+                role1 = Role.UNACTIVATED;
+        }
+        return userRepository.findAllByRole(role1, pageable);
     }
 
     @Override

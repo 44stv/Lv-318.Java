@@ -1,5 +1,7 @@
 package org.uatransport.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.uatransport.entity.User;
 import org.uatransport.entity.dto.LoginDTO;
 import org.uatransport.entity.dto.UserDTO;
@@ -37,5 +39,9 @@ public interface UserService {
     String singInWithSocial(UserDTO userDTO);
 
     String singUpWithSocial(UserDTO userDTO);
+
+    Page<User> getAllUsers(Pageable page);
+
+    Page<User> getByRole(String role, Pageable pageable);
 
 }

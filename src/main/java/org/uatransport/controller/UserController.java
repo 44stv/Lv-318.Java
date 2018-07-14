@@ -4,6 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailException;
@@ -156,13 +159,6 @@ public class UserController {
 
     }
 
-    @PutMapping("/update-role")
-    public ResponseEntity updateUserRole(@RequestBody UpdateUserRoleDTO updateUserRoleDTO) {
-        String role = updateUserRoleDTO.getRole();
-        String email = updateUserRoleDTO.getEmail();
-        return new ResponseEntity<>(userService.updateUserRole(role, email), HttpStatus.OK);
-    }
-
     @PostMapping("/social")
     public ResponseEntity socialSignIn(@RequestBody UserDTO userDTO, HttpServletResponse response) {
         String token;
@@ -216,4 +212,25 @@ public class UserController {
     public UserInfo getUserInfoById(@PathVariable("id") Integer id) {
         return modelMapper.map(userService.getById(id), UserInfo.class);
     }
+
+
+    @PutMapping("/update-role")
+    public ResponseEntity updateUserRole(@RequestBody UpdateUserRoleDTO updateUserRoleDTO) {
+        String role = updateUserRoleDTO.getRole();
+        String email = updateUserRoleDTO.getEmail();
+        return new ResponseEntity<>(userService.updateUserRole(role, email), HttpStatus.OK);
+    }
+
+    @Cacheable(cacheNames = "allUsers")
+    @GetMapping()
+    public Page<AllUsersDTO> getAllUsers(Pageable pageable) {
+        return userService.getAllUsers(pageable).map(user -> modelMapper.map(user, AllUsersDTO.class));
+    }
+
+    @Cacheable(cacheNames = "usersByRole")
+    @GetMapping(params = "role")
+    public Page<AllUsersDTO> getAllUsersByRole(@RequestParam("role") String role, Pageable pageable) {
+        return userService.getByRole(role, pageable).map(user -> modelMapper.map(user, AllUsersDTO.class));
+    }
+
 }
