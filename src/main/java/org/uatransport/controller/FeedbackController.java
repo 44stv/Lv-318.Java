@@ -69,12 +69,12 @@ public class FeedbackController {
     @GetMapping(value = "/byStops/{transitId}/direction/{direction}")
     public Map<Stop, Double> getCapacityStopMap(@PathVariable Integer transitId, @PathVariable String direction,
             @RequestParam(value = "stop-list[]", required = false) List<Stop> stopList) {
-        Stop.DIRECTION direction1;
+        Stop.Direction direction1;
         Stop[] stopsVarArg = stopList.toArray(new Stop[stopList.size()]);
         if (direction.equalsIgnoreCase("forward")) {
-            direction1 = Stop.DIRECTION.FORWARD;
+            direction1 = Stop.Direction.FORWARD;
         } else {
-            direction1 = Stop.DIRECTION.BACKWARD;
+            direction1 = Stop.Direction.BACKWARD;
         }
 
         return feedbackService.getStopCapacityMap(transitId, direction1, stopsVarArg);
