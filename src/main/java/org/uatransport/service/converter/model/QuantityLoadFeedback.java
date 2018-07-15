@@ -1,7 +1,7 @@
 package org.uatransport.service.converter.model;
 
 public enum QuantityLoadFeedback {
-    SIT(10), STAY(5), HARD_LOAD(2), LOSER(0);
+    EMPTY_TRANSPORT(10),  SIT(7), STAY(5), CROWDING(2), MISS(1), CRAZY_GRANDMA(-2);
 
     private final int rate;
 

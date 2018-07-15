@@ -54,7 +54,7 @@ public class StopController {
             transitToUpdate.getStops().add(stop);
             transitService.update(transitToUpdate);
             URI location = ServletUriComponentsBuilder.fromCurrentRequest().query("id={id}")
-                .buildAndExpand(savedPoint.getId()).toUri();
+                    .buildAndExpand(savedPoint.getId()).toUri();
             return ResponseEntity.created(location).build();
         } else {
             return ResponseEntity.unprocessableEntity().build();

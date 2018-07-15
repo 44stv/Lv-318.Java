@@ -8,9 +8,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.uatransport.service.ewayutil.EwayRoutesListSaver;
 
 
-//@EntityScan(
-//    basePackageClasses = {UaTransportApplication.class, Jsr310JpaConverters.class}
-//)
 @SpringBootApplication
 @EnableCaching
 @Slf4j

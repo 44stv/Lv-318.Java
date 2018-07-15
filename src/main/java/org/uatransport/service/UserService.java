@@ -10,6 +10,8 @@ public interface UserService {
 
     User update(User user);
 
+    User getById(Integer id);
+
     void deleteById(int id);
 
     User getUser(Principal principal);
@@ -31,4 +33,9 @@ public interface UserService {
     void deleteByEmail(String userEmail);
 
     boolean updatePassword(String name, String oldPassword, String newPassword);
+
+    String singInWithSocial(UserDTO userDTO);
+
+    String singUpWithSocial(UserDTO userDTO);
+
 }

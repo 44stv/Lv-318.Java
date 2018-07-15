@@ -1,8 +1,6 @@
 package org.uatransport.service.email;
 
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
@@ -17,8 +15,6 @@ import java.util.concurrent.Executors;
 @Service
 @Slf4j
 public class EmailService {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(EmailService.class);
 
     @Autowired
     private JavaMailSender mailSender;
@@ -98,7 +94,8 @@ public class EmailService {
         }
     }
 
-    public void prepareAndSendFriendInvitationEmail(String friendEmail, String userName, String friendName, String invitationLink) {
+    public void prepareAndSendFriendInvitationEmail(String friendEmail, String userName, String friendName,
+            String invitationLink) {
         ExecutorService emailExecutor = Executors.newSingleThreadExecutor();
         try {
             emailExecutor.execute(() -> {
@@ -107,7 +104,8 @@ public class EmailService {
                     messageHelper.setFrom(emailFrom);
                     messageHelper.setTo(friendEmail);
                     messageHelper.setSubject(invitation);
-                    String content = emailContentBuilder.buildFriendInvitationHtml(userName, friendName, invitationLink);
+                    String content = emailContentBuilder.buildFriendInvitationHtml(userName, friendName,
+                            invitationLink);
                     messageHelper.setText(content, true);
                 };
                 mailSender.send(messagePreparator);
@@ -116,6 +114,5 @@ public class EmailService {
             emailExecutor.shutdown();
         }
     }
-
 
 }

@@ -33,8 +33,5 @@ public class StopSearchSpecification implements Specification<Stop> {
         Predicate[] array = new Predicate[predicates.size()];
         predicates.toArray(array);
         return criteriaBuilder.and(array);
-        // query.distinct(true);
-        // return criteriaBuilder.like(criteriaBuilder.lower(root.get("street")),
-        // "%" + globalSearch.getGlobalSearch().toLowerCase() + "%");
     }
 }

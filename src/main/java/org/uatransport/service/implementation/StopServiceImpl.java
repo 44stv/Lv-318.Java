@@ -17,6 +17,7 @@ import java.util.List;
 @Transactional
 @RequiredArgsConstructor
 public class StopServiceImpl implements StopService {
+
     private final StopRepository stopRepository;
 
     @Override

@@ -16,6 +16,8 @@ public interface QuestionService {
 
     Question getById(Integer id);
 
+    List<Question> getByPriority(Integer priority);
+
     List<Question> getByName(String name);
 
     List<Question> getByFeedbackCriteriaId(Integer feedbackCriteriaId);

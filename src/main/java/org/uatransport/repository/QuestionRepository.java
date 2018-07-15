@@ -11,6 +11,8 @@ public interface QuestionRepository extends JpaRepository<Question, Integer> {
 
     Optional<Question> findById(Integer id);
 
+    List<Question> findByPriority(Integer priority);
+
     List<Question> findByName(String questionName);
 
     @Query(value = "SELECT * FROM question WHERE criteria_id = ?1", nativeQuery = true)

@@ -41,7 +41,7 @@ public interface FeedbackService {
 
     Map<Integer, Double> getHourCapacityMap(Integer transitId);
 
-    Map<Stop, Double> getStopCapacityMap(Integer transitId, Stop.Direction direction, Stop... stops);
+    Map<Stop, Double> getStopCapacityMap(Integer transitId, Stop.DIRECTION direction, Stop... stops);
 
     EnumMap<SimpleFeedback, Double> getSimpleAnswerPercentageMap(Integer transitId);
 
