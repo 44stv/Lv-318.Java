@@ -31,7 +31,7 @@ public class Question {
 
     @RequiredArgsConstructor
     public enum QuestionType {
-        SIMPLE, STOP, TIME, PERCENTAGE, QUANTITY_LOAD
+        SIMPLE, STOP, TIME, PERCENTAGE, QUANTITY_LOAD, CONFLICT
     }
 
 }
