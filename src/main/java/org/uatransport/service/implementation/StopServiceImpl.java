@@ -17,16 +17,15 @@ import java.util.List;
 @Transactional
 @RequiredArgsConstructor
 public class StopServiceImpl implements StopService {
-
     private final StopRepository stopRepository;
 
     @Override
-    public boolean existByCoordinatesAndDirection(Double lat, Double lng, Stop.DIRECTION direction) {
-        return stopRepository.existsByLatAndLngAndDirection(lat, lng, direction);
+    public Stop getByCoordinatesAndDirection(Double lat, Double lng, Stop.Direction direction) {
+        return stopRepository.findByLatAndLngAndDirection(lat, lng, direction);
     }
 
     @Override
-    public Stop getByLatAndLngAndDirection(Double lat, Double lng, Stop.DIRECTION direction) {
+    public Stop getByLatAndLngAndDirection(Double lat, Double lng, Stop.Direction direction) {
         return stopRepository.findByLatAndLngAndDirection(lat, lng, direction);
     }
 
@@ -43,7 +42,7 @@ public class StopServiceImpl implements StopService {
     @Transactional(readOnly = true)
     public Stop getById(Integer id) {
         return stopRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(String.format("Stop with id '%s' not found", id)));
+            .orElseThrow(() -> new ResourceNotFoundException(String.format("Stop with id '%s' not found", id)));
     }
 
     @Override
@@ -76,13 +75,13 @@ public class StopServiceImpl implements StopService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public Stop getByTransitIdAndStopNameAndDirection(Integer transitId, String street, Stop.DIRECTION direction) {
+    public Stop getByTransitIdAndStopNameAndDirection(Integer transitId, String street, Stop.Direction direction) {
         return stopRepository.findByTransitIdAndStopNameAndDirection(transitId, street, direction);
     }
 
     @Override
-    public List<Stop> getByTransitIdAndDirection(Integer id, Stop.DIRECTION direction) {
-        if (direction.equals(Stop.DIRECTION.FORWARD)) {
+    public List<Stop> getByTransitIdAndDirection(Integer id, Stop.Direction direction) {
+        if (direction.equals(Stop.Direction.FORWARD)) {
             return stopRepository.findForwardStopsByTransitId(id);
         }
         return stopRepository.findBackwardStopsByTransitId(id);
@@ -91,9 +90,9 @@ public class StopServiceImpl implements StopService {
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Integer getIndexByTransitIdAndStopNameAndDirection(Integer transitId, String street,
-            Stop.DIRECTION direction) {
+                                                              Stop.Direction direction) {
 
-            return stopRepository.findIndexByTransitIdAndStopNameAndDirection(transitId, street, direction);
+        return stopRepository.findIndexByTransitIdAndStopNameAndDirection(transitId, street, direction);
 
     }
 

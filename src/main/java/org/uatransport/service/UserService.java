@@ -16,7 +16,7 @@ public interface UserService {
 
     String signin(LoginDTO loginDTO);
 
-    String signup(UserDTO user);
+    boolean signup(UserDTO user);
 
     User getUserByEmail(String userEmail);
 
@@ -28,4 +28,7 @@ public interface UserService {
 
     boolean existUserByEmail(String email);
 
+    void deleteByEmail(String userEmail);
+
+    boolean updatePassword(String name, String oldPassword, String newPassword);
 }

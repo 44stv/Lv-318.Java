@@ -7,9 +7,9 @@ import java.util.List;
 
 public interface StopService {
 
-    boolean existByCoordinatesAndDirection(Double lat, Double lng, Stop.DIRECTION direction);
+    Stop getByCoordinatesAndDirection(Double lat, Double lng, Stop.Direction direction);
 
-    Stop getByLatAndLngAndDirection(Double lat, Double lng, Stop.DIRECTION direction);
+    Stop getByLatAndLngAndDirection(Double lat, Double lng, Stop.Direction direction);
 
     Stop save(Stop point);
 
@@ -21,12 +21,12 @@ public interface StopService {
 
     List<Stop> getByTransitId(Integer id);
 
-    Stop getByTransitIdAndStopNameAndDirection(Integer transitId, String street, Stop.DIRECTION direction);
+    Stop getByTransitIdAndStopNameAndDirection(Integer transitId, String street, Stop.Direction direction);
 
-    List<Stop> getByTransitIdAndDirection(Integer id, Stop.DIRECTION direction);
+    List<Stop> getByTransitIdAndDirection(Integer id, Stop.Direction direction);
 
     List<Stop> getAll(Specification specification);
 
-    Integer getIndexByTransitIdAndStopNameAndDirection(Integer transitId, String street, Stop.DIRECTION direction);
+    Integer getIndexByTransitIdAndStopNameAndDirection(Integer transitId, String street, Stop.Direction direction);
 
 }
