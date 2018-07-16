@@ -15,7 +15,7 @@ public class EwaySchedule extends QuartzJobBean {
     @Override
     public void executeInternal(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         EwayRoutesListSaver saver = appContext.getBean(EwayRoutesListSaver.class);
-//        saver.updateRoutes();
+          saver.updateRoutes();
     }
 
     @Bean
