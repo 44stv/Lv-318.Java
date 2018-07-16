@@ -103,6 +103,21 @@ public class CommentServiceImpl implements CommentService {
         comment.setModifiedDate(LocalDateTime.now());
 
         return commentRepository.save(comment);
+    }
+
+    @Override
+    public Comment addPics(String images, Integer commentId) {
+        Comment comment;
+
+        if (commentRepository.existsById(commentId)) {
+            comment = getById(commentId);
+        } else {
+            throw new ResourceNotFoundException(String.format("Comment with id '%s' not found", commentId));
+        }
+
+        comment.setImages(images);
+
+        return commentRepository.save(comment);
 
     }
 
