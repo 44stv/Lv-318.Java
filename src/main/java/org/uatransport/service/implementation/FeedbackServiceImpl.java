@@ -359,7 +359,7 @@ public class FeedbackServiceImpl implements FeedbackService {
         return feedbackList.stream()
             .mapToDouble(new ConflictTypeConverter()::convert)
             .average()
-            .orElse(10);
+            .orElse(0.0);
     }
 
 }
