@@ -357,7 +357,7 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     private Double getAverageConflictFeedBacksRate(List<Feedback> feedbackList) {
         return feedbackList.stream()
-            .mapToDouble(new RatingConverter()::convert)
+            .mapToDouble(new ConflictTypeConverter()::convert)
             .average()
             .orElse(10);
     }
