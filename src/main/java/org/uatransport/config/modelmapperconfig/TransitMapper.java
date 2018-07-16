@@ -12,7 +12,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class TransitMap implements Converter<Transit, TransitDTO> {
+public class TransitMapper implements Converter<Transit, TransitDTO> {
 
     @Override
     public TransitDTO convert(MappingContext<Transit, TransitDTO> mappingContext) {

@@ -70,6 +70,11 @@ public class UserServiceImplementation implements UserService {
     }
 
     @Override
+    public User getById(Integer id) {
+        return userRepository.getOne(id);
+    }
+
+    @Override
     public void activateUserByEmail(String userEmail) {
 
         User user = userRepository.findByEmail(userEmail);

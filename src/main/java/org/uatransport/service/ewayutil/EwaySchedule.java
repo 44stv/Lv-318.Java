@@ -13,9 +13,9 @@ public class EwaySchedule extends QuartzJobBean {
     private ConfigurableApplicationContext appContext;
 
     @Override
-    public void executeInternal(JobExecutionContext jobExecutionContext) {
+    public void executeInternal(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         EwayRoutesListSaver saver = appContext.getBean(EwayRoutesListSaver.class);
-        saver.convertAndSaveEwayRoutes();
+        saver.updateRoutes();
     }
 
     @Bean
@@ -28,11 +28,11 @@ public class EwaySchedule extends QuartzJobBean {
      * For init local DB change "second minutes hours * * ?" to time you wish. for example : "0 30 15 * * ?" - works at
      * 15:30:00 every day. After using set for our application : "0 5 2 ? * SAT" - works at 02:05:00 every Saturday.
      */
-    @Bean
+//    @Bean
     public Trigger routesListSaverJobTrigger() {
-        SimpleScheduleBuilder.simpleSchedule().repeatForever();
+      SimpleScheduleBuilder.simpleSchedule().repeatForever();
         return TriggerBuilder.newTrigger().forJob(jobDetail()).withIdentity("jobTrigger")
                 .withDescription("Update list of transit and stops")
-                .withSchedule(CronScheduleBuilder.cronSchedule("0 5 2 ? * SAT")).build();
+                .withSchedule(CronScheduleBuilder.cronSchedule(EwayConfig.getProperty("update-date"))).build();
     }
 }

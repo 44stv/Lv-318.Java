@@ -1,6 +1,7 @@
 package org.uatransport.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -28,6 +29,8 @@ import java.util.UUID;
 public class UserController {
 
     private final UserService userService;
+    private final ModelMapper modelMapper;
+
     @Autowired
     private TemporaryDataConfirmationService temporaryDataConfirmationService;
 
@@ -207,5 +210,10 @@ public class UserController {
             return new ResponseEntity<>(new InfoResponse("Invalid old password"), HttpStatus.BAD_REQUEST);
         }
 
+    }
+
+    @GetMapping("/info/{id}")
+    public UserInfo getUserInfoById(@PathVariable("id") Integer id) {
+        return modelMapper.map(userService.getById(id), UserInfo.class);
     }
 }
