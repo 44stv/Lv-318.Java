@@ -13,7 +13,7 @@ import javax.persistence.*;
 @Accessors(chain = true)
 public class Stop {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
     private Integer id;
 
@@ -25,10 +25,10 @@ public class Stop {
 
     @Enumerated(value = EnumType.STRING)
     @Column(name = "dir", updatable = false)
-    private Stop.DIRECTION direction;
+    private Direction direction;
 
     @RequiredArgsConstructor
-    public enum DIRECTION {
+    public enum Direction {
         FORWARD, BACKWARD
     }
 

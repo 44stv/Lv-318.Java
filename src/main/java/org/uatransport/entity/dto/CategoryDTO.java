@@ -12,4 +12,5 @@ public class CategoryDTO {
     ExtendableCategory nextLevelCategory;
     String iconURL;
     Integer countOfTransits;
+    Double rating;
 }

@@ -133,7 +133,7 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     @Override
     @Transactional(readOnly = true)
-    public Map<Stop, Double> getStopCapacityMap(Integer transitId, Stop.DIRECTION direction, Stop... stops) {
+    public Map<Stop, Double> getStopCapacityMap(Integer transitId, Stop.Direction direction, Stop... stops) {
 
         List<Stop> stopList = stops.length > 0 ? Arrays.asList(stops)
             : stopService.getByTransitIdAndDirection(transitId, direction);
@@ -156,7 +156,7 @@ public class FeedbackServiceImpl implements FeedbackService {
         for (SimpleFeedback simpleFeedback : SimpleFeedback.values()) {
 
             double percentValue = 100 * safeDivision(countByValue(simpleFeedback, transitId),
-                    (double) countAllAccepterFeedBacks(transitId));
+                (double) countAllAccepterFeedBacks(transitId));
             simpleFeedbackDoubleEnumMap.put(simpleFeedback, percentValue);
         }
 
@@ -185,13 +185,13 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Override
     public List<HeatMapDTO> getHeatMap(Integer transitId, Stop... stops) {
         List<Stop> stopList = stops.length > 0 ? Arrays.asList(stops)
-                : stopService.getByTransitIdAndDirection(transitId, Stop.DIRECTION.FORWARD);
+            : stopService.getByTransitIdAndDirection(transitId, Stop.Direction.FORWARD);
         Map<String, Double> capacityMap = new TreeMap<>(Comparator.comparingInt(
-                street -> stopList.stream().map(Stop::getStreet).collect(Collectors.toList()).indexOf(street)));
+            street -> stopList.stream().map(Stop::getStreet).collect(Collectors.toList()).indexOf(street)));
 
         Map<Integer, Double> hourCapacityMap = getHourCapacityMap(transitId);
         int averageHourCapacity = hourCapacityMap.values().stream().mapToInt(Number::intValue).sum();
-        Map<Stop, Double> stopCapacityMap = getStopCapacityMap(transitId, Stop.DIRECTION.FORWARD, stops);
+        Map<Stop, Double> stopCapacityMap = getStopCapacityMap(transitId, Stop.Direction.FORWARD, stops);
 
         return valueToReturn(stopList, capacityMap, hourCapacityMap, averageHourCapacity, stopCapacityMap);
     }
@@ -210,7 +210,7 @@ public class FeedbackServiceImpl implements FeedbackService {
      * Method to create specific form of list of data for heatmap.
      */
     private List<HeatMapDTO> valueToReturn(List<Stop> stopList, Map<String, Double> capacityMap,
-            Map<Integer, Double> hourCapacityMap, int averageHourCapacity, Map<Stop, Double> stopCapacityMap) {
+                                           Map<Integer, Double> hourCapacityMap, int averageHourCapacity, Map<Stop, Double> stopCapacityMap) {
         List<HeatMapDTO> valueToReturn = new ArrayList<>();
 
         for (int i = 0; i < 24; i++) {
@@ -285,7 +285,7 @@ public class FeedbackServiceImpl implements FeedbackService {
 
         return (fromStopIndex < toStopIndex) ? Range.closed(fromStopIndex, toStopIndex).contains(stopIndex)
             : Range.closed(toStopIndex, fromStopIndex).contains(stopIndex);
-}
+    }
 
     private Double getCapacityByTransitAndStops(Stop stop, List<CapacityRouteFeedback> capacityRouteFeedbackList,
                                                 List<Stop> stopList) {
