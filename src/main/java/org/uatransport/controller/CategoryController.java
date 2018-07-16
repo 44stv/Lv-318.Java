@@ -1,6 +1,7 @@
 package org.uatransport.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -10,18 +11,21 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.uatransport.config.SearchCategoryParam;
 import org.uatransport.entity.ExtendableCategory;
 import org.uatransport.entity.dto.CategoryDTO;
+import org.uatransport.entity.dto.ExCategoryDTO;
 import org.uatransport.service.CategoryService;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/category")
 @RequiredArgsConstructor
 public class CategoryController {
     private final CategoryService categoryService;
+    private final ModelMapper modelMapper;
 
     @GetMapping("/top")
     public List<ExtendableCategory> getTop() {
@@ -69,4 +73,5 @@ public class CategoryController {
         response.setContentType(MediaType.IMAGE_PNG_VALUE);
         StreamUtils.copy(imgFile.getInputStream(), response.getOutputStream());
     }
+
 }

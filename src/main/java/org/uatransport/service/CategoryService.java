@@ -24,4 +24,8 @@ public interface CategoryService {
 
     List<CategoryDTO> getAllWithCountOfTransits(SearchCategoryParam searchCategoryParam);
 
+    List<ExtendableCategory> findByNextLevelCategory_Name(String name);
+
+    ExtendableCategory findByNameAndNextLevelCategory_Name(String name, String nextLevelName);
+
 }

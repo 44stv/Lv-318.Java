@@ -7,9 +7,9 @@ import org.uatransport.entity.ExtendableCategory;
 @Data
 @AllArgsConstructor
 public class CategoryDTO {
-    Integer id;
-    String name;
-    ExtendableCategory nextLevelCategory;
-    String iconURL;
-    Integer countOfTransits;
+    private Integer id;
+    private String name;
+    private ExtendableCategory nextLevelCategory;
+    private String iconURL;
+    private Integer countOfTransits;
 }

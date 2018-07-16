@@ -8,13 +8,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.uatransport.entity.Feedback;
 import org.uatransport.entity.Transit;
 import org.uatransport.entity.dto.TransitDTO;
 import org.uatransport.service.FeedbackService;
 import org.uatransport.service.TransitService;
 
-import javax.websocket.server.PathParam;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,29 +32,29 @@ public class TransitController {
     @GetMapping
     public List<TransitDTO> getAllTransits() {
         return transitService.getAll().stream().map(transit -> modelMapper.map(transit, TransitDTO.class))
-                .collect(Collectors.toList());
+            .collect(Collectors.toList());
     }
 
     @Cacheable(cacheNames = "categoryTransits")
     @GetMapping(params = "categoryId")
     public Page<TransitDTO> getTransitsByCategoryId(@RequestParam("categoryId") Integer categoryId, Pageable pageable) {
         return transitService.getAllByCategoryIdByPage(categoryId, pageable)
-                .map(transit -> modelMapper.map(transit, TransitDTO.class));
+            .map(transit -> modelMapper.map(transit, TransitDTO.class));
     }
 
     @GetMapping(params = "nextLevelCategoryId")
     public List<TransitDTO> getTransitsByNextLevelCategoryId(
-            @RequestParam("nextLevelCategoryId") Integer nextLevelCategoryId) {
+        @RequestParam("nextLevelCategoryId") Integer nextLevelCategoryId) {
         return transitService.getAllByNextLevelCategoryId(nextLevelCategoryId).stream()
-                .map(transit -> modelMapper.map(transit, TransitDTO.class)).collect(Collectors.toList());
+            .map(transit -> modelMapper.map(transit, TransitDTO.class)).collect(Collectors.toList());
     }
 
     @Cacheable(cacheNames = "cityTransits")
     @GetMapping(params = "nextLevelCategoryName")
     public Page<TransitDTO> getTransitsByNextLevelCategoryName(
-            @RequestParam("nextLevelCategoryName") String nextLevelCategoryName, Pageable pageable) {
+        @RequestParam("nextLevelCategoryName") String nextLevelCategoryName, Pageable pageable) {
         return transitService.getAllByNextLevelCategoryNameByPage(nextLevelCategoryName, pageable)
-                .map(transit -> modelMapper.map(transit, TransitDTO.class));
+            .map(transit -> modelMapper.map(transit, TransitDTO.class));
     }
 
     @PostMapping
@@ -79,12 +77,10 @@ public class TransitController {
 
     @GetMapping("/user/{id}")
     public List<TransitDTO> getAllTransitsByUserId(@PathVariable Integer id) {
-        /*return transitService.getAll().stream().map(transit -> modelMapper.map(transit, TransitDTO.class))
-            .collect(Collectors.toList());*/
-
-        List<Transit> transits = feedbackService.getByUserId(id).stream().map(feedback -> feedback.getTransit()).collect(Collectors.toList());
-      return transits.stream().map(transit -> modelMapper.map(transit,TransitDTO.class)).collect(Collectors.toList());
+        List<Transit> transits = feedbackService.getByUserId(id).stream().map(feedback -> feedback.getTransit()).distinct().limit(5).collect(Collectors.toList());
+        return transits.stream().map(transit -> modelMapper.map(transit, TransitDTO.class)).collect(Collectors.toList());
 
     }
+
 
 }

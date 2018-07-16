@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.client.RestTemplate;
 import org.uatransport.security.JwtTokenFilterConfigurer;
 import org.uatransport.security.JwtTokenProvider;
 
@@ -31,9 +32,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests()
 
-                .antMatchers("/user/signin", "/user/activate/**", "/user/**", "/user/signup", "/stop/**", "/transit/**",
+                .antMatchers("/user/signin", "/user/activate/**", "/user/**", "/user/signup", "/stop/**",
                         "/category/**", "/feedback/**", "/feedback-criteria/**", "/question/**", "/location/**",
-                        "/actuator/health", "/search/**", "/comment/**")
+                        "/actuator/health", "/search/**", "/comment/**","/telegram/**")
                 .permitAll().antMatchers(HttpMethod.OPTIONS, "/**").permitAll().anyRequest().authenticated();
 
         http.apply(new JwtTokenFilterConfigurer(jwtTokenProvider));
@@ -47,5 +48,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
+    }
+
+    @Bean
+    public RestTemplate restTemplate(){
+        return new RestTemplate();
     }
 }

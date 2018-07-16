@@ -5,6 +5,7 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -55,6 +56,12 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     @ExceptionHandler(value = SecurityJwtException.class)
     protected ResponseEntity<Object> handleConflict(SecurityJwtException ex, WebRequest request) {
         final ApiError apiError = new ApiError(ex.getHttpStatus(), ex);
+        apiError.setMessage(ex.getMessage());
+        return handleExceptionInternal(ex, apiError, HTTP_HEADERS, apiError.getStatus(), request);
+    }
+    @ExceptionHandler(value = AccessDeniedException.class)
+    protected ResponseEntity<Object> handleConflict(AccessDeniedException ex, WebRequest request) {
+        final ApiError apiError = new ApiError(HttpStatus.FORBIDDEN, ex);
         apiError.setMessage(ex.getMessage());
         return handleExceptionInternal(ex, apiError, HTTP_HEADERS, apiError.getStatus(), request);
     }

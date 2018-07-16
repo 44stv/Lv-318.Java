@@ -1,5 +1,6 @@
 package org.uatransport.service.implementation;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -12,10 +13,10 @@ import org.uatransport.repository.UserRepository;
 import org.uatransport.service.UserValidatorService;
 
 @Component
+@RequiredArgsConstructor
 public class UserValidatorServiceImp implements UserValidatorService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Value("${validation.email.regex}")
     private String regex;
@@ -104,10 +105,10 @@ public class UserValidatorServiceImp implements UserValidatorService {
     }
 
     @Override
-    public boolean validateUserOnLogin(LoginDTO loginDTO) throws UserValidationException {
+    public void validateUserOnLogin(LoginDTO loginDTO) throws UserValidationException {
         validateEmailOnLogin(loginDTO.getEmail());
         validatePassword(loginDTO.getPassword());
-        return true;
+
     }
 
     // TODO

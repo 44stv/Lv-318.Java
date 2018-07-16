@@ -16,11 +16,4 @@ public class UaTransportApplication {
         log.debug("--Application Started--");
     }
 
-   /* List<Feedback> feedbacks= context.getBean(FeedbackService.class).getByUserId(1);
-    List<Transit> transits = new ArrayList<>();
-for (int i = 0; i < feedbacks.size(); i++) {
-        transits.add(feedbacks.get(i).getTransit());
-    }*/
-   /*Optional<Transit> transit =  context.getBean(TransitRepository.class).findById(35);
-context.getBean(ModelMapper.class).map(transit,TransitDTO.class);*/
 }

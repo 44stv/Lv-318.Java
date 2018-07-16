@@ -10,7 +10,7 @@ public interface FeedbackRepository extends CrudRepository<Feedback, Integer> {
 
     List<Feedback> findByTransitId(Integer id);
 
-    List<Feedback> findDistinctByUser(Integer id);
+    List<Feedback> findByUserIdOrderByDateDesc(Integer id);
 
     List<Feedback> findByFeedbackCriteriaId(Integer id);
 

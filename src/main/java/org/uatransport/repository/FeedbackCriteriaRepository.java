@@ -30,4 +30,7 @@ public interface FeedbackCriteriaRepository extends JpaRepository<FeedbackCriter
 
     List<FeedbackCriteria> findByQuestionsPriority(Integer priority);
 
+    @Query(value = "SELECT * FROM feedback_criteria WHERE category_id =? AND  type= ?", nativeQuery = true)
+    FeedbackCriteria findFeedbackCriteriaByTypeAndNonExtendableCategoryId(Integer categoryId, String type);
+
 }

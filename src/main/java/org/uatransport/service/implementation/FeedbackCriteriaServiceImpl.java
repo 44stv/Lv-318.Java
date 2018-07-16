@@ -90,6 +90,11 @@ public class FeedbackCriteriaServiceImpl implements FeedbackCriteriaService {
     }
 
     @Override
+    public FeedbackCriteria getFeedbackCriteriaByTypeAndCategoryId(Integer categoryId, String type) {
+        return feedbackCriteriaRepository.findFeedbackCriteriaByTypeAndNonExtendableCategoryId(categoryId,type);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public List<String> getAllEnumsType() {
         List<String> allEnumTypes = new ArrayList<>();

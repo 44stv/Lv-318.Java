@@ -72,6 +72,11 @@ public class TransitServiceImpl implements TransitService {
     }
 
     @Override
+    public Transit findByNameAndCategory_Id(String name, Integer categoryId) {
+        return transitRepository.findByNameAndCategory_Id(name, categoryId);
+    }
+
+    @Override
     @Transactional
     public Transit update(Transit transit) {
         if (transit == null) {
