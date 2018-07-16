@@ -55,7 +55,6 @@ public class EwayRoutesListSaver {
             transitService.add(
                 new Transit().setName(route.getTitle()).setCategory(category).setStops(stops)
             );
-
         } else {
             transit.setStops(stops);
             transitService.update(transit);
