@@ -5,7 +5,10 @@ import com.google.common.util.concurrent.RateLimiter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.http.client.utils.URIBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.uatransport.config.SearchCategoryParam;
@@ -22,7 +25,9 @@ import org.uatransport.service.ewayutil.ewaystopentity.EwayPoint;
 import org.uatransport.service.ewayutil.ewaystopentity.EwayStopResponse;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 @RequiredArgsConstructor
 @Service
@@ -39,27 +44,25 @@ public class EwayRoutesListSaver {
         }
     }
 
-
     @Transactional
     public void updateRoute(EwayRoute route) {
-        NonExtendableCategory category = getCategoryByTransportType(route.getTransport());
+        NonExtendableCategory category = getCategoryByTransportType(route);
 
         Transit transit = transitService.getByNameAndCategoryName(route.getTitle(), category.getName());
         List<Stop> stops = convertAndSaveStops(route.getId().toString());
 
         if (transit == null) {
-            transit = transitService.add(
+            transitService.add(
                 new Transit().setName(route.getTitle()).setCategory(category).setStops(stops)
             );
-        }
-        else {
+
+        } else {
             transit.setStops(stops);
             transitService.update(transit);
         }
     }
 
-    @Transactional
-    public List<Stop> convertAndSaveStops(String routeId) {
+    private List<Stop> convertAndSaveStops(String routeId) {
         List<Stop> stops = new ArrayList<>();
         for (EwayPoint point : getStopsObject(routeId).getRoute().getPoints().getPoint()) {
             if (point.getTitle() != null) {
@@ -77,28 +80,36 @@ public class EwayRoutesListSaver {
                     stop.setDirection(direction);
                 }
                 stops.add(stop);
+                stopService.save(stop);
             }
         }
         rateLimiter.acquire();
         return stops;
     }
 
-    private NonExtendableCategory getCategoryByTransportType(String transportType) {
+    private NonExtendableCategory getCategoryByTransportType(EwayRoute route) {
+        boolean isBusType = route.getTransport().equals(EwayConfig.getProperty("ewayBusType"));
+        boolean isBusNumber = Stream.of(busNumbers).anyMatch(route.getTitle()::equals);
+
         SearchCategoryParam searchCategoryParam = new SearchCategoryParam();
         searchCategoryParam.setFirstNestedCategoryName(EwayConfig.getProperty("extendCategory"));
-        switch (transportType) {
-            case "bus":
-                searchCategoryParam.setName(EwayConfig.getProperty("marshrutkaCategoryName"));
-                break;
-            case "trol":
-                searchCategoryParam.setName(EwayConfig.getProperty("trolCategoryName"));
-                break;
-            case "tram":
-                searchCategoryParam.setName(EwayConfig.getProperty("tramCategoryName"));
-                break;
-            default:
-                searchCategoryParam.setName(EwayConfig.getProperty("busCategoryName"));
+
+        if (isBusType && isBusNumber) {
+            searchCategoryParam.setName(EwayConfig.getProperty("busCategoryName"));
+        } else {
+            switch (route.getTransport()) {
+                case "bus":
+                    searchCategoryParam.setName(EwayConfig.getProperty("marshrutkaCategoryName"));
+                    break;
+                case "trol":
+                    searchCategoryParam.setName(EwayConfig.getProperty("trolCategoryName"));
+                    break;
+                case "tram":
+                    searchCategoryParam.setName(EwayConfig.getProperty("tramCategoryName"));
+                    break;
+            }
         }
+
         return (NonExtendableCategory) categoryService.getAll(searchCategoryParam).stream().findFirst()
             .orElseThrow(() -> new ResourceNotFoundException("There no category with such parameters"));
     }
