@@ -17,7 +17,9 @@ public interface CommentService {
 
     List<Comment> getAllByParentId(Integer parentId);
 
-    Comment update(Comment newData, Integer commentId) throws TimeExpiredException;
+    Comment addPics(String images, Integer commentId);
+
+    Comment update(Comment newComment, Integer commentId) throws TimeExpiredException;
 
     void delete(Integer commendId) throws TimeExpiredException;
 
