@@ -110,9 +110,9 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     @Override
     @Transactional(readOnly = true)
-    public Double getRatingByCategoryId(Integer categoryId) {
+    public Double getRatingByTransitCategoryId(Integer transitCategoryId) {
 
-        return getAverageRate(getByTransitCategoryIdAndFeedbackCriteriaType(categoryId,
+        return getAverageRate(getByTransitCategoryIdAndFeedbackCriteriaType(transitCategoryId,
             FeedbackCriteria.FeedbackType.RATING));
     }
 
@@ -205,7 +205,7 @@ public class FeedbackServiceImpl implements FeedbackService {
         if (divider == 0) {
             return 0;
         }
-        return (double) divided / divider;
+        return  divided.doubleValue() / divider;
     }
 
     /**
@@ -309,7 +309,6 @@ public class FeedbackServiceImpl implements FeedbackService {
     }
 
     private Long countByValue(SimpleFeedback answer, Integer transitId) {
-
         return convertSimpleFeedBacks(transitId).stream()
             .filter(simpleFeedback -> simpleFeedback == answer)
             .count();

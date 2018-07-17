@@ -53,7 +53,7 @@ public class FeedbackController {
 
     @GetMapping(value = "/categoryRating/{categoryId}")
     public Double getRatingByCategoryId(@PathVariable Integer categoryId) {
-        return feedbackService.getRatingByCategoryId(categoryId);
+        return feedbackService.getRatingByTransitCategoryId(categoryId);
     }
 
     @GetMapping(value = "/rating/{transitId}/user/{userId}")

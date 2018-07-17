@@ -108,7 +108,7 @@ public class CategoryServiceImpl implements CategoryService {
             CategoryDTO categoryDTO = new CategoryDTO(category.getId(), category.getName(),
                     category.getNextLevelCategory(), category.getIconURL(),
                     transitRepository.countAllByCategoryId(category.getId()),
-                feedbackService.getRatingByCategoryId(category.getId()));
+                feedbackService.getRatingByTransitCategoryId(category.getId()));
             list.add(categoryDTO);
         }
         return list;

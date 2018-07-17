@@ -35,7 +35,7 @@ public interface FeedbackService {
 
     Double getRatingByTransitId(Integer transitId);
 
-    Double getRatingByCategoryId(Integer categoryId);
+    Double getRatingByTransitCategoryId(Integer transitCategoryId);
 
     Double getRatingByTransitIdAndUserId(Integer transitId, Integer userId);
 
