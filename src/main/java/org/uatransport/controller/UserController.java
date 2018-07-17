@@ -2,8 +2,10 @@ package org.uatransport.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailException;
@@ -11,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import org.uatransport.entity.*;
 import org.uatransport.entity.dto.*;
 import org.uatransport.exception.EmailSendException;
+import org.uatransport.exception.SecurityJwtException;
+import org.uatransport.security.JwtTokenProvider;
 import org.uatransport.service.TemporaryDataConfirmationService;
 import org.uatransport.service.UserService;
 import org.uatransport.service.UserValidatorService;
@@ -18,6 +22,7 @@ import org.uatransport.service.email.EmailService;
 import org.uatransport.service.implementation.ExpirationCheckService;
 
 import javax.servlet.http.HttpServletResponse;
+import java.security.GeneralSecurityException;
 import java.security.Principal;
 import java.util.Optional;
 import java.util.UUID;
@@ -25,37 +30,34 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
-@CrossOrigin
+
 public class UserController {
-
-    private final UserService userService;
-    private final ModelMapper modelMapper;
-
-    @Autowired
-    private TemporaryDataConfirmationService temporaryDataConfirmationService;
-
-    @Autowired
-    private EmailService emailService;
-
-    @Autowired
-    private ExpirationCheckService expirationCheckService;
 
     @Value("${server.url}")
     private String serverUrl;
 
-    @Value("localhost:4200/main")
+    @Value("${server.invitationLink}")
     private String invitationLink;
 
-    @Autowired
-    private UserValidatorService userValidatorService;
+    private final UserService userService;
+    private final ModelMapper modelMapper;
+    private final TemporaryDataConfirmationService temporaryDataConfirmationService;
+    private final EmailService emailService;
+    private final ExpirationCheckService expirationCheckService;
+    private final UserValidatorService userValidatorService;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/signup")
     public ResponseEntity signUp(@RequestBody UserDTO userDTO) {
         userValidatorService.validateUserOnRegistration(userDTO);
 
-        if (!userValidatorService.validateForUnactivating(userDTO.getEmail())) {
-            userService.signup(userDTO);
+        if (userValidatorService.validateForUnactivating(userDTO.getEmail())) {
+
+            userService.deleteByEmail(userDTO.getEmail());
         }
+
+        userService.signup(userDTO);
+
         final String uuid = UUID.randomUUID().toString().replace("-", "");
         final String confirmUrl = serverUrl + "/main/user/activate/" + uuid;
         String email = userDTO.getEmail();
@@ -144,9 +146,6 @@ public class UserController {
 
         temporaryDataConfirmationService.save(temporaryDataConfirmationService.makePasswordConfirmationEntity(uuid,
                 forgetPasswordDTO.getPassword(), userEmail));
-        temporaryDataConfirmationService.save(temporaryDataConfirmationService.makePasswordConfirmationEntity(uuid,
-                forgetPasswordDTO.getPassword(), userEmail));
-
         try {
             emailService.prepareAndSendConfirmPassEmail(userEmail, firstName, confirmUrl);
         } catch (MailException e) {
@@ -156,33 +155,52 @@ public class UserController {
 
     }
 
-    @PutMapping("/update-role")
-    public ResponseEntity updateUserRole(@RequestBody UpdateUserRoleDTO updateUserRoleDTO) {
-        String role = updateUserRoleDTO.getRole();
-        String email = updateUserRoleDTO.getEmail();
-        return new ResponseEntity<>(userService.updateUserRole(role, email), HttpStatus.OK);
+    @PostMapping(value = "/update/password")
+    public ResponseEntity saveUserPassword(@RequestBody String uuidFromUrl) {
+        Optional<TemporaryDataConfirmation> checkedTemporaryDataConfirmation = expirationCheckService
+                .getTemporaryDataConfirmationWithExpirationChecking(uuidFromUrl);
+        if (checkedTemporaryDataConfirmation.isPresent()) {
+            if ((uuidFromUrl.equals(checkedTemporaryDataConfirmation.get().getUuid()))
+                    && (checkedTemporaryDataConfirmation.get()
+                            .getConfirmationType() == ConfirmationType.PASSWORD_CONFIRM)) {
+                String newPassword = checkedTemporaryDataConfirmation.get().getNewPassword();
+                String userEmail = checkedTemporaryDataConfirmation.get().getUserEmail();
+
+                userService.updateUserEncodedPassword(newPassword, userEmail);
+                temporaryDataConfirmationService.delete(checkedTemporaryDataConfirmation.get());
+
+                return ResponseEntity.status(HttpStatus.OK)
+                        .body(new InfoResponse("You are successfully updated password"));
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new InfoResponse("Error during password changing"));
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new InfoResponse("Error during password changing"));
     }
 
     @PostMapping("/social")
     public ResponseEntity socialSignIn(@RequestBody UserDTO userDTO, HttpServletResponse response) {
-        String token;
-        if (userService.existUserByEmail(userDTO.getEmail())) {
+        try {
+            String token = userService.singInWithSocialGoogle(userDTO);
+            response.setHeader("Authorization", token);
 
-            token = userService.singInWithSocial(userDTO);
-            response.setHeader("Authorization", token);
             return ResponseEntity.ok(new TokenModel(token));
-        } else if (!(userService.existUserByEmail(userDTO.getEmail()))) {
-            token = userService.singUpWithSocial(userDTO);
-            response.setHeader("Authorization", token);
-            return ResponseEntity.ok(new TokenModel(token));
+        } catch (GeneralSecurityException e) {
+            throw new SecurityJwtException("Can`t login", HttpStatus.UNPROCESSABLE_ENTITY);
         }
-        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @PostMapping("/socialFacebook")
+    public ResponseEntity socialFacebookSignIn(@RequestBody UserDTO userDTO, HttpServletResponse response) {
+
+        String token = userService.singInWithSocialFacebook(userDTO);
+        response.setHeader("Authorization", token);
+        return ResponseEntity.ok(new TokenModel(token));
     }
 
     @PostMapping("/invite")
     public ResponseEntity inviteFriend(@RequestBody FriendInvitationDTO friendInvitationDTO, Principal principal) {
-
-        // TODO
         String friendEmail = friendInvitationDTO.getFriendEmail();
         String userName = userService.getUser(principal).getFirstName() + " "
                 + userService.getUser(principal).getLastName();
@@ -198,7 +216,6 @@ public class UserController {
 
     }
 
-    //// Exception
     @PostMapping("/profile/update/password")
     public ResponseEntity updatePassword(@RequestBody UpdatePasswordDTO updatePasswordDTO, Principal principal) {
         userValidatorService.checkPasswords(updatePasswordDTO.getNewPassword(),
@@ -216,4 +233,24 @@ public class UserController {
     public UserInfo getUserInfoById(@PathVariable("id") Integer id) {
         return modelMapper.map(userService.getById(id), UserInfo.class);
     }
+
+    @PutMapping("/update-role")
+    public ResponseEntity updateUserRole(@RequestBody UpdateUserRoleDTO updateUserRoleDTO) {
+        String role = updateUserRoleDTO.getRole();
+        String email = updateUserRoleDTO.getEmail();
+        return new ResponseEntity<>(userService.updateUserRole(role, email), HttpStatus.OK);
+    }
+
+    @Cacheable(cacheNames = "allUsers")
+    @GetMapping()
+    public Page<AllUsersDTO> getAllUsers(Pageable pageable) {
+        return userService.getAllUsers(pageable).map(user -> modelMapper.map(user, AllUsersDTO.class));
+    }
+
+    @Cacheable(cacheNames = "usersByRole")
+    @GetMapping(params = "role")
+    public Page<AllUsersDTO> getAllUsersByRole(@RequestParam("role") String role, Pageable pageable) {
+        return userService.getByRole(role, pageable).map(user -> modelMapper.map(user, AllUsersDTO.class));
+    }
+
 }

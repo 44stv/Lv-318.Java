@@ -72,13 +72,18 @@ public class TransitServiceImpl implements TransitService {
     }
 
     @Override
+    public Transit findByNameAndCategoryId(String name, Integer categoryId) {
+        return transitRepository.findByNameAndCategoryId(name, categoryId);
+    }
+
+    @Override
     @Transactional
     public Transit update(Transit transit) {
         if (transit == null) {
             throw new IllegalArgumentException("Transit object should not be null");
         }
         if (transitRepository.existsById(transit.getId())) {
-            return transitRepository.save(transit); // DTO, get stops set stops
+            return transitRepository.save(transit);
         } else {
             throw new ResourceNotFoundException(String.format("Transit with id '%s' not found", transit.getId()));
         }
@@ -123,6 +128,6 @@ public class TransitServiceImpl implements TransitService {
     @Override
     public List<Transit> getAll(Specification specification) {
         return transitRepository.findAll(specification);
-    }
 
+    }
 }

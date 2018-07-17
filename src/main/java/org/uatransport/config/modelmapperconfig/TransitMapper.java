@@ -48,7 +48,7 @@ public class TransitMapper implements Converter<Transit, TransitDTO> {
         destination.setName(source.getName());
         destination.setCategoryId(source.getCategory().getId());
         destination.setCategoryIconURL(source.getCategory().getIconURL());
-
+        destination.setStops(source.getStops());
         return destination;
     }
 

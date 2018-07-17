@@ -17,8 +17,8 @@ import java.util.Optional;
 @Service
 public class ExpirationCheckService {
 
-    @Value("${expiration-time-password-change-confirmation}")
-    Long passwordChangeExpiredTime;
+    @Value("${expiration-time-confirmation}")
+    Long expiredTime;
 
     @Autowired
     private TemporaryDataConfirmationService temporaryDataConfirmationService;
@@ -49,6 +49,6 @@ public class ExpirationCheckService {
 
     private boolean isExpired(TemporaryDataConfirmation temporaryDataConfirmation) {
         return LocalDateTime.now().toInstant(ZoneOffset.UTC)
-                .isAfter(temporaryDataConfirmation.getTimeStamp().plusSeconds(passwordChangeExpiredTime));
+                .isAfter(temporaryDataConfirmation.getTimeStamp().plusSeconds(expiredTime));
     }
 }

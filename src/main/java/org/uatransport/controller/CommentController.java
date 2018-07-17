@@ -28,6 +28,13 @@ public class CommentController {
         return new ResponseEntity<>(modelMapper.map(addedComment, CommentDTO.class), HttpStatus.CREATED);
     }
 
+    @PutMapping
+    public ResponseEntity<CommentDTO> addImageToComment(@RequestParam("commentId") Integer id,
+            @RequestBody String images) {
+        Comment updatedComment = commentService.addPics(images, id);
+        return new ResponseEntity<>(modelMapper.map(updatedComment, CommentDTO.class), HttpStatus.OK);
+    }
+
     @GetMapping("/{transitId}")
     public List<CommentDTO> getTransitComments(@PathVariable Integer transitId) {
         return commentService.getAllTopLevel(transitId).stream()

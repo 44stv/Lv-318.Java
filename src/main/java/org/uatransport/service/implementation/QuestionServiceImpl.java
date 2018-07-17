@@ -6,8 +6,8 @@ import org.springframework.stereotype.Service;
 import org.uatransport.entity.Question;
 import org.uatransport.repository.QuestionRepository;
 import org.uatransport.service.QuestionService;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,31 +54,37 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Question> getByPriority(Integer priority) {
         return questionRepository.findByPriority(priority);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Question> getByName(String name) {
         return questionRepository.findByName(name);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Question> getByFeedbackCriteriaId(Integer feedbackCriteriaId) {
         return questionRepository.findByFeedbackCriteriaId(feedbackCriteriaId);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Question> getByWeight(Integer weight) {
         return questionRepository.findByWeight(weight);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Question> getByType(Question.QuestionType type) {
         return questionRepository.findByType(type);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<String> getAllEnumsTypeOfQuestion() {
         List<String> allEnumTypes = new ArrayList<>();
         for (Question.QuestionType questionType : Question.QuestionType.values()) {
