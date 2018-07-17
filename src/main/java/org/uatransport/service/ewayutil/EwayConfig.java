@@ -6,12 +6,13 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.util.Objects;
 import java.util.Properties;
 
 @Slf4j
 class EwayConfig {
     static String getProperty(String property) {
-        String rootPath = Thread.currentThread().getContextClassLoader().getResource("").getPath();
+        String rootPath = Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResource("")).getPath();
         String appConfigPath = rootPath + "eway.properties";
         Properties appProps = new Properties();
         try {
