@@ -126,6 +126,7 @@ public class TransitServiceImpl implements TransitService {
     }
 
     @Override
+    @Transactional
     public List<Transit> getAll(Specification specification) {
         return transitRepository.findAll(specification);
 
