@@ -1,9 +1,12 @@
 package org.uatransport.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.uatransport.entity.User;
 import org.uatransport.entity.dto.LoginDTO;
 import org.uatransport.entity.dto.UserDTO;
 
+import java.security.GeneralSecurityException;
 import java.security.Principal;
 
 public interface UserService {
@@ -32,9 +35,14 @@ public interface UserService {
 
     boolean updatePassword(String name, String oldPassword, String newPassword);
 
-    String singInWithSocial(UserDTO userDTO);
+    String singInWithSocialGoogle(UserDTO userDTO) throws GeneralSecurityException;
 
-    String singUpWithSocial(UserDTO userDTO);
+    String singInWithSocialFacebook(UserDTO userDTO);
 
     void updateUserEncodedPassword(String newPassword, String userEmail);
+
+    Page<User> getAllUsers(Pageable page);
+
+    Page<User> getByRole(String role, Pageable pageable);
+
 }

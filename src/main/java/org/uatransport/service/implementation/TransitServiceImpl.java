@@ -83,7 +83,7 @@ public class TransitServiceImpl implements TransitService {
             throw new IllegalArgumentException("Transit object should not be null");
         }
         if (transitRepository.existsById(transit.getId())) {
-            return transitRepository.save(transit); // DTO, get stops set stops
+            return transitRepository.save(transit);
         } else {
             throw new ResourceNotFoundException(String.format("Transit with id '%s' not found", transit.getId()));
         }
@@ -128,6 +128,6 @@ public class TransitServiceImpl implements TransitService {
     @Override
     public List<Transit> getAll(Specification specification) {
         return transitRepository.findAll(specification);
-    }
 
+    }
 }

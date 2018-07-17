@@ -4,21 +4,23 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.uatransport.entity.Stop;
 
-import javax.persistence.criteria.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
 public class StopSearchSpecification implements Specification<Stop> {
-    private final GlobalSearch globalSearch;
-
     public final List<Predicate> predicates = new ArrayList<>();
+    private final GlobalSearch globalSearch;
 
     private void filterBySearchName(Root<Stop> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
         if (!globalSearch.getGlobalSearch().isEmpty()) {
             Predicate stops = cb.like(cb.lower(root.get("street")),
                     "%" + globalSearch.getGlobalSearch().toLowerCase() + "%");
-            predicates.add(stops);
+            predicates.add(cb.or(stops));
         }
 
     }

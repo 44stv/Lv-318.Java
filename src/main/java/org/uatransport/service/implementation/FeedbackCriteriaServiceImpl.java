@@ -100,16 +100,19 @@ public class FeedbackCriteriaServiceImpl implements FeedbackCriteriaService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<FeedbackCriteria> getByQuestionsWeight(Integer weight) {
         return feedbackCriteriaRepository.findByQuestionsWeight(weight);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<FeedbackCriteria> getByQuestionsType(Question.QuestionType type) {
         return feedbackCriteriaRepository.findByQuestionsType(type);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<FeedbackCriteria> getByQuestionsPriority(Integer priority) {
         return feedbackCriteriaRepository.findByQuestionsPriority(priority);
     }

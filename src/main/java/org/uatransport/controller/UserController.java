@@ -3,6 +3,9 @@ package org.uatransport.controller;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailException;
@@ -10,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import org.uatransport.entity.*;
 import org.uatransport.entity.dto.*;
 import org.uatransport.exception.EmailSendException;
+import org.uatransport.exception.SecurityJwtException;
+import org.uatransport.security.JwtTokenProvider;
 import org.uatransport.service.TemporaryDataConfirmationService;
 import org.uatransport.service.UserService;
 import org.uatransport.service.UserValidatorService;
@@ -17,6 +22,7 @@ import org.uatransport.service.email.EmailService;
 import org.uatransport.service.implementation.ExpirationCheckService;
 
 import javax.servlet.http.HttpServletResponse;
+import java.security.GeneralSecurityException;
 import java.security.Principal;
 import java.util.Optional;
 import java.util.UUID;
@@ -39,6 +45,7 @@ public class UserController {
     private final EmailService emailService;
     private final ExpirationCheckService expirationCheckService;
     private final UserValidatorService userValidatorService;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/signup")
     public ResponseEntity signUp(@RequestBody UserDTO userDTO) {
@@ -172,27 +179,24 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new InfoResponse("Error during password changing"));
     }
 
-    @PutMapping("/update-role")
-    public ResponseEntity updateUserRole(@RequestBody UpdateUserRoleDTO updateUserRoleDTO) {
-        String role = updateUserRoleDTO.getRole();
-        String email = updateUserRoleDTO.getEmail();
-        return new ResponseEntity<>(userService.updateUserRole(role, email), HttpStatus.OK);
-    }
-
     @PostMapping("/social")
     public ResponseEntity socialSignIn(@RequestBody UserDTO userDTO, HttpServletResponse response) {
-        String token;
-        if (userService.existUserByEmail(userDTO.getEmail())) {
+        try {
+            String token = userService.singInWithSocialGoogle(userDTO);
+            response.setHeader("Authorization", token);
 
-            token = userService.singInWithSocial(userDTO);
-            response.setHeader("Authorization", token);
             return ResponseEntity.ok(new TokenModel(token));
-        } else if (!(userService.existUserByEmail(userDTO.getEmail()))) {
-            token = userService.singUpWithSocial(userDTO);
-            response.setHeader("Authorization", token);
-            return ResponseEntity.ok(new TokenModel(token));
+        } catch (GeneralSecurityException e) {
+            throw new SecurityJwtException("Can`t login", HttpStatus.UNPROCESSABLE_ENTITY);
         }
-        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @PostMapping("/socialFacebook")
+    public ResponseEntity socialFacebookSignIn(@RequestBody UserDTO userDTO, HttpServletResponse response) {
+
+        String token = userService.singInWithSocialFacebook(userDTO);
+        response.setHeader("Authorization", token);
+        return ResponseEntity.ok(new TokenModel(token));
     }
 
     @PostMapping("/invite")
@@ -229,4 +233,24 @@ public class UserController {
     public UserInfo getUserInfoById(@PathVariable("id") Integer id) {
         return modelMapper.map(userService.getById(id), UserInfo.class);
     }
+
+    @PutMapping("/update-role")
+    public ResponseEntity updateUserRole(@RequestBody UpdateUserRoleDTO updateUserRoleDTO) {
+        String role = updateUserRoleDTO.getRole();
+        String email = updateUserRoleDTO.getEmail();
+        return new ResponseEntity<>(userService.updateUserRole(role, email), HttpStatus.OK);
+    }
+
+    @Cacheable(cacheNames = "allUsers")
+    @GetMapping()
+    public Page<AllUsersDTO> getAllUsers(Pageable pageable) {
+        return userService.getAllUsers(pageable).map(user -> modelMapper.map(user, AllUsersDTO.class));
+    }
+
+    @Cacheable(cacheNames = "usersByRole")
+    @GetMapping(params = "role")
+    public Page<AllUsersDTO> getAllUsersByRole(@RequestParam("role") String role, Pageable pageable) {
+        return userService.getByRole(role, pageable).map(user -> modelMapper.map(user, AllUsersDTO.class));
+    }
+
 }
