@@ -4,6 +4,7 @@ import org.uatransport.entity.User;
 import org.uatransport.entity.dto.LoginDTO;
 import org.uatransport.entity.dto.UserDTO;
 
+import java.security.GeneralSecurityException;
 import java.security.Principal;
 
 public interface UserService {
@@ -32,8 +33,8 @@ public interface UserService {
 
     boolean updatePassword(String name, String oldPassword, String newPassword);
 
-    String singInWithSocial(UserDTO userDTO);
+    String singInWithSocialGoogle(UserDTO userDTO) throws GeneralSecurityException;
 
-    String singUpWithSocial(UserDTO userDTO);
+    String singInWithSocialFacebook(UserDTO userDTO);
 
 }

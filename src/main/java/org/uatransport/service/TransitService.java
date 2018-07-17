@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.uatransport.entity.NonExtendableCategory;
 import org.uatransport.entity.Transit;
+import org.uatransport.entity.dto.TransitDTO;
 
 import java.util.List;
 

@@ -1,14 +1,14 @@
-INSERT INTO public.category (type, id, name, next_level_category_id, icon_url) VALUES ('EXTENDABLE', 1, 'Public Transport', null, 'static/bus.png');
-INSERT INTO public.category (type, id, name, next_level_category_id, icon_url) VALUES ('EXTENDABLE', 8, 'Taxi', null, 'static/taxi.png');
-INSERT INTO public.category (type, id, name, next_level_category_id, icon_url) VALUES ('EXTENDABLE', 2, 'Lviv', 1, 'static/lviv.png');
-INSERT INTO public.category (type, id, name, next_level_category_id, icon_url) VALUES ('EXTENDABLE', 3, 'Kyiv', 1, 'static/kyiv.png');
-INSERT INTO public.category (type, id, name, next_level_category_id, icon_url) VALUES ('NON_EXTENDABLE', 4, 'Tram', 2, 'static/tram.png');
-INSERT INTO public.category (type, id, name, next_level_category_id, icon_url) VALUES ('NON_EXTENDABLE', 5, 'Trolleybus', 2, 'static/trolleybus.png');
-INSERT INTO public.category (type, id, name, next_level_category_id, icon_url) VALUES ('NON_EXTENDABLE', 6, 'Bus', 2, 'static/bigbus.png');
-INSERT INTO public.category (type, id, name, next_level_category_id, icon_url) VALUES ('NON_EXTENDABLE', 7, 'Marshrutka', 2, 'static/van.png');
+INSERT INTO public.category (type, id, name, next_level_category_id, geotag_id, icon_url) VALUES ('EXTENDABLE', 1, 'Public Transport', null,1, 'static/bus.png');
+INSERT INTO public.category (type, id, name, next_level_category_id,geotag_id, icon_url) VALUES ('EXTENDABLE', 8, 'Taxi', null, 1,'static/taxi.png');
+INSERT INTO public.category (type, id, name, next_level_category_id, geotag_id,icon_url) VALUES ('EXTENDABLE', 2, 'Lviv',1, 1, 'static/lviv.png');
+INSERT INTO public.category (type, id, name, next_level_category_id, geotag_id,icon_url) VALUES ('EXTENDABLE', 3, 'Kyiv',2, 1, 'static/kyiv.png');
+INSERT INTO public.category (type, id, name, next_level_category_id, geotag_id, icon_url) VALUES ('NON_EXTENDABLE', 4, 'Tram',1, 2, 'static/tram.png');
+INSERT INTO public.category (type, id, name, next_level_category_id,geotag_id, icon_url) VALUES ('NON_EXTENDABLE', 5, 'Trolleybus',1, 2, 'static/trolleybus.png');
+INSERT INTO public.category (type, id, name, next_level_category_id, geotag_id,icon_url) VALUES ('NON_EXTENDABLE', 6, 'Bus',1, 2, 'static/bigbus.png');
+INSERT INTO public.category (type, id, name, next_level_category_id, geotag_id, icon_url) VALUES ('NON_EXTENDABLE', 7, 'Marshrutka',1, 2, 'static/van.png');
 
-INSERT INTO public.geotag (id, latitude, longtitude, name) VALUES (1, 49.83826, 24.02324, '#Lviv');
-INSERT INTO public.geotag (id, latitude, longtitude, name) VALUES (2, 50.4501, 30.5234, '#Kyiv');
+INSERT INTO public.geotag (id, latitude, longtitude, name) VALUES (1, 49.83826, 24.02324, 'Lviv');
+INSERT INTO public.geotag (id, latitude, longtitude, name) VALUES (2, 50.4501, 30.5234, 'Kyiv');
 
 update public.category set geotag_id=1 where id=2;
 update public.category set geotag_id=2 where id=3;

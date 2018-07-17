@@ -9,14 +9,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.uatransport.config.GlobalSearchSpecification;
 import org.uatransport.entity.NonExtendableCategory;
 import org.uatransport.entity.Transit;
+import org.uatransport.entity.dto.TransitDTO;
 import org.uatransport.exception.ResourceNotFoundException;
 import org.uatransport.repository.CategoryRepository;
 import org.uatransport.repository.TransitRepository;
 import org.uatransport.service.TransitService;
 
 import java.util.List;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Service
@@ -88,7 +91,7 @@ public class TransitServiceImpl implements TransitService {
     @Transactional(readOnly = true)
     public Transit getById(Integer id) {
         return transitRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(String.format("Transit with id '%s' not found", id)));
+            .orElseThrow(() -> new ResourceNotFoundException(String.format("Transit with id '%s' not found", id)));
     }
 
     @Override
@@ -123,6 +126,6 @@ public class TransitServiceImpl implements TransitService {
     @Override
     public List<Transit> getAll(Specification specification) {
         return transitRepository.findAll(specification);
-    }
 
+    }
 }

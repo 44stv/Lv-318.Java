@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import org.uatransport.entity.*;
 import org.uatransport.entity.dto.*;
 import org.uatransport.exception.EmailSendException;
+import org.uatransport.exception.SecurityJwtException;
+import org.uatransport.security.JwtTokenProvider;
 import org.uatransport.service.TemporaryDataConfirmationService;
 import org.uatransport.service.UserService;
 import org.uatransport.service.UserValidatorService;
@@ -17,6 +19,7 @@ import org.uatransport.service.email.EmailService;
 import org.uatransport.service.implementation.ExpirationCheckService;
 
 import javax.servlet.http.HttpServletResponse;
+import java.security.GeneralSecurityException;
 import java.security.Principal;
 import java.util.Optional;
 import java.util.UUID;
@@ -46,6 +49,9 @@ public class UserController {
     @Autowired
     private UserValidatorService userValidatorService;
 
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
+
     @PostMapping("/signup")
     public ResponseEntity signUp(@RequestBody UserDTO userDTO) {
         userValidatorService.validateUserOnRegistration(userDTO);
@@ -59,7 +65,7 @@ public class UserController {
         String firstName = userDTO.getFirstName();
 
         temporaryDataConfirmationService
-                .save(temporaryDataConfirmationService.makeRegistrationConfirmationEntity(uuid, email));
+            .save(temporaryDataConfirmationService.makeRegistrationConfirmationEntity(uuid, email));
         try {
             emailService.prepareAndSendConfirmRegistrationEmail(email, firstName, confirmUrl);
         } catch (MailException e) {
@@ -67,20 +73,20 @@ public class UserController {
 
         }
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new InfoResponse("Please check your email, and confirm registration"));
+            .body(new InfoResponse("Please check your email, and confirm registration"));
     }
 
     @PostMapping("/activate")
     public ResponseEntity activateUser(@RequestBody String uuidFromUrl) {
         Optional<TemporaryDataConfirmation> checkedTemporaryDataConfirmation = expirationCheckService
-                .getTemporaryDataConfirmationWithExpirationChecking(uuidFromUrl);
+            .getTemporaryDataConfirmationWithExpirationChecking(uuidFromUrl);
 
         if (checkedTemporaryDataConfirmation.isPresent()) {
             User user = userService.getUserByEmail(checkedTemporaryDataConfirmation.get().getUserEmail());
 
             if ((uuidFromUrl.equals(checkedTemporaryDataConfirmation.get().getUuid()))
-                    && (checkedTemporaryDataConfirmation.get()
-                            .getConfirmationType() == ConfirmationType.REGISTRATION_CONFIRM)) {
+                && (checkedTemporaryDataConfirmation.get()
+                .getConfirmationType() == ConfirmationType.REGISTRATION_CONFIRM)) {
 
                 userService.activateUserByEmail(checkedTemporaryDataConfirmation.get().getUserEmail());
                 temporaryDataConfirmationService.delete(checkedTemporaryDataConfirmation.get());
@@ -88,10 +94,10 @@ public class UserController {
                     emailService.prepareAndSendWelcomeEmail(user.getEmail(), user.getFirstName());
                 } catch (MailException e) {
                     throw new EmailSendException("Could not send email to " + user.getEmail(),
-                            HttpStatus.INTERNAL_SERVER_ERROR);
+                        HttpStatus.INTERNAL_SERVER_ERROR);
                 }
                 return new ResponseEntity<>(new InfoResponse("Your account has been successfully activated"),
-                        HttpStatus.OK);
+                    HttpStatus.OK);
             }
         } else {
 
@@ -131,7 +137,7 @@ public class UserController {
     @PostMapping("/forget/password/confirm")
     public ResponseEntity forgetPasswordSendConfirmation(@RequestBody ForgetPasswordDTO forgetPasswordDTO) {
         userValidatorService.checkPasswords(forgetPasswordDTO.getPassword(),
-                forgetPasswordDTO.getPasswordConfirmation());
+            forgetPasswordDTO.getPasswordConfirmation());
 
         final String uuid = UUID.randomUUID().toString().replace("-", "");
 
@@ -140,9 +146,9 @@ public class UserController {
         String firstName = userService.getUserByEmail(userEmail).getFirstName();
 
         temporaryDataConfirmationService.save(temporaryDataConfirmationService.makePasswordConfirmationEntity(uuid,
-                forgetPasswordDTO.getPassword(), userEmail));
+            forgetPasswordDTO.getPassword(), userEmail));
         temporaryDataConfirmationService.save(temporaryDataConfirmationService.makePasswordConfirmationEntity(uuid,
-                forgetPasswordDTO.getPassword(), userEmail));
+            forgetPasswordDTO.getPassword(), userEmail));
 
         try {
             emailService.prepareAndSendConfirmPassEmail(userEmail, firstName, confirmUrl);
@@ -162,18 +168,22 @@ public class UserController {
 
     @PostMapping("/social")
     public ResponseEntity socialSignIn(@RequestBody UserDTO userDTO, HttpServletResponse response) {
-        String token;
-        if (userService.existUserByEmail(userDTO.getEmail())) {
+        try {
+            String token = userService.singInWithSocialGoogle(userDTO);
+            response.setHeader("Authorization", token);
 
-            token = userService.singInWithSocial(userDTO);
-            response.setHeader("Authorization", token);
             return ResponseEntity.ok(new TokenModel(token));
-        } else if (!(userService.existUserByEmail(userDTO.getEmail()))) {
-            token = userService.singUpWithSocial(userDTO);
-            response.setHeader("Authorization", token);
-            return ResponseEntity.ok(new TokenModel(token));
+        } catch (GeneralSecurityException e) {
+            throw new SecurityJwtException("Can`t login", HttpStatus.UNPROCESSABLE_ENTITY);
         }
-        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @PostMapping("/socialFacebook")
+    public ResponseEntity socialFacebookSignIn(@RequestBody UserDTO userDTO, HttpServletResponse response) {
+
+        String token = userService.singInWithSocialFacebook(userDTO);
+        response.setHeader("Authorization", token);
+        return ResponseEntity.ok(new TokenModel(token));
     }
 
     @PostMapping("/invite")
@@ -182,7 +192,7 @@ public class UserController {
         // TODO
         String friendEmail = friendInvitationDTO.getFriendEmail();
         String userName = userService.getUser(principal).getFirstName() + " "
-                + userService.getUser(principal).getLastName();
+            + userService.getUser(principal).getLastName();
         String friendName = friendInvitationDTO.getFriendName();
 
         try {
@@ -199,9 +209,9 @@ public class UserController {
     @PostMapping("/profile/update/password")
     public ResponseEntity updatePassword(@RequestBody UpdatePasswordDTO updatePasswordDTO, Principal principal) {
         userValidatorService.checkPasswords(updatePasswordDTO.getNewPassword(),
-                updatePasswordDTO.getPasswordConfirmation());
+            updatePasswordDTO.getPasswordConfirmation());
         if (userService.updatePassword(principal.getName(), updatePasswordDTO.getOldPassword(),
-                updatePasswordDTO.getNewPassword())) {
+            updatePasswordDTO.getNewPassword())) {
             return new ResponseEntity<>(new InfoResponse("Password changed successfully"), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(new InfoResponse("Invalid old password"), HttpStatus.BAD_REQUEST);

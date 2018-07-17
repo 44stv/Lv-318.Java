@@ -2,7 +2,9 @@ package org.uatransport.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
+import org.uatransport.entity.ExtendableCategory;
 import org.uatransport.entity.Stop;
+import org.uatransport.entity.Transit;
 
 import javax.persistence.criteria.*;
 import java.util.ArrayList;
@@ -18,7 +20,11 @@ public class StopSearchSpecification implements Specification<Stop> {
         if (!globalSearch.getGlobalSearch().isEmpty()) {
             Predicate stops = cb.like(cb.lower(root.get("street")),
                     "%" + globalSearch.getGlobalSearch().toLowerCase() + "%");
-            predicates.add(stops);
+//            query.select() // select transit ... where stops in :stops
+
+//            Join<Transit, ExtendableCategory> cityJoin = root.join("name");
+//            Predicate city = cb.like(cityJoin.get("name"), "%" + globalSearch.getCity());
+            predicates.add(cb.or(stops));
         }
 
     }
