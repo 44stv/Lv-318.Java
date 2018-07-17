@@ -1,8 +1,6 @@
 package org.uatransport.service;
 
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import org.uatransport.entity.Stop;
 
 import java.util.List;

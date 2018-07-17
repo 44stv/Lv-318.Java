@@ -30,7 +30,7 @@ public class EwaySchedule extends QuartzJobBean {
      */
     @Bean
     public Trigger routesListSaverJobTrigger() {
-      SimpleScheduleBuilder.simpleSchedule().repeatForever();
+        SimpleScheduleBuilder.simpleSchedule().repeatForever();
         return TriggerBuilder.newTrigger().forJob(jobDetail()).withIdentity("jobTrigger")
                 .withDescription("Update list of transit and stops")
                 .withSchedule(CronScheduleBuilder.cronSchedule(EwayConfig.getProperty("update-date"))).build();

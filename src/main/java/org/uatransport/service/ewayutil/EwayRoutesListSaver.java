@@ -5,10 +5,7 @@ import com.google.common.util.concurrent.RateLimiter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.http.client.utils.URIBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.uatransport.config.SearchCategoryParam;
@@ -25,13 +22,13 @@ import org.uatransport.service.ewayutil.ewaystopentity.EwayPoint;
 import org.uatransport.service.ewayutil.ewaystopentity.EwayStopResponse;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
 @RequiredArgsConstructor
 @Service
 public class EwayRoutesListSaver {
+
     private final TransitService transitService;
     private final CategoryService categoryService;
     private final StopService stopService;
@@ -52,9 +49,7 @@ public class EwayRoutesListSaver {
         List<Stop> stops = convertAndSaveStops(route.getId().toString());
 
         if (transit == null) {
-            transitService.add(
-                new Transit().setName(route.getTitle()).setCategory(category).setStops(stops)
-            );
+            transitService.add(new Transit().setName(route.getTitle()).setCategory(category).setStops(stops));
         } else {
             transit.setStops(stops);
             transitService.update(transit);
@@ -66,11 +61,7 @@ public class EwayRoutesListSaver {
         for (EwayPoint point : getStopsObject(routeId).getRoute().getPoints().getPoint()) {
             if (point.getTitle() != null) {
                 Stop.Direction direction = point.getDirection() == 1 ? Stop.Direction.FORWARD : Stop.Direction.BACKWARD;
-                Stop stop = stopService.getByLatAndLngAndDirection(
-                    point.getLat(),
-                    point.getLng(),
-                    direction
-                );
+                Stop stop = stopService.getByLatAndLngAndDirection(point.getLat(), point.getLng(), direction);
                 if (stop == null) {
                     stop = new Stop();
                     stop.setLng(point.getLng());
@@ -97,52 +88,52 @@ public class EwayRoutesListSaver {
             searchCategoryParam.setName(EwayConfig.getProperty("busCategoryName"));
         } else {
             switch (route.getTransport()) {
-                case "bus":
-                    searchCategoryParam.setName(EwayConfig.getProperty("marshrutkaCategoryName"));
-                    break;
-                case "trol":
-                    searchCategoryParam.setName(EwayConfig.getProperty("trolCategoryName"));
-                    break;
-                case "tram":
-                    searchCategoryParam.setName(EwayConfig.getProperty("tramCategoryName"));
-                    break;
+            case "bus":
+                searchCategoryParam.setName(EwayConfig.getProperty("marshrutkaCategoryName"));
+                break;
+            case "trol":
+                searchCategoryParam.setName(EwayConfig.getProperty("trolCategoryName"));
+                break;
+            case "tram":
+                searchCategoryParam.setName(EwayConfig.getProperty("tramCategoryName"));
+                break;
             }
         }
 
         return (NonExtendableCategory) categoryService.getAll(searchCategoryParam).stream().findFirst()
-            .orElseThrow(() -> new ResourceNotFoundException("There no category with such parameters"));
+                .orElseThrow(() -> new ResourceNotFoundException("There no category with such parameters"));
     }
 
     private String getTransitsUrl() {
         URIBuilder uri = new URIBuilder().setScheme(EwayConfig.getProperty("scheme"))
-            .setHost(EwayConfig.getProperty("host")).addParameter("login", EwayConfig.getProperty("login"))
-            .addParameter("password", EwayConfig.getProperty("password"))
-            .addParameter("function", EwayConfig.getProperty("function-transit"))
-            .addParameter("city", EwayConfig.getProperty("city"));
+                .setHost(EwayConfig.getProperty("host")).addParameter("login", EwayConfig.getProperty("login"))
+                .addParameter("password", EwayConfig.getProperty("password"))
+                .addParameter("function", EwayConfig.getProperty("function-transit"))
+                .addParameter("city", EwayConfig.getProperty("city"));
         return uri.toString();
     }
 
     private String getStopsUrl(String transitId) {
         URIBuilder uri = new URIBuilder().setScheme(EwayConfig.getProperty("scheme"))
-            .setHost(EwayConfig.getProperty("host")).addParameter("login", EwayConfig.getProperty("login"))
-            .addParameter("password", EwayConfig.getProperty("password"))
-            .addParameter("function", EwayConfig.getProperty("function-stops"))
-            .addParameter("city", EwayConfig.getProperty("city")).addParameter("id", transitId)
-            .addParameter("start_position", EwayConfig.getProperty("start_position"))
-            .addParameter("stop_position", EwayConfig.getProperty("stop_position"));
+                .setHost(EwayConfig.getProperty("host")).addParameter("login", EwayConfig.getProperty("login"))
+                .addParameter("password", EwayConfig.getProperty("password"))
+                .addParameter("function", EwayConfig.getProperty("function-stops"))
+                .addParameter("city", EwayConfig.getProperty("city")).addParameter("id", transitId)
+                .addParameter("start_position", EwayConfig.getProperty("start_position"))
+                .addParameter("stop_position", EwayConfig.getProperty("stop_position"));
         return uri.toString();
     }
 
     @SneakyThrows
     private EwayResponseObject getTransitsObject() {
         return new ObjectMapper().readValue(new RestTemplate().getForEntity(getTransitsUrl(), String.class).getBody(),
-            EwayResponseObject.class);
+                EwayResponseObject.class);
     }
 
     @SneakyThrows
     private EwayStopResponse getStopsObject(String transitId) {
         return new ObjectMapper().readValue(
-            new RestTemplate().getForEntity(getStopsUrl(transitId), String.class).getBody(),
-            EwayStopResponse.class);
+                new RestTemplate().getForEntity(getStopsUrl(transitId), String.class).getBody(),
+                EwayStopResponse.class);
     }
 }

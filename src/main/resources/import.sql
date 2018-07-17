@@ -13,7 +13,6 @@ INSERT INTO public.geotag (id, latitude, longtitude, name) VALUES (2, 50.4501, 3
 update public.category set geotag_id=1 where id=2;
 update public.category set geotag_id=2 where id=3;
 
-
 INSERT INTO public.feedback_criteria (id, type, category_id) VALUES (1, 'RATING', 4);
 INSERT INTO public.feedback_criteria (id, type, category_id) VALUES (2, 'RATING', 5);
 INSERT INTO public.feedback_criteria (id, type, category_id) VALUES (3, 'RATING', 5);
@@ -170,5 +169,6 @@ INSERT INTO public.feedback (id, answer, criteria_id, transit_id, user_id, date)
 INSERT INTO public.feedback (id, answer, criteria_id, transit_id, user_id, date) VALUES (94, '[{"answer":3,"weight":2},{"answer":7,"weight":6}]', 7, 10365, 1, '2018-07-11 10:21:45.616000');
 INSERT INTO public.feedback (id, answer, criteria_id, transit_id, user_id, date) VALUES (95, '"NO"', 11, 10365, 1, '2018-07-11 10:21:45.690000');
 INSERT INTO public.feedback (id, answer, criteria_id, transit_id, user_id, date) VALUES (96, '{"startTime":{"hour":10,"minute":21},"endTime":{"hour":11,"minute":21},"capacity":"45"}', 18, 10365, 1, '2018-07-11 10:21:45.776000');
+INSERT INTO public.feedback (id, answer, criteria_id, transit_id, user_id, date) VALUES (97, '{"from":{"id":108,"street":"пл. Різні","lat":49.84550094604492,"lng":24.02606964111328,"direction":"FORWARD"},"to":{"id":113,"street":"пл. Кропивницького","lat":49.837730407714844,"lng":24.005586624145508,"direction":"FORWARD"},"capacity":"45"}', 14, 10365, 1, '2018-07-11 10:21:45.886000');
 INSERT INTO public.feedback (id, answer, criteria_id, transit_id, user_id, date) VALUES (97, '{"from":{"id":108,"street":"пл. Різні","lat":49.84550094604492,"lng":24.02606964111328,"direction":"FORWARD"},"to":{"id":113,"street":"пл. Кропивницького","lat":49.837730407714844,"lng":24.005586624145508,"direction":"FORWARD"},"capacity":"45"}', 14, 10365, 1, '2018-07-11 10:21:45.886000');
 

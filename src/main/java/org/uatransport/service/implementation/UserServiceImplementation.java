@@ -35,7 +35,7 @@ public class UserServiceImplementation implements UserService {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
             return jwtTokenProvider.createToken(username, userRepository.findByEmail(username).getRole(),
-                userRepository.findByEmail(username).getId());
+                    userRepository.findByEmail(username).getId());
         } catch (AuthenticationException e) {
             throw new SecurityJwtException("Invalid username/password supplied", HttpStatus.UNPROCESSABLE_ENTITY);
 
@@ -136,9 +136,9 @@ public class UserServiceImplementation implements UserService {
 
     @Override
     public void updateUserEncodedPassword(String newPassword, String userEmail) {
-       User user = userRepository.findByEmail(userEmail);
-       user.setPassword(newPassword);
-       userRepository.save(user);
+        User user = userRepository.findByEmail(userEmail);
+        user.setPassword(newPassword);
+        userRepository.save(user);
 
     }
 
@@ -151,7 +151,7 @@ public class UserServiceImplementation implements UserService {
             try {
                 authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
                 return jwtTokenProvider.createToken(username, userRepository.findByEmail(username).getRole(),
-                    userRepository.findByEmail(username).getId());
+                        userRepository.findByEmail(username).getId());
             } catch (AuthenticationException e) {
                 throw new SecurityJwtException("Can`t login", HttpStatus.UNPROCESSABLE_ENTITY);
             }

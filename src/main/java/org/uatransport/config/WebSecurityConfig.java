@@ -28,19 +28,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-
         http.csrf().disable();
 
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http.authorizeRequests()
 
-            .antMatchers("/user/signin", "/user/activate/**", "/user/**", "/user/signup", "/stop/**", "/transit/**",
-                "/category/**", "/feedback/**", "/feedback-criteria/**", "/question/**", "/location/**",
-                "/actuator/health", "/search/**", "/comment/**", "/news/**")
-            .permitAll().antMatchers(HttpMethod.OPTIONS, "/**").permitAll().anyRequest().authenticated()
-            .and()
-            .exceptionHandling().accessDeniedHandler(accessDeniedHandler);
+                .antMatchers("/user/signin", "/user/activate/**", "/user/**", "/user/signup", "/stop/**", "/transit/**",
+                        "/category/**", "/feedback/**", "/feedback-criteria/**", "/question/**", "/location/**",
+                        "/actuator/health", "/search/**", "/comment/**", "/news/**")
+                .permitAll().antMatchers(HttpMethod.OPTIONS, "/**").permitAll().anyRequest().authenticated().and()
+                .exceptionHandling().accessDeniedHandler(accessDeniedHandler);
 
         http.apply(new JwtTokenFilterConfigurer(jwtTokenProvider));
     }
