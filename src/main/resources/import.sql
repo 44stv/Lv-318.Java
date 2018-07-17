@@ -7,8 +7,8 @@ INSERT INTO public.category (type, id, name, next_level_category_id, icon_url) V
 INSERT INTO public.category (type, id, name, next_level_category_id, icon_url) VALUES ('NON_EXTENDABLE', 6, 'Bus', 2, 'static/bigbus.png');
 INSERT INTO public.category (type, id, name, next_level_category_id, icon_url) VALUES ('NON_EXTENDABLE', 7, 'Marshrutka', 2, 'static/van.png');
 
-INSERT INTO public.geotag (id, latitude, longtitude, name) VALUES (1, 49.83826, 24.02324, '#Lviv');
-INSERT INTO public.geotag (id, latitude, longtitude, name) VALUES (2, 50.4501, 30.5234, '#Kyiv');
+INSERT INTO public.geotag (id, latitude, longtitude, name) VALUES (1, 49.83826, 24.02324, 'Lviv');
+INSERT INTO public.geotag (id, latitude, longtitude, name) VALUES (2, 50.4501, 30.5234, 'Kyiv');
 
 update public.category set geotag_id=1 where id=2;
 update public.category set geotag_id=2 where id=3;
