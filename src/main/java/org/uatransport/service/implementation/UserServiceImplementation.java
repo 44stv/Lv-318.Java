@@ -1,13 +1,13 @@
 package org.uatransport.service.implementation;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
-import com.google.api.client.http.HttpResponse;
+
+import com.google.common.base.Strings;
 import com.google.api.client.http.apache.ApacheHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.servlet4preview.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -35,21 +35,12 @@ import java.util.Collections;
 
 @Service
 @RequiredArgsConstructor
-@Qualifier("UserDetails")
 public class UserServiceImplementation implements UserService {
 
     private final UserRepository userRepository;
-
-    @Autowired
-    private PasswordEncoder bcryptEncoder;
-
-    @Autowired
-    private JwtTokenProvider jwtTokenProvider;
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    private final PasswordEncoder bcryptEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final AuthenticationManager authenticationManager;
 
     private final JacksonFactory jacksonFactory = new JacksonFactory();
 
@@ -63,18 +54,17 @@ public class UserServiceImplementation implements UserService {
     public String signin(LoginDTO loginDTO) {
         String username = loginDTO.getEmail();
         String password = loginDTO.getPassword();
-        Role role = userRepository.findByEmail(username).getRole();
-        Integer id = userRepository.findByEmail(username).getId();
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-            return jwtTokenProvider.createToken(username, role, id);
+            return jwtTokenProvider.createToken(username, userRepository.findByEmail(username).getRole(),
+                    userRepository.findByEmail(username).getId());
         } catch (AuthenticationException e) {
             throw new SecurityJwtException("Invalid username/password supplied", HttpStatus.UNPROCESSABLE_ENTITY);
 
         }
     }
 
-    public boolean signup(UserDTO userDTO) {
+    public void signup(UserDTO userDTO) {
 
         User user = new User();
         user.setFirstName(userDTO.getFirstName());
@@ -83,7 +73,6 @@ public class UserServiceImplementation implements UserService {
         user.setPassword(bcryptEncoder.encode(userDTO.getPassword()));
         user.setRole(Role.UNACTIVATED);
         userRepository.save(user);
-        return true;
 
     }
 
@@ -93,20 +82,17 @@ public class UserServiceImplementation implements UserService {
     }
 
     @Override
+    public User getById(Integer id) {
+        return userRepository.getOne(id);
+    }
+
+    @Override
     public void activateUserByEmail(String userEmail) {
 
         User user = userRepository.findByEmail(userEmail);
         user.setRole(Role.USER);
         userRepository.saveAndFlush(user);
 
-    }
-
-    @Override
-    public void updateUserEncodedPassword(String newPassword, String userEmail) {
-        User user = userRepository.findByEmail(userEmail);
-        user.setPassword(newPassword);
-
-        userRepository.saveAndFlush(user);
     }
 
     @Override
@@ -160,7 +146,7 @@ public class UserServiceImplementation implements UserService {
             if (idToken != null) {
                 Payload payload = idToken.getPayload();
                 String email = payload.getEmail();
-                if (userService.existUserByEmail(userDTO.getEmail())) {
+                if (userRepository.existsByEmail(userDTO.getEmail())) {
                     authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userDTO.getEmail(), userDTO.getPassword()));
                     return jwtTokenProvider.createToken(userDTO.getEmail(), userRepository.findByEmail(userDTO.getEmail()).getRole(),
                         userRepository.findByEmail(userDTO.getEmail()).getId());
@@ -172,6 +158,41 @@ public class UserServiceImplementation implements UserService {
             throw new SecurityJwtException("Can`t login", HttpStatus.UNPROCESSABLE_ENTITY);
         }
         return "Can`t login";
+    }
+
+    @Override
+    public void updateUserEncodedPassword(String newPassword, String userEmail) {
+        User user = userRepository.findByEmail(userEmail);
+        user.setPassword(newPassword);
+        userRepository.save(user);
+
+    }
+
+    @Override
+    public Page<User> getAllUsers(Pageable pageable) {
+        return userRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<User> getByRole(String role, Pageable pageable) {
+        if (Strings.isNullOrEmpty(role)) {
+            throw new IllegalArgumentException("Role value should not be empty");
+        }
+        Role role1;
+        switch (role.toLowerCase()) {
+            case "manager":
+                role1 = Role.MANAGER;
+                break;
+            case "user":
+                role1 = Role.USER;
+                break;
+            case "admin":
+                role1 = Role.ADMIN;
+                break;
+            default:
+                role1 = Role.UNACTIVATED;
+        }
+        return userRepository.findAllByRole(role1, pageable);
     }
 
     @Override

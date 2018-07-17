@@ -25,23 +25,23 @@ public interface FeedbackService {
 
     List<Feedback> getByUserId(Integer id);
 
-    List<Feedback> getByTransitAndFeedbackCriteria(Integer transitId, FeedbackCriteria.FeedbackType feedbackType);
+    List<Feedback> getByTransitIdAndFeedbackCriteriaType(Integer transitId, FeedbackCriteria.FeedbackType feedbackType);
 
-    List<Feedback> getByTransitCategoryIdAndFeedbackCriteria(Integer transitCategoryId,
+    List<Feedback> getByTransitCategoryIdAndFeedbackCriteriaType(Integer transitCategoryId,
             FeedbackCriteria.FeedbackType feedbackType);
 
-    List<Feedback> getByTransitAndFeedbackCriteriaAndUserId(Integer transitId,
+    List<Feedback> getByTransitIdAndFeedbackCriteriaTypeAndUserId(Integer transitId,
             FeedbackCriteria.FeedbackType feedbackType, Integer userId);
 
     Double getRatingByTransitId(Integer transitId);
 
-    Double getRatingByCategoryId(Integer categoryId);
+    Double getRatingByTransitCategoryId(Integer transitCategoryId);
 
-    Double getRatingByTransitAndUser(Integer transitId, Integer userId);
+    Double getRatingByTransitIdAndUserId(Integer transitId, Integer userId);
 
     Map<Integer, Double> getHourCapacityMap(Integer transitId);
 
-    Map<Stop, Double> getStopCapacityMap(Integer transitId, Stop.DIRECTION direction, Stop... stops);
+    Map<Stop, Double> getStopCapacityMap(Integer transitId, Stop.Direction direction, Stop... stops);
 
     EnumMap<SimpleFeedback, Double> getSimpleAnswerPercentageMap(Integer transitId);
 

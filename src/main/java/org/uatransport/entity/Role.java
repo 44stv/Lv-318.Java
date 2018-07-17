@@ -3,7 +3,7 @@ package org.uatransport.entity;
 import org.springframework.security.core.GrantedAuthority;
 
 public enum Role implements GrantedAuthority {
-    USER, ADMIN, UNACTIVATED;
+    USER, ADMIN, MANAGER, UNACTIVATED;
 
     @Override
     public String getAuthority() {

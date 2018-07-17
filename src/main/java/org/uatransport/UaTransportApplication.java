@@ -13,5 +13,7 @@ public class UaTransportApplication {
     public static void main(String[] args) {
         SpringApplication.run(UaTransportApplication.class, args);
         log.debug("--Application Started--");
+        // EwayRoutesListSaver saver = context.getBean(EwayRoutesListSaver.class);
+        // saver.updateRoutes();
     }
 }
