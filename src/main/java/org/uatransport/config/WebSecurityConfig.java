@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.web.client.RestTemplate;
 import org.uatransport.security.JwtTokenFilterConfigurer;
@@ -24,6 +25,7 @@ import org.uatransport.security.JwtTokenProvider;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final JwtTokenProvider jwtTokenProvider;
     private final AccessDeniedHandler accessDeniedHandler;
+    private final AuthenticationEntryPoint authenticationEntryPoint;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -43,7 +45,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .anyRequest().authenticated()
             .antMatchers(HttpMethod.POST, "/feedback").hasRole("USER")
             .and()
-            .exceptionHandling().accessDeniedHandler(accessDeniedHandler);
+            .exceptionHandling().accessDeniedHandler(accessDeniedHandler).authenticationEntryPoint(authenticationEntryPoint);
 
         http.apply(new JwtTokenFilterConfigurer(jwtTokenProvider));
     }
@@ -62,4 +64,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public RestTemplate restTemplate() {
         return new RestTemplate();
     }
+
+
 }
