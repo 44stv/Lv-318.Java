@@ -83,7 +83,7 @@ public class TransitController {
     }
     @GetMapping("/{name}/{id}")
     public TransitDTO getTransitByNameAndCategoryId(@PathVariable String name, @PathVariable Integer id){
-        Transit transit = transitService.findByNameAndCategory_Id(name, id);
+        Transit transit = transitService.findByNameAndCategoryId(name, id);
         return modelMapper.map(transit, TransitDTO.class);
     }
 

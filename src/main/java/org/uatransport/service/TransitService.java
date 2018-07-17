@@ -34,6 +34,6 @@ public interface TransitService {
 
     void delete(Transit transit);
 
-    Transit findByNameAndCategory_Id(String name, Integer categoryId);
+    Transit findByNameAndCategoryId(String name, Integer categoryId);
 
 }

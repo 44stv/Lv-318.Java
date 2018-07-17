@@ -72,8 +72,8 @@ public class TransitServiceImpl implements TransitService {
     }
 
     @Override
-    public Transit findByNameAndCategory_Id(String name, Integer categoryId) {
-        return transitRepository.findByNameAndCategory_Id(name, categoryId);
+    public Transit findByNameAndCategoryId(String name, Integer categoryId) {
+        return transitRepository.findByNameAndCategoryId(name, categoryId);
     }
 
     @Override
