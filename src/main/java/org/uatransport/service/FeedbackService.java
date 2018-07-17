@@ -25,19 +25,19 @@ public interface FeedbackService {
 
     List<Feedback> getByUserId(Integer id);
 
-    List<Feedback> getByTransitAndFeedbackCriteria(Integer transitId, FeedbackCriteria.FeedbackType feedbackType);
+    List<Feedback> getByTransitIdAndFeedbackCriteriaType(Integer transitId, FeedbackCriteria.FeedbackType feedbackType);
 
-    List<Feedback> getByTransitCategoryIdAndFeedbackCriteria(Integer transitCategoryId,
-            FeedbackCriteria.FeedbackType feedbackType);
+    List<Feedback> getByTransitCategoryIdAndFeedbackCriteriaType(Integer transitCategoryId,
+                                                                 FeedbackCriteria.FeedbackType feedbackType);
 
-    List<Feedback> getByTransitAndFeedbackCriteriaAndUserId(Integer transitId,
-            FeedbackCriteria.FeedbackType feedbackType, Integer userId);
+    List<Feedback> getByTransitIdAndFeedbackCriteriaTypeAndUserId(Integer transitId,
+                                                                  FeedbackCriteria.FeedbackType feedbackType, Integer userId);
 
     Double getRatingByTransitId(Integer transitId);
 
     Double getRatingByCategoryId(Integer categoryId);
 
-    Double getRatingByTransitAndUser(Integer transitId, Integer userId);
+    Double getRatingByTransitIdAndUserId(Integer transitId, Integer userId);
 
     Map<Integer, Double> getHourCapacityMap(Integer transitId);
 
