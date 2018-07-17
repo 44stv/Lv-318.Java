@@ -175,13 +175,6 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new InfoResponse("Error during password changing"));
     }
 
-    @PutMapping("/update-role")
-    public ResponseEntity updateUserRole(@RequestBody UpdateUserRoleDTO updateUserRoleDTO) {
-        String role = updateUserRoleDTO.getRole();
-        String email = updateUserRoleDTO.getEmail();
-        return new ResponseEntity<>(userService.updateUserRole(role, email), HttpStatus.OK);
-    }
-
     @PostMapping("/social")
     public ResponseEntity socialSignIn(@RequestBody UserDTO userDTO, HttpServletResponse response) {
         String token;
