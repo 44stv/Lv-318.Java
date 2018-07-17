@@ -48,6 +48,7 @@ public class CommentServiceImpl implements CommentService {
             comment.setParentComment(parentComment);
         }
 
+        comment.setCreatedDate(LocalDateTime.now());
         comment.setTransit(transitRepository.getOne(transitId));
         comment.setUser(userRepository.getOne(userId));
 
