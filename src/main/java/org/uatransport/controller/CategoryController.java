@@ -69,5 +69,4 @@ public class CategoryController {
         response.setContentType(MediaType.IMAGE_PNG_VALUE);
         StreamUtils.copy(imgFile.getInputStream(), response.getOutputStream());
     }
-
 }
