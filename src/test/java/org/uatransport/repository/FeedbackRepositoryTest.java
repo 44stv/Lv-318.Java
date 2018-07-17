@@ -54,7 +54,7 @@ public class FeedbackRepositoryTest {
     @Test
     public void findByUserIdTest() {
         Feedback expectedFeedback = feedbackRepository.save(getTestFeedback());
-        List<Feedback> feedbackList = feedbackRepository.findByUserId(DEFAULT_DB_USER.getId());
+        List<Feedback> feedbackList = feedbackRepository.findByUserIdOrderByDateDesc(DEFAULT_DB_USER.getId());
 
         assertNotNull(expectedFeedback);
         assertNotEquals(0, feedbackList.size());
