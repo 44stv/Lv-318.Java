@@ -27,7 +27,7 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String commentText;
 
     @Column(nullable = false)
@@ -52,7 +52,6 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(name = "parent_id")
-    // @JsonIgnore
     private Comment parentComment;
 
     @JsonIgnore
@@ -60,9 +59,8 @@ public class Comment {
     @OrderBy("created_date ASC")
     private List<Comment> childrenComments;
 
-    // @Lob
-    // List<byte[]> images;
-    // separate table for images
+    @Column(columnDefinition = "TEXT")
+    private String images;
 
     public boolean canDelete() {
         return LocalDateTime.now().isBefore(maxDeleteTime());

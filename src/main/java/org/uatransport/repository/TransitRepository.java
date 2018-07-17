@@ -26,4 +26,6 @@ public interface TransitRepository extends JpaRepository<Transit, Integer>, JpaS
 
     Integer countAllByCategoryId(Integer categoryId);
 
+    Transit findByNameAndCategoryId(String name, Integer categoryId);
+
 }

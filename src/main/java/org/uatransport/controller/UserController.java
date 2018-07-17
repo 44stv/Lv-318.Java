@@ -2,7 +2,6 @@ package org.uatransport.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -28,37 +27,33 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
-@CrossOrigin
+
 public class UserController {
-
-    private final UserService userService;
-    private final ModelMapper modelMapper;
-
-    @Autowired
-    private TemporaryDataConfirmationService temporaryDataConfirmationService;
-
-    @Autowired
-    private EmailService emailService;
-
-    @Autowired
-    private ExpirationCheckService expirationCheckService;
 
     @Value("${server.url}")
     private String serverUrl;
 
-    @Value("localhost:4200/main")
+    @Value("${server.invitationLink}")
     private String invitationLink;
 
-    @Autowired
-    private UserValidatorService userValidatorService;
+    private final UserService userService;
+    private final ModelMapper modelMapper;
+    private final TemporaryDataConfirmationService temporaryDataConfirmationService;
+    private final EmailService emailService;
+    private final ExpirationCheckService expirationCheckService;
+    private final UserValidatorService userValidatorService;
 
     @PostMapping("/signup")
     public ResponseEntity signUp(@RequestBody UserDTO userDTO) {
         userValidatorService.validateUserOnRegistration(userDTO);
 
-        if (!userValidatorService.validateForUnactivating(userDTO.getEmail())) {
-            userService.signup(userDTO);
+        if (userValidatorService.validateForUnactivating(userDTO.getEmail())) {
+
+            userService.deleteByEmail(userDTO.getEmail());
         }
+
+        userService.signup(userDTO);
+
         final String uuid = UUID.randomUUID().toString().replace("-", "");
         final String confirmUrl = serverUrl + "/main/user/activate/" + uuid;
         String email = userDTO.getEmail();
@@ -147,9 +142,6 @@ public class UserController {
 
         temporaryDataConfirmationService.save(temporaryDataConfirmationService.makePasswordConfirmationEntity(uuid,
                 forgetPasswordDTO.getPassword(), userEmail));
-        temporaryDataConfirmationService.save(temporaryDataConfirmationService.makePasswordConfirmationEntity(uuid,
-                forgetPasswordDTO.getPassword(), userEmail));
-
         try {
             emailService.prepareAndSendConfirmPassEmail(userEmail, firstName, confirmUrl);
         } catch (MailException e) {
@@ -157,6 +149,37 @@ public class UserController {
         }
         return new ResponseEntity<>(new InfoResponse("Please, check your email "), HttpStatus.OK);
 
+    }
+
+    @PostMapping(value = "/update/password")
+    public ResponseEntity saveUserPassword(@RequestBody String uuidFromUrl) {
+        Optional<TemporaryDataConfirmation> checkedTemporaryDataConfirmation = expirationCheckService
+                .getTemporaryDataConfirmationWithExpirationChecking(uuidFromUrl);
+        if (checkedTemporaryDataConfirmation.isPresent()) {
+            if ((uuidFromUrl.equals(checkedTemporaryDataConfirmation.get().getUuid()))
+                    && (checkedTemporaryDataConfirmation.get()
+                            .getConfirmationType() == ConfirmationType.PASSWORD_CONFIRM)) {
+                String newPassword = checkedTemporaryDataConfirmation.get().getNewPassword();
+                String userEmail = checkedTemporaryDataConfirmation.get().getUserEmail();
+
+                userService.updateUserEncodedPassword(newPassword, userEmail);
+                temporaryDataConfirmationService.delete(checkedTemporaryDataConfirmation.get());
+
+                return ResponseEntity.status(HttpStatus.OK)
+                        .body(new InfoResponse("You are successfully updated password"));
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new InfoResponse("Error during password changing"));
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new InfoResponse("Error during password changing"));
+    }
+
+    @PutMapping("/update-role")
+    public ResponseEntity updateUserRole(@RequestBody UpdateUserRoleDTO updateUserRoleDTO) {
+        String role = updateUserRoleDTO.getRole();
+        String email = updateUserRoleDTO.getEmail();
+        return new ResponseEntity<>(userService.updateUserRole(role, email), HttpStatus.OK);
     }
 
     @PostMapping("/social")
@@ -177,8 +200,6 @@ public class UserController {
 
     @PostMapping("/invite")
     public ResponseEntity inviteFriend(@RequestBody FriendInvitationDTO friendInvitationDTO, Principal principal) {
-
-        // TODO
         String friendEmail = friendInvitationDTO.getFriendEmail();
         String userName = userService.getUser(principal).getFirstName() + " "
                 + userService.getUser(principal).getLastName();
@@ -194,7 +215,6 @@ public class UserController {
 
     }
 
-    //// Exception
     @PostMapping("/profile/update/password")
     public ResponseEntity updatePassword(@RequestBody UpdatePasswordDTO updatePasswordDTO, Principal principal) {
         userValidatorService.checkPasswords(updatePasswordDTO.getNewPassword(),

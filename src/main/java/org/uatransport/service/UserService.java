@@ -20,13 +20,11 @@ public interface UserService {
 
     String signin(LoginDTO loginDTO);
 
-    boolean signup(UserDTO user);
+    void signup(UserDTO user);
 
     User getUserByEmail(String userEmail);
 
     void activateUserByEmail(String userEmail);
-
-    void updateUserEncodedPassword(String newPassword, String userEmail);
 
     User updateUserRole(String role, String email);
 
@@ -40,6 +38,7 @@ public interface UserService {
 
     String singUpWithSocial(UserDTO userDTO);
 
+    void updateUserEncodedPassword(String newPassword, String userEmail);
     Page<User> getAllUsers(Pageable page);
 
     Page<User> getByRole(String role, Pageable pageable);

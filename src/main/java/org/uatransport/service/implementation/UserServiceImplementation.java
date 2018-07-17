@@ -27,19 +27,12 @@ import java.security.Principal;
 
 @Service
 @RequiredArgsConstructor
-@Qualifier("UserDetails")
 public class UserServiceImplementation implements UserService {
 
     private final UserRepository userRepository;
-
-    @Autowired
-    private PasswordEncoder bcryptEncoder;
-
-    @Autowired
-    private JwtTokenProvider jwtTokenProvider;
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    private final PasswordEncoder bcryptEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final AuthenticationManager authenticationManager;
 
     public String signin(LoginDTO loginDTO) {
         String username = loginDTO.getEmail();
@@ -54,7 +47,7 @@ public class UserServiceImplementation implements UserService {
         }
     }
 
-    public boolean signup(UserDTO userDTO) {
+    public void signup(UserDTO userDTO) {
 
         User user = new User();
         user.setFirstName(userDTO.getFirstName());
@@ -63,7 +56,6 @@ public class UserServiceImplementation implements UserService {
         user.setPassword(bcryptEncoder.encode(userDTO.getPassword()));
         user.setRole(Role.UNACTIVATED);
         userRepository.save(user);
-        return true;
 
     }
 
@@ -84,14 +76,6 @@ public class UserServiceImplementation implements UserService {
         user.setRole(Role.USER);
         userRepository.saveAndFlush(user);
 
-    }
-
-    @Override
-    public void updateUserEncodedPassword(String newPassword, String userEmail) {
-        User user = userRepository.findByEmail(userEmail);
-        user.setPassword(newPassword);
-
-        userRepository.saveAndFlush(user);
     }
 
     @Override
@@ -153,6 +137,14 @@ public class UserServiceImplementation implements UserService {
         user.setProvider(userDTO.getProvider());
         userRepository.save(user);
         return jwtTokenProvider.createToken(user.getEmail(), user.getRole(), user.getId());
+    }
+
+    @Override
+    public void updateUserEncodedPassword(String newPassword, String userEmail) {
+        User user = userRepository.findByEmail(userEmail);
+        user.setPassword(newPassword);
+        userRepository.save(user);
+
     }
 
     @Override
