@@ -20,10 +20,6 @@ public class StopSearchSpecification implements Specification<Stop> {
         if (!globalSearch.getGlobalSearch().isEmpty()) {
             Predicate stops = cb.like(cb.lower(root.get("street")),
                     "%" + globalSearch.getGlobalSearch().toLowerCase() + "%");
-//            query.select() // select transit ... where stops in :stops
-
-//            Join<Transit, ExtendableCategory> cityJoin = root.join("name");
-//            Predicate city = cb.like(cityJoin.get("name"), "%" + globalSearch.getCity());
             predicates.add(cb.or(stops));
         }
 
