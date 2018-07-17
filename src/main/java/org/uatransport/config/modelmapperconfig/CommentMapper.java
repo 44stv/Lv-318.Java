@@ -23,6 +23,7 @@ public class CommentMapper implements Converter<Comment, CommentDTO> {
         destination.setUserId(source.getUser().getId());
         destination.setTransitId(source.getTransit().getId());
         destination.setImages(source.getImages());
+        destination.setLevel(source.getLevel());
 
         try {
             if (source.getChildrenComments().isEmpty()) {
