@@ -3,7 +3,6 @@ package org.uatransport.repository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.CrudRepository;
 import org.uatransport.entity.ExtendableCategory;
-import org.uatransport.entity.NonExtendableCategory;
 
 import java.util.List;
 
