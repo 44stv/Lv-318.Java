@@ -1,25 +1,29 @@
 package org.uatransport.service.ewayutil;
 
 import lombok.extern.slf4j.Slf4j;
+import org.uatransport.config.ConfigurationUtils;
 
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
-import java.util.Objects;
 import java.util.Properties;
 
 @Slf4j
 class EwayConfig {
-    static String getProperty(String property) {
-        String rootPath = Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResource("")).getPath();
-        String appConfigPath = rootPath + "eway.properties";
+
+    private static ClassLoader classLoader = ConfigurationUtils.class.getClassLoader();
+    private static final String EWAY_PROPERTIES = "eway.properties";
+
+    static Properties getProperty() {
+
         Properties appProps = new Properties();
         try {
-            appProps.load(new InputStreamReader(new FileInputStream(appConfigPath), Charset.forName("UTF-8")));
+            appProps.load(classLoader.getResourceAsStream(EWAY_PROPERTIES));
         } catch (IOException e) {
             log.debug(e.getMessage());
         }
-        return appProps.getProperty(property);
+        return appProps;
+    }
+
+    public static String getPropertyValue(String key) {
+        return String.valueOf(getProperty().getProperty(key));
     }
 }

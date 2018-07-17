@@ -3,7 +3,6 @@ package org.uatransport.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.uatransport.entity.NonExtendableCategory;
-import org.uatransport.entity.Stop;
 import org.uatransport.entity.Transit;
 
 import javax.persistence.criteria.*;
@@ -20,10 +19,10 @@ public class GlobalSearchSpecification implements Specification<Transit> {
         if (!globalSearch.getGlobalSearch().isEmpty()) {
             Predicate transitPredicate = cb.like(root.get("name"), globalSearch.getGlobalSearch() + "%");
             predicates.add(transitPredicate);
-            Join<Transit, Stop> transitStopJoin = root.join("stops");
-            Predicate stopsPredicate = cb.like(transitStopJoin.get("street"),
-                    "%" + globalSearch.getGlobalSearch() + "%");
-            predicates.add(stopsPredicate);
+            // Join<Transit, Stop> transitStopJoin = root.join("stops");
+            // Predicate stopsPredicate = cb.like(transitStopJoin.get("street"),
+            // "%" + globalSearch.getGlobalSearch() + "%");
+            // predicates.add(stopsPredicate);
             Join<Transit, NonExtendableCategory> nonExCategoryJoin = root.join("category");
             Predicate categoryPredicate = cb.like(nonExCategoryJoin.get("nextLevelCategory").get("name"),
                     "%" + globalSearch.getCity() + "%");

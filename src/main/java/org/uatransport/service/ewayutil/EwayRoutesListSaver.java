@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static org.uatransport.service.ewayutil.EwayConfig.getPropertyValue;
+
 @RequiredArgsConstructor
 @Service
 public class EwayRoutesListSaver {
@@ -33,7 +35,7 @@ public class EwayRoutesListSaver {
     private final CategoryService categoryService;
     private final StopService stopService;
     private RateLimiter rateLimiter = RateLimiter.create(1.0 / 10);
-    private String[] busNumbers = EwayConfig.getProperty("bigBusNumbers").split(",");
+    private String[] busNumbers = getPropertyValue("bigBusNumbers").split(",");
 
     public void updateRoutes() {
         for (EwayRoute route : getTransitsObject().getRoutesList().getRoute()) {
@@ -78,24 +80,24 @@ public class EwayRoutesListSaver {
     }
 
     private NonExtendableCategory getCategoryByTransportType(EwayRoute route) {
-        boolean isBusType = route.getTransport().equals(EwayConfig.getProperty("ewayBusType"));
+        boolean isBusType = route.getTransport().equals(getPropertyValue("ewayBusType"));
         boolean isBusNumber = Stream.of(busNumbers).anyMatch(route.getTitle()::equals);
 
         SearchCategoryParam searchCategoryParam = new SearchCategoryParam();
-        searchCategoryParam.setFirstNestedCategoryName(EwayConfig.getProperty("extendCategory"));
+        searchCategoryParam.setFirstNestedCategoryName(getPropertyValue("extendCategory"));
 
         if (isBusType && isBusNumber) {
-            searchCategoryParam.setName(EwayConfig.getProperty("busCategoryName"));
+            searchCategoryParam.setName(getPropertyValue("busCategoryName"));
         } else {
             switch (route.getTransport()) {
             case "bus":
-                searchCategoryParam.setName(EwayConfig.getProperty("marshrutkaCategoryName"));
+                searchCategoryParam.setName(getPropertyValue("marshrutkaCategoryName"));
                 break;
             case "trol":
-                searchCategoryParam.setName(EwayConfig.getProperty("trolCategoryName"));
+                searchCategoryParam.setName(getPropertyValue("trolCategoryName"));
                 break;
             case "tram":
-                searchCategoryParam.setName(EwayConfig.getProperty("tramCategoryName"));
+                searchCategoryParam.setName(getPropertyValue("tramCategoryName"));
                 break;
             }
         }
@@ -105,22 +107,22 @@ public class EwayRoutesListSaver {
     }
 
     private String getTransitsUrl() {
-        URIBuilder uri = new URIBuilder().setScheme(EwayConfig.getProperty("scheme"))
-                .setHost(EwayConfig.getProperty("host")).addParameter("login", EwayConfig.getProperty("login"))
-                .addParameter("password", EwayConfig.getProperty("password"))
-                .addParameter("function", EwayConfig.getProperty("function-transit"))
-                .addParameter("city", EwayConfig.getProperty("city"));
+        URIBuilder uri = new URIBuilder().setScheme(getPropertyValue("scheme"))
+                .setHost(getPropertyValue("host")).addParameter("login", getPropertyValue("login"))
+                .addParameter("password", getPropertyValue("password"))
+                .addParameter("function", getPropertyValue("function-transit"))
+                .addParameter("city", getPropertyValue("city"));
         return uri.toString();
     }
 
     private String getStopsUrl(String transitId) {
-        URIBuilder uri = new URIBuilder().setScheme(EwayConfig.getProperty("scheme"))
-                .setHost(EwayConfig.getProperty("host")).addParameter("login", EwayConfig.getProperty("login"))
-                .addParameter("password", EwayConfig.getProperty("password"))
-                .addParameter("function", EwayConfig.getProperty("function-stops"))
-                .addParameter("city", EwayConfig.getProperty("city")).addParameter("id", transitId)
-                .addParameter("start_position", EwayConfig.getProperty("start_position"))
-                .addParameter("stop_position", EwayConfig.getProperty("stop_position"));
+        URIBuilder uri = new URIBuilder().setScheme(getPropertyValue("scheme"))
+                .setHost(getPropertyValue("host")).addParameter("login", getPropertyValue("login"))
+                .addParameter("password", getPropertyValue("password"))
+                .addParameter("function", getPropertyValue("function-stops"))
+                .addParameter("city", getPropertyValue("city")).addParameter("id", transitId)
+                .addParameter("start_position", getPropertyValue("start_position"))
+                .addParameter("stop_position", getPropertyValue("stop_position"));
         return uri.toString();
     }
 
