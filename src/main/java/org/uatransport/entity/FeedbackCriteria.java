@@ -19,7 +19,7 @@ public class FeedbackCriteria {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "criteria_id")
     private List<Question> questions;
 

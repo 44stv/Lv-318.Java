@@ -36,4 +36,5 @@ public interface UserService {
 
     String singUpWithSocial(UserDTO userDTO);
 
+    void updateUserEncodedPassword(String newPassword, String userEmail);
 }

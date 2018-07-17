@@ -45,6 +45,7 @@ public class UserController {
         userValidatorService.validateUserOnRegistration(userDTO);
 
         if (userValidatorService.validateForUnactivating(userDTO.getEmail())) {
+
             userService.deleteByEmail(userDTO.getEmail());
         }
 
@@ -138,9 +139,6 @@ public class UserController {
 
         temporaryDataConfirmationService.save(temporaryDataConfirmationService.makePasswordConfirmationEntity(uuid,
             forgetPasswordDTO.getPassword(), userEmail));
-        temporaryDataConfirmationService.save(temporaryDataConfirmationService.makePasswordConfirmationEntity(uuid,
-            forgetPasswordDTO.getPassword(), userEmail));
-
         try {
             emailService.prepareAndSendConfirmPassEmail(userEmail, firstName, confirmUrl);
         } catch (MailException e) {
@@ -148,6 +146,30 @@ public class UserController {
         }
         return new ResponseEntity<>(new InfoResponse("Please, check your email "), HttpStatus.OK);
 
+    }
+    @PostMapping(value = "/update/password")
+    public ResponseEntity saveUserPassword(@RequestBody String uuidFromUrl) {
+        Optional<TemporaryDataConfirmation> checkedTemporaryDataConfirmation =
+            expirationCheckService.getTemporaryDataConfirmationWithExpirationChecking(uuidFromUrl);
+        if (checkedTemporaryDataConfirmation.isPresent()) {
+            if ((uuidFromUrl.equals(checkedTemporaryDataConfirmation.get().getUuid()))
+                && (checkedTemporaryDataConfirmation.get()
+                .getConfirmationType() == ConfirmationType.PASSWORD_CONFIRM)) {
+                String newPassword = checkedTemporaryDataConfirmation.get().getNewPassword();
+                String userEmail = checkedTemporaryDataConfirmation.get().getUserEmail();
+
+                userService.updateUserEncodedPassword(newPassword, userEmail);
+                temporaryDataConfirmationService.delete(checkedTemporaryDataConfirmation.get());
+
+                return ResponseEntity.status(HttpStatus.OK)
+                    .body(new InfoResponse("You are successfully updated password"));
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new InfoResponse("Error during password changing"));
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(new InfoResponse("Error during password changing"));
     }
 
     @PutMapping("/update-role")

@@ -135,6 +135,14 @@ public class UserServiceImplementation implements UserService {
     }
 
     @Override
+    public void updateUserEncodedPassword(String newPassword, String userEmail) {
+       User user = userRepository.findByEmail(userEmail);
+       user.setPassword(newPassword);
+       userRepository.save(user);
+
+    }
+
+    @Override
     public String singInWithSocial(UserDTO userDTO) {
         String username = userDTO.getEmail();
         String provider = userDTO.getProvider();
