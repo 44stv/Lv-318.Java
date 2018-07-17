@@ -234,7 +234,6 @@ public class UserController {
         return modelMapper.map(userService.getById(id), UserInfo.class);
     }
 
-
     @PutMapping("/update-role")
     public ResponseEntity updateUserRole(@RequestBody UpdateUserRoleDTO updateUserRoleDTO) {
         String role = updateUserRoleDTO.getRole();

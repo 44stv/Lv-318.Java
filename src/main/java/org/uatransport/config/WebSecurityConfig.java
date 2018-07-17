@@ -34,16 +34,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests()
 
-            .antMatchers("/user/signin", "/user/activate/**", "/user/**", "/user/signup", "/stop/**", "/transit/**",
-                "/category/**", "/feedback-criteria/**", "/question/**", "/location/**",
-                "/actuator/health", "/search/**", "/comment/**", "/news/**")
-            .permitAll()
-            .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-            .antMatchers(HttpMethod.GET,"/feedback/**").permitAll()
-            .anyRequest().authenticated()
-            .antMatchers(HttpMethod.POST, "/feedback").hasRole("USER")
-            .and()
-            .exceptionHandling().accessDeniedHandler(accessDeniedHandler);
+                .antMatchers("/user/signin", "/user/activate/**", "/user/**", "/user/signup", "/stop/**", "/transit/**",
+                        "/category/**", "/feedback-criteria/**", "/question/**", "/location/**", "/actuator/health",
+                        "/search/**", "/comment/**", "/news/**")
+                .permitAll().antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/feedback/**").permitAll().anyRequest().authenticated()
+                .antMatchers(HttpMethod.POST, "/feedback").hasRole("USER").and().exceptionHandling()
+                .accessDeniedHandler(accessDeniedHandler);
 
         http.apply(new JwtTokenFilterConfigurer(jwtTokenProvider));
     }

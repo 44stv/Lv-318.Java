@@ -42,8 +42,8 @@ public class FeedbackCriteriaServiceImpl implements FeedbackCriteriaService {
         }
 
         return feedbackCriteriaRepository.findById(feedbackCriteria.getId())
-            .orElseThrow(() -> new ResourceNotFoundException(
-                String.format("FeedbackCriteria with id '%s' not found", feedbackCriteria.getId())));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        String.format("FeedbackCriteria with id '%s' not found", feedbackCriteria.getId())));
     }
 
     @Override
@@ -56,7 +56,7 @@ public class FeedbackCriteriaServiceImpl implements FeedbackCriteriaService {
     public FeedbackCriteria getById(Integer id) {
 
         return feedbackCriteriaRepository.findById(id).orElseThrow(
-            () -> new ResourceNotFoundException(String.format("FeedbackCriteria with id '%s' not found", id)));
+                () -> new ResourceNotFoundException(String.format("FeedbackCriteria with id '%s' not found", id)));
     }
 
     @Override

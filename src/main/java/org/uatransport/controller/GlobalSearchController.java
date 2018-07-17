@@ -1,6 +1,5 @@
 package org.uatransport.controller;
 
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,9 +9,7 @@ import org.uatransport.config.GlobalSearchSpecification;
 import org.uatransport.entity.Transit;
 import org.uatransport.service.TransitService;
 
-
 import java.util.List;
-
 
 @RestController
 @RequiredArgsConstructor
@@ -22,10 +19,11 @@ public class GlobalSearchController {
 
     private final TransitService transitService;
 
-
     @GetMapping
-    public ResponseEntity<List<Transit>> getAll(@RequestParam("search") String search, @RequestParam("city") String city) {
-        GlobalSearchSpecification globalSearchSpecification = new GlobalSearchSpecification(new GlobalSearch(search, city));
+    public ResponseEntity<List<Transit>> getAll(@RequestParam("search") String search,
+            @RequestParam("city") String city) {
+        GlobalSearchSpecification globalSearchSpecification = new GlobalSearchSpecification(
+                new GlobalSearch(search, city));
         return new ResponseEntity<>(transitService.getAll(globalSearchSpecification), HttpStatus.OK);
     }
 }

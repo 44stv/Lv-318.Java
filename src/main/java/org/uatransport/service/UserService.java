@@ -40,6 +40,7 @@ public interface UserService {
     String singInWithSocialFacebook(UserDTO userDTO);
 
     void updateUserEncodedPassword(String newPassword, String userEmail);
+
     Page<User> getAllUsers(Pageable page);
 
     Page<User> getByRole(String role, Pageable pageable);

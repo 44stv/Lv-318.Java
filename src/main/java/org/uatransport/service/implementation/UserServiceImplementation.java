@@ -27,7 +27,6 @@ import org.uatransport.service.UserService;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
 
-
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.Principal;
@@ -48,8 +47,9 @@ public class UserServiceImplementation implements UserService {
 
     GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(transport, jacksonFactory)
 
-        .setAudience(Collections.singletonList("1021227322496-q7977jujlatadfoql9skbeasai2550mn.apps.googleusercontent.com"))
-        .build();
+            .setAudience(Collections
+                    .singletonList("1021227322496-q7977jujlatadfoql9skbeasai2550mn.apps.googleusercontent.com"))
+            .build();
 
     public String signin(LoginDTO loginDTO) {
         String username = loginDTO.getEmail();
@@ -138,7 +138,6 @@ public class UserServiceImplementation implements UserService {
         return userRepository.existsByEmail(email);
     }
 
-
     @Override
     public String singInWithSocialGoogle(UserDTO userDTO) {
         try {
@@ -147,9 +146,11 @@ public class UserServiceImplementation implements UserService {
                 Payload payload = idToken.getPayload();
                 String email = payload.getEmail();
                 if (userRepository.existsByEmail(userDTO.getEmail())) {
-                    authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userDTO.getEmail(), userDTO.getPassword()));
-                    return jwtTokenProvider.createToken(userDTO.getEmail(), userRepository.findByEmail(userDTO.getEmail()).getRole(),
-                        userRepository.findByEmail(userDTO.getEmail()).getId());
+                    authenticationManager.authenticate(
+                            new UsernamePasswordAuthenticationToken(userDTO.getEmail(), userDTO.getPassword()));
+                    return jwtTokenProvider.createToken(userDTO.getEmail(),
+                            userRepository.findByEmail(userDTO.getEmail()).getRole(),
+                            userRepository.findByEmail(userDTO.getEmail()).getId());
                 } else {
                     return addSocialUser(userDTO);
                 }
@@ -180,17 +181,17 @@ public class UserServiceImplementation implements UserService {
         }
         Role role1;
         switch (role.toLowerCase()) {
-            case "manager":
-                role1 = Role.MANAGER;
-                break;
-            case "user":
-                role1 = Role.USER;
-                break;
-            case "admin":
-                role1 = Role.ADMIN;
-                break;
-            default:
-                role1 = Role.UNACTIVATED;
+        case "manager":
+            role1 = Role.MANAGER;
+            break;
+        case "user":
+            role1 = Role.USER;
+            break;
+        case "admin":
+            role1 = Role.ADMIN;
+            break;
+        default:
+            role1 = Role.UNACTIVATED;
         }
         return userRepository.findAllByRole(role1, pageable);
     }
@@ -207,7 +208,6 @@ public class UserServiceImplementation implements UserService {
                 authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
                 return jwtTokenProvider.createToken(email, role, id);
             } catch (AuthenticationException e) {
-                System.out.println("ExMari");
                 throw new SecurityJwtException("Can`t login with Facebook", HttpStatus.UNPROCESSABLE_ENTITY);
             }
         } else {
@@ -233,7 +233,6 @@ public class UserServiceImplementation implements UserService {
             return false;
         }
     }
-
 
     private String addSocialUser(UserDTO userDTO) {
         User user = new User();

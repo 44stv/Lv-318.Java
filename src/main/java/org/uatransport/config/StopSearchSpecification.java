@@ -2,19 +2,19 @@ package org.uatransport.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
-import org.uatransport.entity.ExtendableCategory;
 import org.uatransport.entity.Stop;
-import org.uatransport.entity.Transit;
 
-import javax.persistence.criteria.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
 public class StopSearchSpecification implements Specification<Stop> {
-    private final GlobalSearch globalSearch;
-
     public final List<Predicate> predicates = new ArrayList<>();
+    private final GlobalSearch globalSearch;
 
     private void filterBySearchName(Root<Stop> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
         if (!globalSearch.getGlobalSearch().isEmpty()) {
