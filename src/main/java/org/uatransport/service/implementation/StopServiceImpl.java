@@ -26,6 +26,7 @@ public class StopServiceImpl implements StopService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Stop getByLatAndLngAndDirection(Double lat, Double lng, Stop.Direction direction) {
         return stopRepository.findByLatAndLngAndDirection(lat, lng, direction);
     }
@@ -82,6 +83,9 @@ public class StopServiceImpl implements StopService {
 
     @Override
     public List<Stop> getByTransitIdAndDirection(Integer id, Stop.Direction direction) {
+        if ((id == null) && (direction == null)) {
+            throw new IllegalArgumentException("Arguments should not be null!");
+        }
         if (direction.equals(Stop.Direction.FORWARD)) {
             return stopRepository.findForwardStopsByTransitId(id);
         }
