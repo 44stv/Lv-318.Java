@@ -14,5 +14,6 @@ public class UserDTO {
     private String password;
     private String provider;
     private String passwordConfirmation;
+    private String tokenId;
 
 }

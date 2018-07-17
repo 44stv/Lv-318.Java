@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.uatransport.config.SearchCategoryParam;
 import org.uatransport.entity.ExtendableCategory;
+import org.uatransport.entity.NonExtendableCategory;
 import org.uatransport.entity.dto.CategoryDTO;
 import org.uatransport.service.CategoryService;
 
@@ -51,7 +52,7 @@ public class CategoryController {
         ExtendableCategory savedCategory = categoryService.save(category);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-                .buildAndExpand(savedCategory.getId()).toUri();
+            .buildAndExpand(savedCategory.getId()).toUri();
 
         return ResponseEntity.created(location).build();
     }

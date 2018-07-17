@@ -42,8 +42,8 @@ public class FeedbackCriteriaServiceImpl implements FeedbackCriteriaService {
         }
 
         return feedbackCriteriaRepository.findById(feedbackCriteria.getId())
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        String.format("FeedbackCriteria with id '%s' not found", feedbackCriteria.getId())));
+            .orElseThrow(() -> new ResourceNotFoundException(
+                String.format("FeedbackCriteria with id '%s' not found", feedbackCriteria.getId())));
     }
 
     @Override
@@ -56,7 +56,7 @@ public class FeedbackCriteriaServiceImpl implements FeedbackCriteriaService {
     public FeedbackCriteria getById(Integer id) {
 
         return feedbackCriteriaRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException(String.format("FeedbackCriteria with id '%s' not found", id)));
+            () -> new ResourceNotFoundException(String.format("FeedbackCriteria with id '%s' not found", id)));
     }
 
     @Override
@@ -100,16 +100,19 @@ public class FeedbackCriteriaServiceImpl implements FeedbackCriteriaService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<FeedbackCriteria> getByQuestionsWeight(Integer weight) {
         return feedbackCriteriaRepository.findByQuestionsWeight(weight);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<FeedbackCriteria> getByQuestionsType(Question.QuestionType type) {
         return feedbackCriteriaRepository.findByQuestionsType(type);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<FeedbackCriteria> getByQuestionsPriority(Integer priority) {
         return feedbackCriteriaRepository.findByQuestionsPriority(priority);
     }

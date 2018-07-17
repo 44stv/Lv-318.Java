@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import org.uatransport.entity.*;
 import org.uatransport.entity.dto.*;
 import org.uatransport.exception.EmailSendException;
+import org.uatransport.exception.SecurityJwtException;
+import org.uatransport.security.JwtTokenProvider;
 import org.uatransport.service.TemporaryDataConfirmationService;
 import org.uatransport.service.UserService;
 import org.uatransport.service.UserValidatorService;
@@ -20,6 +22,7 @@ import org.uatransport.service.email.EmailService;
 import org.uatransport.service.implementation.ExpirationCheckService;
 
 import javax.servlet.http.HttpServletResponse;
+import java.security.GeneralSecurityException;
 import java.security.Principal;
 import java.util.Optional;
 import java.util.UUID;
@@ -42,6 +45,7 @@ public class UserController {
     private final EmailService emailService;
     private final ExpirationCheckService expirationCheckService;
     private final UserValidatorService userValidatorService;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/signup")
     public ResponseEntity signUp(@RequestBody UserDTO userDTO) {
@@ -177,18 +181,22 @@ public class UserController {
 
     @PostMapping("/social")
     public ResponseEntity socialSignIn(@RequestBody UserDTO userDTO, HttpServletResponse response) {
-        String token;
-        if (userService.existUserByEmail(userDTO.getEmail())) {
+        try {
+            String token = userService.singInWithSocialGoogle(userDTO);
+            response.setHeader("Authorization", token);
 
-            token = userService.singInWithSocial(userDTO);
-            response.setHeader("Authorization", token);
             return ResponseEntity.ok(new TokenModel(token));
-        } else if (!(userService.existUserByEmail(userDTO.getEmail()))) {
-            token = userService.singUpWithSocial(userDTO);
-            response.setHeader("Authorization", token);
-            return ResponseEntity.ok(new TokenModel(token));
+        } catch (GeneralSecurityException e) {
+            throw new SecurityJwtException("Can`t login", HttpStatus.UNPROCESSABLE_ENTITY);
         }
-        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @PostMapping("/socialFacebook")
+    public ResponseEntity socialFacebookSignIn(@RequestBody UserDTO userDTO, HttpServletResponse response) {
+
+        String token = userService.singInWithSocialFacebook(userDTO);
+        response.setHeader("Authorization", token);
+        return ResponseEntity.ok(new TokenModel(token));
     }
 
     @PostMapping("/invite")
