@@ -5,17 +5,19 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.uatransport.service.ewayutil.EwayRoutesListSaver;
+
 
 @SpringBootApplication
 @EnableCaching
 @Slf4j
 public class UaTransportApplication {
 
+
     public static void main(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(UaTransportApplication.class, args);
         log.debug("--Application Started--");
-        log.debug("--Application --");
-
+//        EwayRoutesListSaver saver = context.getBean(EwayRoutesListSaver.class);
+//        saver.updateRoutes();
     }
-
 }

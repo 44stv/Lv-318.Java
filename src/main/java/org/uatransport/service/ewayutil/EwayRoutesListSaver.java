@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.http.client.utils.URIBuilder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.uatransport.config.SearchCategoryParam;
 import org.uatransport.entity.NonExtendableCategory;
@@ -30,44 +31,52 @@ public class EwayRoutesListSaver {
     private final CategoryService categoryService;
     private final StopService stopService;
     private RateLimiter rateLimiter = RateLimiter.create(1.0 / 10);
+    private String[] busNumbers = EwayConfig.getProperty("bigBusNumbers").split(",");
 
-    void convertAndSaveEwayRoutes() {
+    public void updateRoutes() {
         for (EwayRoute route : getTransitsObject().getRoutesList().getRoute()) {
-            Transit transit = new Transit();
-            transit.setCategory(getCategoryByTransportType(route.getTransport()));
-            transit.setName(route.getTitle());
-            transit.setStops(convertAndSaveStops(route.getId().toString()));
-            if (transitService.getByNameAndCategoryName(transit.getName(), transit.getCategory().getName()) == null) {
-                transitService.add(transit);
-            } else {
-                transit.setId(transitService
-                        .getByNameAndCategoryName(transit.getName(), transit.getCategory().getName()).getId());
-                transitService.update(transit);
-            }
+            updateRoute(route);
         }
     }
 
-    private List<Stop> convertAndSaveStops(String routeId) {
+
+    @Transactional
+    public void updateRoute(EwayRoute route) {
+        NonExtendableCategory category = getCategoryByTransportType(route.getTransport());
+
+        Transit transit = transitService.getByNameAndCategoryName(route.getTitle(), category.getName());
+        List<Stop> stops = convertAndSaveStops(route.getId().toString());
+
+        if (transit == null) {
+            transit = transitService.add(
+                new Transit().setName(route.getTitle()).setCategory(category).setStops(stops)
+            );
+        }
+        else {
+            transit.setStops(stops);
+            transitService.update(transit);
+        }
+    }
+
+    @Transactional
+    public List<Stop> convertAndSaveStops(String routeId) {
         List<Stop> stops = new ArrayList<>();
         for (EwayPoint point : getStopsObject(routeId).getRoute().getPoints().getPoint()) {
             if (point.getTitle() != null) {
-                Stop transitStop = new Stop();
-                transitStop.setLng(point.getLng());
-                transitStop.setLat(point.getLat());
-                transitStop.setStreet(point.getTitle());
-                if (point.getDirection() == 1) {
-                    transitStop.setDirection(Stop.DIRECTION.FORWARD);
-                } else {
-                    transitStop.setDirection(Stop.DIRECTION.BACKWARD);
+                Stop.Direction direction = point.getDirection() == 1 ? Stop.Direction.FORWARD : Stop.Direction.BACKWARD;
+                Stop stop = stopService.getByLatAndLngAndDirection(
+                    point.getLat(),
+                    point.getLng(),
+                    direction
+                );
+                if (stop == null) {
+                    stop = new Stop();
+                    stop.setLng(point.getLng());
+                    stop.setLat(point.getLat());
+                    stop.setStreet(point.getTitle());
+                    stop.setDirection(direction);
                 }
-                if (stopService.existByCoordinatesAndDirection(transitStop.getLat(), transitStop.getLng(),
-                        transitStop.getDirection())) {
-                    transitStop.setId(stopService.getByLatAndLngAndDirection(transitStop.getLat(), transitStop.getLng(),
-                            transitStop.getDirection()).getId());
-                } else {
-                    stopService.save(transitStop);
-                }
-                stops.add(transitStop);
+                stops.add(stop);
             }
         }
         rateLimiter.acquire();
@@ -78,50 +87,52 @@ public class EwayRoutesListSaver {
         SearchCategoryParam searchCategoryParam = new SearchCategoryParam();
         searchCategoryParam.setFirstNestedCategoryName(EwayConfig.getProperty("extendCategory"));
         switch (transportType) {
-        case "bus":
-            searchCategoryParam.setName(EwayConfig.getProperty("busCategoryName"));
-            break;
-        case "trol":
-            searchCategoryParam.setName(EwayConfig.getProperty("trolCategoryName"));
-            break;
-        case "tram":
-            searchCategoryParam.setName(EwayConfig.getProperty("tramCategoryName"));
-            break;
+            case "bus":
+                searchCategoryParam.setName(EwayConfig.getProperty("marshrutkaCategoryName"));
+                break;
+            case "trol":
+                searchCategoryParam.setName(EwayConfig.getProperty("trolCategoryName"));
+                break;
+            case "tram":
+                searchCategoryParam.setName(EwayConfig.getProperty("tramCategoryName"));
+                break;
+            default:
+                searchCategoryParam.setName(EwayConfig.getProperty("busCategoryName"));
         }
         return (NonExtendableCategory) categoryService.getAll(searchCategoryParam).stream().findFirst()
-                .orElseThrow(() -> new ResourceNotFoundException("There no category with such parameters"));
+            .orElseThrow(() -> new ResourceNotFoundException("There no category with such parameters"));
     }
 
     private String getTransitsUrl() {
         URIBuilder uri = new URIBuilder().setScheme(EwayConfig.getProperty("scheme"))
-                .setHost(EwayConfig.getProperty("host")).addParameter("login", EwayConfig.getProperty("login"))
-                .addParameter("password", EwayConfig.getProperty("password"))
-                .addParameter("function", EwayConfig.getProperty("function-transit"))
-                .addParameter("city", EwayConfig.getProperty("city"));
+            .setHost(EwayConfig.getProperty("host")).addParameter("login", EwayConfig.getProperty("login"))
+            .addParameter("password", EwayConfig.getProperty("password"))
+            .addParameter("function", EwayConfig.getProperty("function-transit"))
+            .addParameter("city", EwayConfig.getProperty("city"));
         return uri.toString();
     }
 
     private String getStopsUrl(String transitId) {
         URIBuilder uri = new URIBuilder().setScheme(EwayConfig.getProperty("scheme"))
-                .setHost(EwayConfig.getProperty("host")).addParameter("login", EwayConfig.getProperty("login"))
-                .addParameter("password", EwayConfig.getProperty("password"))
-                .addParameter("function", EwayConfig.getProperty("function-stops"))
-                .addParameter("city", EwayConfig.getProperty("city")).addParameter("id", transitId)
-                .addParameter("start_position", EwayConfig.getProperty("start_position"))
-                .addParameter("stop_position", EwayConfig.getProperty("stop_position"));
+            .setHost(EwayConfig.getProperty("host")).addParameter("login", EwayConfig.getProperty("login"))
+            .addParameter("password", EwayConfig.getProperty("password"))
+            .addParameter("function", EwayConfig.getProperty("function-stops"))
+            .addParameter("city", EwayConfig.getProperty("city")).addParameter("id", transitId)
+            .addParameter("start_position", EwayConfig.getProperty("start_position"))
+            .addParameter("stop_position", EwayConfig.getProperty("stop_position"));
         return uri.toString();
     }
 
     @SneakyThrows
     private EwayResponseObject getTransitsObject() {
         return new ObjectMapper().readValue(new RestTemplate().getForEntity(getTransitsUrl(), String.class).getBody(),
-                EwayResponseObject.class);
+            EwayResponseObject.class);
     }
 
     @SneakyThrows
     private EwayStopResponse getStopsObject(String transitId) {
         return new ObjectMapper().readValue(
-                new RestTemplate().getForEntity(getStopsUrl(transitId), String.class).getBody(),
-                EwayStopResponse.class);
+            new RestTemplate().getForEntity(getStopsUrl(transitId), String.class).getBody(),
+            EwayStopResponse.class);
     }
 }
