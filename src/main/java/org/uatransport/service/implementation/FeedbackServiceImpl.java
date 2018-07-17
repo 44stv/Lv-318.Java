@@ -41,6 +41,7 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     @Override
     public List<Feedback> addAll(List<FeedbackDTO> feedbackDTOList) {
+
         return Streams.stream(feedbackRepository.saveAll(FeedbackDTO.toEntity(feedbackDTOList)))
             .collect(Collectors.toList());
     }
@@ -48,6 +49,7 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Override
     @Transactional(readOnly = true)
     public Feedback getById(Integer id) {
+
         return feedbackRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException(String.format("Feedback with id '%s' not found", id)));
     }
@@ -94,7 +96,6 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Override
     @Transactional(readOnly = true)
     public Double getRatingByTransitId(Integer transitId) {
-
         List<Feedback> feedbackList = getByTransitIdAndFeedbackCriteriaType(transitId,
             FeedbackCriteria.FeedbackType.RATING);
         List<Feedback> quantityFeedbackList = getByTransitIdAndFeedbackCriteriaType(transitId,
@@ -119,7 +120,6 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Override
     @Transactional(readOnly = true)
     public Double getRatingByTransitIdAndUserId(Integer transitId, Integer userId) {
-
         List<Feedback> feedbackList = getByTransitIdAndFeedbackCriteriaTypeAndUserId(transitId,
             FeedbackCriteria.FeedbackType.RATING, userId);
         List<Feedback> quantityFeedbackList = getByTransitIdAndFeedbackCriteriaTypeAndUserId(transitId,
@@ -137,11 +137,9 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Override
     @Transactional(readOnly = true)
     public Map<Stop, Double> getStopCapacityMap(Integer transitId, Stop.Direction direction, Stop... stops) {
-
         List<Stop> stopList = stops.length > 0 ? Arrays.asList(stops)
             : stopService.getByTransitIdAndDirection(transitId, direction);
         List<CapacityRouteFeedback> capacityRouteFeedbackList = convertCapacityRouteFeedBacks(transitId);
-
         Map<Stop, Double> capacityMap = new TreeMap<>(Comparator.comparingInt(stopList::indexOf));
 
         for (Stop stop : stopList) {
@@ -153,11 +151,9 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Override
     @Transactional(readOnly = true)
     public EnumMap<SimpleFeedback, Double> getSimpleAnswerPercentageMap(Integer transitId) {
-
         EnumMap<SimpleFeedback, Double> simpleFeedbackDoubleEnumMap = new EnumMap<>(SimpleFeedback.class);
 
         for (SimpleFeedback simpleFeedback : SimpleFeedback.values()) {
-
             double percentValue = 100 * safeDivision(countByValue(simpleFeedback, transitId),
                 (double) countAllAccepterFeedBacks(transitId));
             simpleFeedbackDoubleEnumMap.put(simpleFeedback, percentValue);
@@ -169,7 +165,7 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Override
     @Transactional(readOnly = true)
     public Map<Integer, Double> getHourCapacityMap(Integer transitId) {
-      int hoursInDay = 24;
+        int hoursInDay = 24;
         Map<Integer, Double> capacityMap = new TreeMap<>();
         List<CapacityHourFeedback> capacityHourFeedbackList = convertCapacityHourFeedBacks(transitId);
 
@@ -205,7 +201,7 @@ public class FeedbackServiceImpl implements FeedbackService {
         if (divider == 0) {
             return 0;
         }
-        return  divided.doubleValue() / divider;
+        return divided.doubleValue() / divider;
     }
 
     /**
@@ -236,7 +232,7 @@ public class FeedbackServiceImpl implements FeedbackService {
      * Method to set name to heatMapDTO in correct form (e.g. 00:00).
      *
      * @param heatMapDTO object in which should put specified name
-     * @param i exact name of the object
+     * @param i          exact name of the object
      */
     private void heatMapDTOSetName(HeatMapDTO heatMapDTO, int i) {
         // 10 is the first two-digit number
@@ -253,7 +249,7 @@ public class FeedbackServiceImpl implements FeedbackService {
     private void mapGeneration(List<Stop> stopList, Map<String, Double> capacityMap, int averageHourCapacity,
                                Map<Stop, Double> stopCapacityMap, Double capacityFromHourCapacityMap) {
         for (Stop stop : stopList) {
-            Double valueToSaveInMap = stopCapacityMap.get(stop)*safeDivision( capacityFromHourCapacityMap, averageHourCapacity);
+            Double valueToSaveInMap = stopCapacityMap.get(stop) * safeDivision(capacityFromHourCapacityMap, averageHourCapacity);
 
             capacityMap.put(stop.getStreet(), valueToSaveInMap);
         }
@@ -309,12 +305,14 @@ public class FeedbackServiceImpl implements FeedbackService {
     }
 
     private Long countByValue(SimpleFeedback answer, Integer transitId) {
+
         return convertSimpleFeedBacks(transitId).stream()
             .filter(simpleFeedback -> simpleFeedback == answer)
             .count();
     }
 
     private List<SimpleFeedback> convertSimpleFeedBacks(Integer transitId) {
+
         return getByTransitIdAndFeedbackCriteriaType(transitId, FeedbackCriteria.FeedbackType.SIMPLE).stream()
             .map(feedback -> new FeedbackTypeConverter<>(SimpleFeedback.class).convert(feedback))
             .collect(Collectors.toList());
@@ -325,6 +323,7 @@ public class FeedbackServiceImpl implements FeedbackService {
     }
 
     private Double getAverageQualityRate(List<Feedback> feedbackList) {
+
         return feedbackList.stream()
             .map(feedback -> new FeedbackTypeConverter<>(QuantityLoadFeedback.class).convert(feedback))
             .mapToInt(QuantityLoadFeedback::getRate)
@@ -333,6 +332,7 @@ public class FeedbackServiceImpl implements FeedbackService {
     }
 
     private Double getAverageConflictFeedBacksRate(List<Feedback> feedbackList) {
+
         return feedbackList.stream()
             .mapToDouble(new ConflictTypeConverter()::convert)
             .average()

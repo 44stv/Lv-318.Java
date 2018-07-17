@@ -1,6 +1,7 @@
 package org.uatransport.service;
 
 import org.assertj.core.util.Sets;
+import org.hamcrest.Matchers;
 import org.hamcrest.collection.IsMapContaining;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,7 +55,6 @@ public class FeedbackServiceTest {
     public void setUp() {
         stopService = new StopServiceImpl(stopRepository);
         feedbackService = new FeedbackServiceImpl(feedbackRepository, stopService);
-
     }
 
     @Test(expected = ResourceNotFoundException.class)
@@ -159,6 +159,18 @@ public class FeedbackServiceTest {
         assertEquals(expectedNoValue, simpleFeedbackDoubleEnumMap.get(NO));
     }
 
+    @Test
+    public void getStopCapacityMapStopIndexOrderTest() {
+        List<Stop> stopList = stopService.getByTransitIdAndDirection(EXIST_DB_TRANSIT_ID, Direction.FORWARD)
+            .subList(0, 4);
+        Collections.shuffle(stopList);
+        Stop[] stopVararg = stopList.toArray(new Stop[stopList.size()]);
+        Map<Stop, Double> stopCapacityMap = feedbackService.getStopCapacityMap(EXIST_DB_TRANSIT_ID,
+            Direction.FORWARD, stopVararg);
+
+        assertThat(stopCapacityMap.keySet(),
+            Matchers.contains(stopList.get(0), stopList.get(1), stopList.get(2), stopList.get(3)));
+    }
 
     @Test
     public void getHourCapacityMap() {
