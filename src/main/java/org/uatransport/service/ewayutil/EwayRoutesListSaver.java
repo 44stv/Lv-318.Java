@@ -5,10 +5,7 @@ import com.google.common.util.concurrent.RateLimiter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.http.client.utils.URIBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.uatransport.config.SearchCategoryParam;
@@ -25,16 +22,19 @@ import org.uatransport.service.ewayutil.ewaystopentity.EwayPoint;
 import org.uatransport.service.ewayutil.ewaystopentity.EwayStopResponse;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
+
+@RequiredArgsConstructor
+@Service
 public class EwayRoutesListSaver {
-    private  TransitService transitService;
-    private  CategoryService categoryService;
-    private  StopService stopService;
-    private RateLimiter rateLimiter = RateLimiter.create(1.0 / 10);
-    private String[] busNumbers = EwayConfig.getProperty("bigBusNumbers").split(",");
+
+    private final  TransitService transitService;
+    private final CategoryService categoryService;
+    private final StopService stopService;
+    private final RateLimiter rateLimiter = RateLimiter.create(1.0 / 10);
+    private final String[] busNumbers = EwayConfig.getProperty("bigBusNumbers").split(",");
 
     public void updateRoutes() {
         for (EwayRoute route : getTransitsObject().getRoutesList().getRoute()) {

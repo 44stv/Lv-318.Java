@@ -33,6 +33,6 @@ public class News {
     @Column(name = "image")
     private String imageUrl;
 
-    @Type(type="text")
+    @Type(type = "text")
     private String text;
 }

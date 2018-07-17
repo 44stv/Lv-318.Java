@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.uatransport.entity.Feedback;
 import org.uatransport.entity.Transit;
 import org.uatransport.entity.dto.TransitDTO;
 import org.uatransport.service.FeedbackService;
@@ -77,12 +78,14 @@ public class TransitController {
 
     @GetMapping("/user/{id}")
     public List<TransitDTO> getAllTransitsByUserId(@PathVariable Integer id) {
-        List<Transit> transits = feedbackService.getByUserId(id).stream().map(feedback -> feedback.getTransit()).distinct().limit(5).collect(Collectors.toList());
+        List<Transit> transits = feedbackService.getByUserId(id).stream().map(Feedback::getTransit).
+            distinct().limit(5).collect(Collectors.toList());
         return transits.stream().map(transit -> modelMapper.map(transit, TransitDTO.class)).collect(Collectors.toList());
 
     }
+
     @GetMapping("/{name}/{id}")
-    public TransitDTO getTransitByNameAndCategoryId(@PathVariable String name, @PathVariable Integer id){
+    public TransitDTO getTransitByNameAndCategoryId(@PathVariable String name, @PathVariable Integer id) {
         Transit transit = transitService.findByNameAndCategoryId(name, id);
         return modelMapper.map(transit, TransitDTO.class);
     }

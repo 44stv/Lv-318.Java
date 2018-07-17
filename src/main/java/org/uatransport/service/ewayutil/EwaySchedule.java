@@ -28,7 +28,7 @@ public class EwaySchedule extends QuartzJobBean {
      * For init local DB change "second minutes hours * * ?" to time you wish. for example : "0 30 15 * * ?" - works at
      * 15:30:00 every day. After using set for our application : "0 5 2 ? * SAT" - works at 02:05:00 every Saturday.
      */
-//    @Bean
+    @Bean
     public Trigger routesListSaverJobTrigger() {
       SimpleScheduleBuilder.simpleSchedule().repeatForever();
         return TriggerBuilder.newTrigger().forJob(jobDetail()).withIdentity("jobTrigger")

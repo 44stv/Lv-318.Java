@@ -3,7 +3,6 @@ package org.uatransport.entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 

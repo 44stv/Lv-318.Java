@@ -35,7 +35,7 @@ public class StopController {
         Stop.Direction direction1 = null;
         if (direction.equalsIgnoreCase("forward")) {
             direction1 = Stop.Direction.FORWARD;
-        } else if(direction.equalsIgnoreCase("backward")){
+        } else if (direction.equalsIgnoreCase("backward")) {
             direction1 = Stop.Direction.BACKWARD;
         }
         return stopService.getByTransitIdAndDirection(id, direction1);
@@ -54,7 +54,7 @@ public class StopController {
             transitToUpdate.getStops().add(stop);
             transitService.update(transitToUpdate);
             URI location = ServletUriComponentsBuilder.fromCurrentRequest().query("id={id}")
-                    .buildAndExpand(savedPoint.getId()).toUri();
+                .buildAndExpand(savedPoint.getId()).toUri();
             return ResponseEntity.created(location).build();
         } else {
             return ResponseEntity.unprocessableEntity().build();
