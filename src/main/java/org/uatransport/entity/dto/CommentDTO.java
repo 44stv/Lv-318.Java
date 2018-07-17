@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 public class CommentDTO {
     private Integer id;
     private String commentText;
-    private LocalDateTime postDate;
+    private LocalDateTime createdDate;
     private LocalDateTime modifiedDate;
     private Integer userId;
     private Integer transitId;
