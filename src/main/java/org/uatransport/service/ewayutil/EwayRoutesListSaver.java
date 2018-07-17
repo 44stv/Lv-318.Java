@@ -107,18 +107,16 @@ public class EwayRoutesListSaver {
     }
 
     private String getTransitsUrl() {
-        URIBuilder uri = new URIBuilder().setScheme(getPropertyValue("scheme"))
-                .setHost(getPropertyValue("host")).addParameter("login", getPropertyValue("login"))
-                .addParameter("password", getPropertyValue("password"))
+        URIBuilder uri = new URIBuilder().setScheme(getPropertyValue("scheme")).setHost(getPropertyValue("host"))
+                .addParameter("login", getPropertyValue("login")).addParameter("password", getPropertyValue("password"))
                 .addParameter("function", getPropertyValue("function-transit"))
                 .addParameter("city", getPropertyValue("city"));
         return uri.toString();
     }
 
     private String getStopsUrl(String transitId) {
-        URIBuilder uri = new URIBuilder().setScheme(getPropertyValue("scheme"))
-                .setHost(getPropertyValue("host")).addParameter("login", getPropertyValue("login"))
-                .addParameter("password", getPropertyValue("password"))
+        URIBuilder uri = new URIBuilder().setScheme(getPropertyValue("scheme")).setHost(getPropertyValue("host"))
+                .addParameter("login", getPropertyValue("login")).addParameter("password", getPropertyValue("password"))
                 .addParameter("function", getPropertyValue("function-stops"))
                 .addParameter("city", getPropertyValue("city")).addParameter("id", transitId)
                 .addParameter("start_position", getPropertyValue("start_position"))

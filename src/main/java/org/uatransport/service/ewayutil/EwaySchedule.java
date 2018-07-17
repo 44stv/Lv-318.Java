@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.stereotype.Component;
 
+import static org.uatransport.service.ewayutil.EwayConfig.getPropertyValue;
+
 @Component
 public class EwaySchedule extends QuartzJobBean {
     @Autowired
@@ -33,6 +35,6 @@ public class EwaySchedule extends QuartzJobBean {
         SimpleScheduleBuilder.simpleSchedule().repeatForever();
         return TriggerBuilder.newTrigger().forJob(jobDetail()).withIdentity("jobTrigger")
                 .withDescription("Update list of transit and stops")
-                .withSchedule(CronScheduleBuilder.cronSchedule(EwayConfig.getProperty("update-date"))).build();
+                .withSchedule(CronScheduleBuilder.cronSchedule(getPropertyValue("update-date"))).build();
     }
 }
