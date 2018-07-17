@@ -1,7 +1,6 @@
 package org.uatransport.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +22,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CategoryController {
     private final CategoryService categoryService;
-    private final ModelMapper modelMapper;
 
     @GetMapping("/top")
     public List<ExtendableCategory> getTop() {
@@ -71,5 +69,4 @@ public class CategoryController {
         response.setContentType(MediaType.IMAGE_PNG_VALUE);
         StreamUtils.copy(imgFile.getInputStream(), response.getOutputStream());
     }
-
 }
