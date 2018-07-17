@@ -45,6 +45,9 @@ public class CategoryController {
 
     @PostMapping
     public ResponseEntity<ExtendableCategory> save(@RequestBody ExtendableCategory category) {
+        if (category.getNextLevelCategory()!= null) {
+            category.setNextLevelCategory(categoryService.getById(category.getNextLevelCategory().getId()));
+        }
         ExtendableCategory savedCategory = categoryService.save(category);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
