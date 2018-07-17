@@ -19,12 +19,11 @@ import java.time.LocalDateTime;
 public class NewsServiceImpl implements NewsService {
     public final NewsRepository newsRepository;
 
-
     @Override
     @Transactional(readOnly = true)
     public News getById(Integer id) {
         return newsRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException(String.format("News with id '%s' not found", id)));
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("News with id '%s' not found", id)));
     }
 
     @Override

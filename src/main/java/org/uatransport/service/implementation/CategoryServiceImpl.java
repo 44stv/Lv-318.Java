@@ -26,7 +26,7 @@ public class CategoryServiceImpl implements CategoryService {
     @NonNull
     private TransitRepository transitRepository;
     @NonNull
-    private  FeedbackService feedbackService;
+    private FeedbackService feedbackService;
 
     @Override
     @Transactional
@@ -108,7 +108,7 @@ public class CategoryServiceImpl implements CategoryService {
             CategoryDTO categoryDTO = new CategoryDTO(category.getId(), category.getName(),
                     category.getNextLevelCategory(), category.getIconURL(),
                     transitRepository.countAllByCategoryId(category.getId()),
-                feedbackService.getRatingByTransitCategoryId(category.getId()));
+                    feedbackService.getRatingByTransitCategoryId(category.getId()));
             list.add(categoryDTO);
         }
         return list;

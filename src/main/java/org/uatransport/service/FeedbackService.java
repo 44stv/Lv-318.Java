@@ -28,10 +28,10 @@ public interface FeedbackService {
     List<Feedback> getByTransitIdAndFeedbackCriteriaType(Integer transitId, FeedbackCriteria.FeedbackType feedbackType);
 
     List<Feedback> getByTransitCategoryIdAndFeedbackCriteriaType(Integer transitCategoryId,
-                                                                 FeedbackCriteria.FeedbackType feedbackType);
+            FeedbackCriteria.FeedbackType feedbackType);
 
     List<Feedback> getByTransitIdAndFeedbackCriteriaTypeAndUserId(Integer transitId,
-                                                                  FeedbackCriteria.FeedbackType feedbackType, Integer userId);
+            FeedbackCriteria.FeedbackType feedbackType, Integer userId);
 
     Double getRatingByTransitId(Integer transitId);
 

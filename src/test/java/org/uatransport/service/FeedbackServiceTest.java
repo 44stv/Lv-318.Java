@@ -78,11 +78,11 @@ public class FeedbackServiceTest {
         assertNotEquals(EXPECTED_ZERO_VALUE, actualRate);
 
         Double actualRateMissedUser = feedbackService.getRatingByTransitIdAndUserId(EXIST_DB_TRANSIT_ID,
-            NON_EXIST_DB_USER_ID);
+                NON_EXIST_DB_USER_ID);
         assertEquals(EXPECTED_ZERO_VALUE, actualRateMissedUser, 0.0);
 
         Double actualRateMissedTransit = feedbackService.getRatingByTransitIdAndUserId(NON_EXIST_DB_TRANSIT_ID,
-            EXIST_DB_USER_ID);
+                EXIST_DB_USER_ID);
         assertEquals(EXPECTED_ZERO_VALUE, actualRateMissedTransit, 0.0);
     }
 
@@ -97,15 +97,16 @@ public class FeedbackServiceTest {
 
     @Test
     public void getStopCapacityMapTest() {
-        Set<Stop> expectedStops = Sets.newHashSet(stopService.getByTransitIdAndDirection(EXIST_DB_TRANSIT_ID,
-            Direction.FORWARD));
+        Set<Stop> expectedStops = Sets
+                .newHashSet(stopService.getByTransitIdAndDirection(EXIST_DB_TRANSIT_ID, Direction.FORWARD));
         Map<Stop, Double> stopCapacityMap = feedbackService.getStopCapacityMap(EXIST_DB_TRANSIT_ID, Direction.FORWARD);
         assertEquals(expectedStops, stopCapacityMap.keySet());
     }
 
     @Test
     public void getStopCapacityMapForwardTest() {
-        Set<Stop> expectedStops = Sets.newHashSet(stopService.getByTransitIdAndDirection(EXIST_DB_TRANSIT_ID, Direction.FORWARD));
+        Set<Stop> expectedStops = Sets
+                .newHashSet(stopService.getByTransitIdAndDirection(EXIST_DB_TRANSIT_ID, Direction.FORWARD));
         Map<Stop, Double> stopCapacityMap = feedbackService.getStopCapacityMap(EXIST_DB_TRANSIT_ID, Direction.FORWARD);
 
         assertThat(stopCapacityMap, IsMapContaining.hasValue(EXPECTED_ZERO_VALUE));
@@ -115,14 +116,15 @@ public class FeedbackServiceTest {
     @Test
     public void getStopCapacityMapForwardNoTransitTest() {
         Set<Stop> expectedStops = Collections.emptySet();
-        Map<Stop, Double> stopCapacityMap = feedbackService.getStopCapacityMap(NON_EXIST_DB_TRANSIT_ID, Direction.FORWARD);
+        Map<Stop, Double> stopCapacityMap = feedbackService.getStopCapacityMap(NON_EXIST_DB_TRANSIT_ID,
+                Direction.FORWARD);
         assertEquals(expectedStops, stopCapacityMap.keySet());
     }
 
     @Test
     public void getStopCapacityMapBackwardTest() {
-        Set<Stop> expectedStops = Sets.newHashSet(
-            stopService.getByTransitIdAndDirection(EXIST_DB_TRANSIT_ID, Direction.BACKWARD));
+        Set<Stop> expectedStops = Sets
+                .newHashSet(stopService.getByTransitIdAndDirection(EXIST_DB_TRANSIT_ID, Direction.BACKWARD));
         Map<Stop, Double> stopCapacityMap = feedbackService.getStopCapacityMap(EXIST_DB_TRANSIT_ID, Direction.BACKWARD);
         assertEquals(expectedStops, stopCapacityMap.keySet());
     }
@@ -132,8 +134,8 @@ public class FeedbackServiceTest {
         List<Stop> stopList = stopService.getByTransitIdAndDirection(EXIST_DB_TRANSIT_ID, Direction.FORWARD);
         List<Stop> trimmedStops = stopList.subList(0, stopList.size() / 2);
         Stop[] expectedStopVararg = trimmedStops.toArray(new Stop[trimmedStops.size()]);
-        Map<Stop, Double> stopCapacityMap = feedbackService.getStopCapacityMap(EXIST_DB_TRANSIT_ID,
-            Direction.FORWARD, expectedStopVararg);
+        Map<Stop, Double> stopCapacityMap = feedbackService.getStopCapacityMap(EXIST_DB_TRANSIT_ID, Direction.FORWARD,
+                expectedStopVararg);
         assertEquals(Sets.newHashSet(trimmedStops), stopCapacityMap.keySet());
     }
 
@@ -142,16 +144,16 @@ public class FeedbackServiceTest {
         List<Stop> stopList = stopService.getByTransitIdAndDirection(EXIST_DB_TRANSIT_ID, Direction.BACKWARD);
         List<Stop> trimmedStops = stopList.subList(stopList.size() / 2, stopList.size());
         Stop[] expectedStopVararg = trimmedStops.toArray(new Stop[trimmedStops.size()]);
-        Map<Stop, Double> stopCapacityMap = feedbackService.getStopCapacityMap(EXIST_DB_TRANSIT_ID,
-            Direction.BACKWARD, expectedStopVararg);
+        Map<Stop, Double> stopCapacityMap = feedbackService.getStopCapacityMap(EXIST_DB_TRANSIT_ID, Direction.BACKWARD,
+                expectedStopVararg);
         assertEquals(Sets.newHashSet(trimmedStops), stopCapacityMap.keySet());
     }
 
     @Test
     public void getSimpleAnswerPercentageMap() {
         Set<SimpleFeedback> expectedEnumSet = EnumSet.of(YES, NO, MAYBE);
-        EnumMap<SimpleFeedback, Double> simpleFeedbackDoubleEnumMap =
-            feedbackService.getSimpleAnswerPercentageMap(EXIST_DB_TRANSIT_ID);
+        EnumMap<SimpleFeedback, Double> simpleFeedbackDoubleEnumMap = feedbackService
+                .getSimpleAnswerPercentageMap(EXIST_DB_TRANSIT_ID);
         Double expectedNoValue = 100.0;
 
         assertEquals(expectedEnumSet, simpleFeedbackDoubleEnumMap.keySet());
@@ -161,15 +163,15 @@ public class FeedbackServiceTest {
 
     @Test
     public void getStopCapacityMapStopIndexOrderTest() {
-        List<Stop> stopList = stopService.getByTransitIdAndDirection(EXIST_DB_TRANSIT_ID, Direction.FORWARD)
-            .subList(0, 4);
+        List<Stop> stopList = stopService.getByTransitIdAndDirection(EXIST_DB_TRANSIT_ID, Direction.FORWARD).subList(0,
+                4);
         Collections.shuffle(stopList);
         Stop[] stopVararg = stopList.toArray(new Stop[stopList.size()]);
-        Map<Stop, Double> stopCapacityMap = feedbackService.getStopCapacityMap(EXIST_DB_TRANSIT_ID,
-            Direction.FORWARD, stopVararg);
+        Map<Stop, Double> stopCapacityMap = feedbackService.getStopCapacityMap(EXIST_DB_TRANSIT_ID, Direction.FORWARD,
+                stopVararg);
 
         assertThat(stopCapacityMap.keySet(),
-            Matchers.contains(stopList.get(0), stopList.get(1), stopList.get(2), stopList.get(3)));
+                Matchers.contains(stopList.get(0), stopList.get(1), stopList.get(2), stopList.get(3)));
     }
 
     @Test

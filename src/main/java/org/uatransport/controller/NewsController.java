@@ -21,11 +21,10 @@ public class NewsController {
         return newsService.getById(id);
     }
 
-//    @Cacheable(cacheNames = "news")
+    // @Cacheable(cacheNames = "news")
     @GetMapping
     public Page<News> getNews(Pageable pageable) {
         return newsService.getAllOrderedByDate(pageable);
     }
-
 
 }

@@ -18,13 +18,12 @@ import static org.junit.Assert.*;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class FeedbackRepositoryTest {
 
-
-    private static final ExtendableCategory DEFAULT_DB_NON_EXTENDABLE_CATEGORY =
-        new NonExtendableCategory().setId(6).setName("Bus");
-    private static final FeedbackCriteria DEFAULT_DB_FEEDBACK_CRITERIA =
-        new FeedbackCriteria().setId(4).setType(FeedbackCriteria.FeedbackType.RATING);
-    private static final Transit DEFAULT_DB_TRANSIT =
-        new Transit().setId(21).setName("1A").setCategory((NonExtendableCategory) DEFAULT_DB_NON_EXTENDABLE_CATEGORY);
+    private static final ExtendableCategory DEFAULT_DB_NON_EXTENDABLE_CATEGORY = new NonExtendableCategory().setId(6)
+            .setName("Bus");
+    private static final FeedbackCriteria DEFAULT_DB_FEEDBACK_CRITERIA = new FeedbackCriteria().setId(4)
+            .setType(FeedbackCriteria.FeedbackType.RATING);
+    private static final Transit DEFAULT_DB_TRANSIT = new Transit().setId(21).setName("1A")
+            .setCategory((NonExtendableCategory) DEFAULT_DB_NON_EXTENDABLE_CATEGORY);
     private static final User DEFAULT_DB_USER = new User().setId(5);
 
     @Autowired
@@ -32,10 +31,8 @@ public class FeedbackRepositoryTest {
 
     private static Feedback getTestFeedback() {
         return new Feedback().setAnswer("[{\"answer\\\" : 2, \"weight\" :1}]")
-            .setFeedbackCriteria(DEFAULT_DB_FEEDBACK_CRITERIA)
-            .setTransit(DEFAULT_DB_TRANSIT)
-            .setUser(DEFAULT_DB_USER)
-            .setDate(LocalDateTime.now());
+                .setFeedbackCriteria(DEFAULT_DB_FEEDBACK_CRITERIA).setTransit(DEFAULT_DB_TRANSIT)
+                .setUser(DEFAULT_DB_USER).setDate(LocalDateTime.now());
     }
 
     @Test
@@ -77,13 +74,11 @@ public class FeedbackRepositoryTest {
         assertEquals(expectedFeedback.getFeedbackCriteria(), actualFeedback.getFeedbackCriteria());
     }
 
-
     @Test
     public void findByTransitIdAndFeedbackCriteriaTypeTest() {
         Feedback expectedFeedback = feedbackRepository.save(getTestFeedback());
-        List<Feedback> feedbackList =
-            feedbackRepository.findByTransitIdAndFeedbackCriteriaType(DEFAULT_DB_TRANSIT.getId(),
-                DEFAULT_DB_FEEDBACK_CRITERIA.getType());
+        List<Feedback> feedbackList = feedbackRepository.findByTransitIdAndFeedbackCriteriaType(
+                DEFAULT_DB_TRANSIT.getId(), DEFAULT_DB_FEEDBACK_CRITERIA.getType());
 
         assertNotNull(expectedFeedback);
         assertNotEquals(0, feedbackList.size());
@@ -97,9 +92,8 @@ public class FeedbackRepositoryTest {
     @Test
     public void findByTransitCategoryIdAndFeedbackCriteriaType() {
         Feedback expectedFeedback = feedbackRepository.save(getTestFeedback());
-        List<Feedback> feedbackList =
-            feedbackRepository.findByTransitCategoryIdAndFeedbackCriteriaType(DEFAULT_DB_TRANSIT.getCategory().getId(),
-                DEFAULT_DB_FEEDBACK_CRITERIA.getType());
+        List<Feedback> feedbackList = feedbackRepository.findByTransitCategoryIdAndFeedbackCriteriaType(
+                DEFAULT_DB_TRANSIT.getCategory().getId(), DEFAULT_DB_FEEDBACK_CRITERIA.getType());
         assertNotNull(expectedFeedback);
         assertNotEquals(feedbackList.size(), 0);
 
@@ -112,10 +106,8 @@ public class FeedbackRepositoryTest {
     @Test
     public void findByTransitIdAndFeedbackCriteriaTypeAndUserIdTest() {
         Feedback expectedFeedback = feedbackRepository.save(getTestFeedback().setTransit(new Transit().setId(21)));
-        List<Feedback> feedbackList =
-            feedbackRepository.findByTransitIdAndFeedbackCriteriaTypeAndUserId(DEFAULT_DB_TRANSIT.getId(),
-                DEFAULT_DB_FEEDBACK_CRITERIA.getType(),
-                DEFAULT_DB_USER.getId());
+        List<Feedback> feedbackList = feedbackRepository.findByTransitIdAndFeedbackCriteriaTypeAndUserId(
+                DEFAULT_DB_TRANSIT.getId(), DEFAULT_DB_FEEDBACK_CRITERIA.getType(), DEFAULT_DB_USER.getId());
         assertNotNull(expectedFeedback);
         assertNotEquals(feedbackList.size(), 0);
 

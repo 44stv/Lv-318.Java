@@ -31,7 +31,7 @@ public class StopController {
 
     @GetMapping
     public List<Stop> getByTransitIdAndDirection(@RequestParam("id") Integer id,
-                                                 @RequestParam("dir") String direction) {
+            @RequestParam("dir") String direction) {
         Stop.Direction direction1 = null;
         if (direction.equalsIgnoreCase("forward")) {
             direction1 = Stop.Direction.FORWARD;
@@ -54,7 +54,7 @@ public class StopController {
             transitToUpdate.getStops().add(stop);
             transitService.update(transitToUpdate);
             URI location = ServletUriComponentsBuilder.fromCurrentRequest().query("id={id}")
-                .buildAndExpand(savedPoint.getId()).toUri();
+                    .buildAndExpand(savedPoint.getId()).toUri();
             return ResponseEntity.created(location).build();
         } else {
             return ResponseEntity.unprocessableEntity().build();
