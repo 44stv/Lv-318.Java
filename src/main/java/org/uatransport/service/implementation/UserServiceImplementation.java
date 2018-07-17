@@ -1,8 +1,6 @@
 package org.uatransport.service.implementation;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,19 +22,12 @@ import java.security.Principal;
 
 @Service
 @RequiredArgsConstructor
-@Qualifier("UserDetails")
 public class UserServiceImplementation implements UserService {
 
     private final UserRepository userRepository;
-
-    @Autowired
-    private PasswordEncoder bcryptEncoder;
-
-    @Autowired
-    private JwtTokenProvider jwtTokenProvider;
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    private final PasswordEncoder bcryptEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final AuthenticationManager authenticationManager;
 
     public String signin(LoginDTO loginDTO) {
         String username = loginDTO.getEmail();
@@ -44,14 +35,14 @@ public class UserServiceImplementation implements UserService {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
             return jwtTokenProvider.createToken(username, userRepository.findByEmail(username).getRole(),
-                    userRepository.findByEmail(username).getId());
+                userRepository.findByEmail(username).getId());
         } catch (AuthenticationException e) {
             throw new SecurityJwtException("Invalid username/password supplied", HttpStatus.UNPROCESSABLE_ENTITY);
 
         }
     }
 
-    public boolean signup(UserDTO userDTO) {
+    public void signup(UserDTO userDTO) {
 
         User user = new User();
         user.setFirstName(userDTO.getFirstName());
@@ -60,7 +51,6 @@ public class UserServiceImplementation implements UserService {
         user.setPassword(bcryptEncoder.encode(userDTO.getPassword()));
         user.setRole(Role.UNACTIVATED);
         userRepository.save(user);
-        return true;
 
     }
 
@@ -81,14 +71,6 @@ public class UserServiceImplementation implements UserService {
         user.setRole(Role.USER);
         userRepository.saveAndFlush(user);
 
-    }
-
-    @Override
-    public void updateUserEncodedPassword(String newPassword, String userEmail) {
-        User user = userRepository.findByEmail(userEmail);
-        user.setPassword(newPassword);
-
-        userRepository.saveAndFlush(user);
     }
 
     @Override
@@ -153,6 +135,14 @@ public class UserServiceImplementation implements UserService {
     }
 
     @Override
+    public void updateUserEncodedPassword(String newPassword, String userEmail) {
+       User user = userRepository.findByEmail(userEmail);
+       user.setPassword(newPassword);
+       userRepository.save(user);
+
+    }
+
+    @Override
     public String singInWithSocial(UserDTO userDTO) {
         String username = userDTO.getEmail();
         String provider = userDTO.getProvider();
@@ -161,7 +151,7 @@ public class UserServiceImplementation implements UserService {
             try {
                 authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
                 return jwtTokenProvider.createToken(username, userRepository.findByEmail(username).getRole(),
-                        userRepository.findByEmail(username).getId());
+                    userRepository.findByEmail(username).getId());
             } catch (AuthenticationException e) {
                 throw new SecurityJwtException("Can`t login", HttpStatus.UNPROCESSABLE_ENTITY);
             }

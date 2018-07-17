@@ -69,7 +69,7 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Override
     @Transactional(readOnly = true)
     public List<Feedback> getByUserId(Integer id) {
-        return feedbackRepository.findByUserId(id);
+        return feedbackRepository.findByUserIdOrderByDateDesc(id);
     }
 
     @Override
