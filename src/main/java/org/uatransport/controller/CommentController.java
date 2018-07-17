@@ -29,7 +29,8 @@ public class CommentController {
     }
 
     @PutMapping
-    public ResponseEntity<CommentDTO> addImageToComment(@RequestParam("commentId") Integer id, @RequestBody String images) {
+    public ResponseEntity<CommentDTO> addImageToComment(@RequestParam("commentId") Integer id,
+            @RequestBody String images) {
         Comment updatedComment = commentService.addPics(images, id);
         return new ResponseEntity<>(modelMapper.map(updatedComment, CommentDTO.class), HttpStatus.OK);
     }

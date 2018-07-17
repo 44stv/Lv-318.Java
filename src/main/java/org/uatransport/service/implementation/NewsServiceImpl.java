@@ -19,12 +19,11 @@ import java.time.LocalDateTime;
 public class NewsServiceImpl implements NewsService {
     public final NewsRepository newsRepository;
 
-
     @Override
     @Transactional(readOnly = true)
     public News getById(Integer id) {
         return newsRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException(String.format("News with id '%s' not found", id)));
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("News with id '%s' not found", id)));
     }
 
     @Override
@@ -50,11 +49,11 @@ public class NewsServiceImpl implements NewsService {
         } else {
             throw new ResourceNotFoundException(String.format("News with id '%s' not found", news.getId()));
         }
-        if (news.getTitle() == null && news.getTitle().isEmpty()){
+        if (news.getTitle() == null && news.getTitle().isEmpty()) {
             throw new ResourceNotFoundException("News title is null or empty");
         }
         updatedNews.setTitle(news.getTitle());
-        if(news.getContent() == null && news.getContent().isEmpty()){
+        if (news.getContent() == null && news.getContent().isEmpty()) {
             throw new ResourceNotFoundException("News content is null or empty");
         }
         updatedNews.setContent(news.getContent());

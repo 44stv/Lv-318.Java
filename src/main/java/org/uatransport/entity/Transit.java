@@ -15,7 +15,7 @@ import java.util.List;
 public class Transit {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     private String name;
@@ -33,8 +33,8 @@ public class Transit {
     private NonExtendableCategory category;
 
     @ManyToMany
-    @JoinTable(name = "transit_stop", joinColumns = {@JoinColumn(name = "transit_id")}, inverseJoinColumns = {
-        @JoinColumn(name = "stop_id")})
+    @JoinTable(name = "transit_stop", joinColumns = { @JoinColumn(name = "transit_id") }, inverseJoinColumns = {
+            @JoinColumn(name = "stop_id") })
     @OrderColumn(name = "stop_index")
     private List<Stop> stops;
 }

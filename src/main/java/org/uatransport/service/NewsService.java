@@ -10,11 +10,10 @@ public interface NewsService {
 
     News add(News news);
 
-    News update(News  news);
+    News update(News news);
 
     void delete(Integer newsId);
 
     Page<News> getAllOrderedByDate(Pageable pageable);
-
 
 }

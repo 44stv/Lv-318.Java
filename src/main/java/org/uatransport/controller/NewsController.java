@@ -1,11 +1,12 @@
 package org.uatransport.controller;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.uatransport.entity.News;
 import org.uatransport.service.NewsService;
 
@@ -20,11 +21,10 @@ public class NewsController {
         return newsService.getById(id);
     }
 
-//    @Cacheable(cacheNames = "news")
+    // @Cacheable(cacheNames = "news")
     @GetMapping
     public Page<News> getNews(Pageable pageable) {
         return newsService.getAllOrderedByDate(pageable);
     }
-
 
 }
