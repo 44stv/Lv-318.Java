@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 @Data
 @Accessors(chain = true)
 @EqualsAndHashCode(of = "id")
-@ToString(exclude = "transit")
 public class Feedback {
 
     @Id
