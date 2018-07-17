@@ -11,8 +11,5 @@ public interface CategoryRepository
         extends CrudRepository<ExtendableCategory, Integer>, JpaSpecificationExecutor<ExtendableCategory> {
 
     List<ExtendableCategory> findAllByNextLevelCategoryIsNull();
-    List<ExtendableCategory> findByNextLevelCategory_Name(String name);
-
-    ExtendableCategory findByNameAndNextLevelCategory_Name(String name, String nextLevelName);
 
 }

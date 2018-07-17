@@ -32,9 +32,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests()
 
-                .antMatchers("/user/signin", "/user/activate/**", "/user/**", "/user/signup", "/stop/**",
+                .antMatchers("/user/signin", "/user/activate/**", "/user/**", "/user/signup", "/stop/**","/transit/**",
                         "/category/**", "/feedback/**", "/feedback-criteria/**", "/question/**", "/location/**",
-                        "/actuator/health", "/search/**", "/comment/**","/telegram/**")
+                        "/actuator/health", "/search/**", "/comment/**")
                 .permitAll().antMatchers(HttpMethod.OPTIONS, "/**").permitAll().anyRequest().authenticated();
 
         http.apply(new JwtTokenFilterConfigurer(jwtTokenProvider));

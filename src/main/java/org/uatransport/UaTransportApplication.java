@@ -12,8 +12,10 @@ import org.springframework.context.ConfigurableApplicationContext;
 public class UaTransportApplication {
 
     public static void main(String[] args) {
-        ConfigurableApplicationContext context=SpringApplication.run(UaTransportApplication.class, args);
+        ConfigurableApplicationContext context = SpringApplication.run(UaTransportApplication.class, args);
         log.debug("--Application Started--");
+        log.debug("--Application --");
+
     }
 
 }

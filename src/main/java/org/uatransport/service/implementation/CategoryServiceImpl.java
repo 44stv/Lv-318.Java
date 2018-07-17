@@ -110,13 +110,4 @@ public class CategoryServiceImpl implements CategoryService {
         return list;
     }
 
-    @Override
-    public List<ExtendableCategory> findByNextLevelCategory_Name(String name) {
-        return categoryRepository.findByNextLevelCategory_Name(name);
-    }
-
-    @Override
-    public ExtendableCategory findByNameAndNextLevelCategory_Name(String name, String nextLevelName) {
-        return categoryRepository.findByNameAndNextLevelCategory_Name(name, nextLevelName);
-    }
 }

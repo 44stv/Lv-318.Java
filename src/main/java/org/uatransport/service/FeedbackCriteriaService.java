@@ -25,7 +25,6 @@ public interface FeedbackCriteriaService {
     List<FeedbackCriteria> getByQuestionsId(Integer questionId);
 
     List<FeedbackCriteria> getByTypeAndCategoryId(Integer categoryId, String type);
-    FeedbackCriteria getFeedbackCriteriaByTypeAndCategoryId(Integer categoryId, String type);
 
     List<String> getAllEnumsType();
 

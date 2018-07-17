@@ -81,6 +81,11 @@ public class TransitController {
         return transits.stream().map(transit -> modelMapper.map(transit, TransitDTO.class)).collect(Collectors.toList());
 
     }
+    @GetMapping("/{name}/{id}")
+    public TransitDTO getTransitByNameAndCategoryId(@PathVariable String name, @PathVariable Integer id){
+        Transit transit = transitService.findByNameAndCategory_Id(name, id);
+        return modelMapper.map(transit, TransitDTO.class);
+    }
 
 
 }

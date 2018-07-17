@@ -11,14 +11,12 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.uatransport.config.SearchCategoryParam;
 import org.uatransport.entity.ExtendableCategory;
 import org.uatransport.entity.dto.CategoryDTO;
-import org.uatransport.entity.dto.ExCategoryDTO;
 import org.uatransport.service.CategoryService;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/category")
