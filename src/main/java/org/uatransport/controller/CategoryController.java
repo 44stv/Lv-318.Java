@@ -28,11 +28,6 @@ public class CategoryController {
         return categoryService.getListTopExtendableCategories();
     }
 
-    @GetMapping("/{id}")
-    public ExtendableCategory getByid(@PathVariable Integer id) {
-        return categoryService.getById(id);
-    }
-
     @GetMapping
     public List<ExtendableCategory> search(SearchCategoryParam searchCategoryParam) {
         return categoryService.getAll(searchCategoryParam);
