@@ -12,7 +12,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.web.client.RestTemplate;
 import org.uatransport.security.JwtTokenFilterConfigurer;
 import org.uatransport.security.JwtTokenProvider;
@@ -23,7 +22,6 @@ import org.uatransport.security.JwtTokenProvider;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final JwtTokenProvider jwtTokenProvider;
-    private final AccessDeniedHandler accessDeniedHandler;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -39,8 +37,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/search/**", "/comment/**", "/news/**")
                 .permitAll().antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/feedback/**").permitAll().anyRequest().authenticated()
-                .antMatchers(HttpMethod.POST, "/feedback").hasRole("USER").and().exceptionHandling()
-                .accessDeniedHandler(accessDeniedHandler);
+                .antMatchers(HttpMethod.POST, "/feedback").hasRole("USER");
 
         http.apply(new JwtTokenFilterConfigurer(jwtTokenProvider));
     }

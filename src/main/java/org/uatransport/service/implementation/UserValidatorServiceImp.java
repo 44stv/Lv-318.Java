@@ -17,8 +17,7 @@ public class UserValidatorServiceImp implements UserValidatorService {
 
     private final UserRepository userRepository;
 
-    @Value("${validation.email.regex}")
-    private String regex;
+
     @Value("${validation.email.min}")
     private int emailMin;
     @Value("${validation.email.max}")
@@ -41,7 +40,7 @@ public class UserValidatorServiceImp implements UserValidatorService {
 
     @Override
     public void validateEmailOnRegistration(String email) throws UserValidationException {
-        if (email == null || !email.matches(regex) || email.length() < emailMin || email.length() > emailMax) {
+        if (email == null || email.length() < emailMin || email.length() > emailMax) {
 
             throw new UserValidationException("Invalid email");
         }
@@ -53,7 +52,7 @@ public class UserValidatorServiceImp implements UserValidatorService {
 
     @Override
     public void validateEmailOnLogin(String email) throws UserValidationException {
-        if (email == null || !email.matches(regex) || email.length() < emailMin || email.length() > emailMax) {
+        if (email == null || email.length() < emailMin || email.length() > emailMax) {
 
             throw new UserValidationException("Entered e-mail adress is not valid");
         }
@@ -110,7 +109,7 @@ public class UserValidatorServiceImp implements UserValidatorService {
 
     }
 
-    // TODO
+
     @Override
     public boolean validateForUnactivating(String email) {
         User user = userRepository.findByEmail(email);
