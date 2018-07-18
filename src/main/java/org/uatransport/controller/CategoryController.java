@@ -38,6 +38,13 @@ public class CategoryController {
         return categoryService.getAllWithCountOfTransits(searchCategoryParam);
     }
 
+    @GetMapping(value = "/img", produces = MediaType.IMAGE_PNG_VALUE)
+    public void getImage(HttpServletResponse response, @RequestParam String link) throws IOException {
+        ClassPathResource imgFile = new ClassPathResource(link);
+        response.setContentType(MediaType.IMAGE_PNG_VALUE);
+        StreamUtils.copy(imgFile.getInputStream(), response.getOutputStream());
+    }
+
     @PostMapping
     public ResponseEntity<ExtendableCategory> save(@RequestBody ExtendableCategory category) {
         if (category.getNextLevelCategory() != null) {
@@ -59,12 +66,5 @@ public class CategoryController {
     @PutMapping("/{id}")
     public ExtendableCategory update(@RequestBody ExtendableCategory category, @PathVariable Integer id) {
         return categoryService.update(category.setId(id));
-    }
-
-    @GetMapping(value = "/img", produces = MediaType.IMAGE_PNG_VALUE)
-    public void getImage(HttpServletResponse response, @RequestParam String link) throws IOException {
-        ClassPathResource imgFile = new ClassPathResource(link);
-        response.setContentType(MediaType.IMAGE_PNG_VALUE);
-        StreamUtils.copy(imgFile.getInputStream(), response.getOutputStream());
     }
 }
