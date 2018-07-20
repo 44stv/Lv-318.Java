@@ -187,14 +187,11 @@ public class FeedbackServiceImpl implements FeedbackService {
     public List<HeatMapDTO> getHeatMap(Integer transitId, Stop... stops) {
         List<Stop> stopList = stops.length > 0 ? Arrays.asList(stops)
             : stopService.getByTransitIdAndDirection(transitId, Stop.Direction.FORWARD);
-        Map<String, Double> capacityMap = new TreeMap<>(Comparator.comparingInt(
-            street -> stopList.stream().map(Stop::getStreet).collect(Collectors.toList()).indexOf(street)));
 
-        Map<Integer, Double> hourCapacityMap = getHourCapacityMap(transitId);
-        int averageHourCapacity = hourCapacityMap.values().stream().mapToInt(Number::intValue).sum();
         Map<Stop, Double> stopCapacityMap = getStopCapacityMap(transitId, Stop.Direction.FORWARD, stops);
+        Map<Integer, Double> hourCapacityMap = getHourCapacityMap(transitId);
 
-        return valueToReturn(stopList, capacityMap, hourCapacityMap, averageHourCapacity, stopCapacityMap);
+        return valueToReturn(stopList, hourCapacityMap, stopCapacityMap);
     }
 
     /**
@@ -210,20 +207,19 @@ public class FeedbackServiceImpl implements FeedbackService {
     /**
      * Method to create specific form of list of data for heatmap.
      */
-    private List<HeatMapDTO> valueToReturn(List<Stop> stopList, Map<String, Double> capacityMap,
-                                           Map<Integer, Double> hourCapacityMap, int averageHourCapacity, Map<Stop, Double> stopCapacityMap) {
+    private List<HeatMapDTO> valueToReturn(List<Stop> stopList,
+                                           Map<Integer, Double> hourCapacityMap,
+                                           Map<Stop, Double> stopCapacityMap) {
         List<HeatMapDTO> valueToReturn = new ArrayList<>();
+        int averageHourCapacity = hourCapacityMap.values().stream().mapToInt(Number::intValue).sum();
 
         for (int i = 0; i < 24; i++) {
             HeatMapDTO heatMapDTO = new HeatMapDTO();
 
             Double capacityFromHourCapacityMap = hourCapacityMap.get(i);
 
-            mapGeneration(stopList, capacityMap, averageHourCapacity, stopCapacityMap, capacityFromHourCapacityMap);
-
-            heatMapDTOSetName(heatMapDTO, i);
-
-            heatMapDTO.setSeries(capacityMap);
+            heatMapDTO.setName(i);
+            heatMapDTO.setSeries(mapGeneration(stopList, stopCapacityMap, averageHourCapacity, capacityFromHourCapacityMap));
 
             valueToReturn.add(heatMapDTO);
         }
@@ -232,31 +228,21 @@ public class FeedbackServiceImpl implements FeedbackService {
     }
 
     /**
-     * Method to set name to heatMapDTO in correct form (e.g. 00:00).
-     *
-     * @param heatMapDTO object in which should put specified name
-     * @param i          exact name of the object
-     */
-    private void heatMapDTOSetName(HeatMapDTO heatMapDTO, int i) {
-        // 10 is the first two-digit number
-        if (i < 10) {
-            heatMapDTO.setName("0" + i + ":00");
-        } else {
-            heatMapDTO.setName(i + ":00");
-        }
-    }
-
-    /**
      * Method to write proper data to the capacity map
      */
-    private void mapGeneration(List<Stop> stopList, Map<String, Double> capacityMap, int averageHourCapacity,
-                               Map<Stop, Double> stopCapacityMap, Double capacityFromHourCapacityMap) {
+    private Map<String, Double> mapGeneration(List<Stop> stopList,
+                                              Map<Stop, Double> stopCapacityMap,
+                                              int averageHourCapacity,
+                                              Double capacityFromHourCapacityMap) {
+        Map<String, Double> capacityMap = new TreeMap<>();
         for (Stop stop : stopList) {
             Double valueToSaveInMap = stopCapacityMap.get(stop)
                 * safeDivision(capacityFromHourCapacityMap, averageHourCapacity);
 
             capacityMap.put(stop.getStreet(), valueToSaveInMap);
         }
+
+        return capacityMap;
     }
 
     private Double getAverageCapacityByHour(Integer feedbackHour, List<CapacityHourFeedback> capacityHourFeedbackList) {

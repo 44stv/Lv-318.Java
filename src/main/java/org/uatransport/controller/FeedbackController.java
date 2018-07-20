@@ -99,6 +99,9 @@ public class FeedbackController {
     @PostMapping(value = "/heat-map/{transitId}")
     public List<HeatMapDTO> getHeatMapData(@PathVariable Integer transitId,
             @RequestBody(required = false) Stop... stopList) {
+        if (stopList == null) {
+            return feedbackService.getHeatMap(transitId);
+        }
         return feedbackService.getHeatMap(transitId, stopList);
     }
 }
