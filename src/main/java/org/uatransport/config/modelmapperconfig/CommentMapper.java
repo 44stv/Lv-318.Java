@@ -18,7 +18,7 @@ public class CommentMapper implements Converter<Comment, CommentDTO> {
 
         destination.setId(source.getId());
         destination.setCommentText(source.getCommentText());
-        destination.setPostDate(source.getCreatedDate());
+        destination.setCreatedDate(source.getCreatedDate());
         destination.setModifiedDate(source.getModifiedDate());
         destination.setUserId(source.getUser().getId());
         destination.setTransitId(source.getTransit().getId());
