@@ -14,6 +14,7 @@ import org.uatransport.repository.UserRepository;
 import org.uatransport.service.CommentService;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 
 @Service
@@ -48,7 +49,7 @@ public class CommentServiceImpl implements CommentService {
             comment.setParentComment(parentComment);
         }
 
-        comment.setCreatedDate(LocalDateTime.now());
+        comment.setCreatedDate(LocalDateTime.now(ZoneOffset.UTC));
         comment.setTransit(transitRepository.getOne(transitId));
         comment.setUser(userRepository.getOne(userId));
 
