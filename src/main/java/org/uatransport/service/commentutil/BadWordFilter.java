@@ -1,5 +1,6 @@
 package org.uatransport.service.commentutil;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -11,16 +12,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
+@Slf4j
 public class BadWordFilter {
+
     static Map<String, String[]> words = new HashMap<>();
     static int largestWordLength = 0;
     public static void loadConfigs() {
         try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(new URL("https://docs.google.com/spreadsheets/d/1hIEi2YG3ydav1E06Bzf2mQbGZ12kh2fe4ISgLg_UBuM/export?format=csv").openConnection().getInputStream()));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(
+                new URL("https://docs.google.com/spreadsheets/d/1QUzVGGL9ArTPhdiIkUzUGpDdDQpliGBKcF5f_9tyk0k/export?format=csv").openConnection().getInputStream()));
             String line = "";
             int counter = 0;
+            log.debug("Inside bad word");
             while((line = reader.readLine()) != null) {
                 counter++;
+                log.debug("line = " + line);
                 String[] content = null;
                 try {
                     content = line.split(",");
