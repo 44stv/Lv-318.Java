@@ -12,8 +12,11 @@ import org.uatransport.repository.CommentRepository;
 import org.uatransport.repository.TransitRepository;
 import org.uatransport.repository.UserRepository;
 import org.uatransport.service.CommentService;
+import org.uatransport.service.commentutil.BadWordFilter;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -31,6 +34,12 @@ public class CommentServiceImpl implements CommentService {
     public Comment add(Comment comment, Integer transitId, Integer userId, Integer parentId) {
         if (comment == null) {
             throw new IllegalArgumentException("Comment object should not be null");
+        }
+
+        BadWordFilter.loadConfigs();
+        ArrayList<String> badWords = BadWordFilter.filterBadWords(comment.getCommentText());
+        if(badWords.size() > 0) {
+            throw new IllegalArgumentException("Comment includes bad words");
         }
 
         comment.setLevel(1);

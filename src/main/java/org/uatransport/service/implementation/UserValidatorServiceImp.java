@@ -17,7 +17,6 @@ public class UserValidatorServiceImp implements UserValidatorService {
 
     private final UserRepository userRepository;
 
-
     @Value("${validation.email.min}")
     private int emailMin;
     @Value("${validation.email.max}")
@@ -108,7 +107,6 @@ public class UserValidatorServiceImp implements UserValidatorService {
         validatePassword(loginDTO.getPassword());
 
     }
-
 
     @Override
     public boolean validateForUnactivating(String email) {
