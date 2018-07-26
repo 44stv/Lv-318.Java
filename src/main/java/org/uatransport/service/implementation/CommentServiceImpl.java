@@ -5,15 +5,17 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.uatransport.entity.Comment;
-import org.uatransport.exception.MaxLevelCommentException;
-import org.uatransport.exception.ResourceNotFoundException;
-import org.uatransport.exception.TimeExpiredException;
+import org.uatransport.entity.CommentRating;
+import org.uatransport.entity.User;
+import org.uatransport.exception.*;
+import org.uatransport.repository.CommentRatingRepository;
 import org.uatransport.repository.CommentRepository;
 import org.uatransport.repository.TransitRepository;
 import org.uatransport.repository.UserRepository;
 import org.uatransport.service.CommentService;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 
 @Service
@@ -21,6 +23,7 @@ import java.util.List;
 public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
+    private final CommentRatingRepository commentRatingRepository;
     private final TransitRepository transitRepository;
     private final UserRepository userRepository;
 
@@ -103,6 +106,28 @@ public class CommentServiceImpl implements CommentService {
         comment.setModifiedDate(LocalDateTime.now());
 
         return commentRepository.save(comment);
+    }
+
+    @Override
+    public CommentRating vote(Integer commentId, Integer userId, boolean like) throws AlreadyVotedException, ForbiddenException {
+        Comment comment = getById(commentId);
+        User user = userRepository.getOne(userId);
+        if (userId.intValue() == comment.getUser().getId().intValue() && !user.getRole().getAuthority().equalsIgnoreCase("ADMIN")) {
+            throw new ForbiddenException("Cannot vote for own comment");
+        }
+
+        List<CommentRating> rating = commentRatingRepository.findCommentRatingByCommentIdAndUserId(commentId, userId);
+
+        if (rating != null && !user.getRole().getAuthority().equalsIgnoreCase("ADMIN")) {
+            throw new AlreadyVotedException("Cannot vote for one comment more than once");
+        }
+
+        CommentRating newRating = new CommentRating();
+        newRating.setUser(user);
+        newRating.setComment(comment);
+        newRating.setValue(like ? CommentRating.LIKE_VALUE : CommentRating.DISLIKE_VALUE);
+
+        return commentRatingRepository.save(newRating);
     }
 
     @Override
