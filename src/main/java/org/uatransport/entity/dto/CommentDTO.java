@@ -13,6 +13,7 @@ public class CommentDTO {
     private Integer userId;
     private Integer transitId;
     private Integer parentCommentId;
+    private Integer rating;
     private boolean parent;
     private Integer level;
     private String images;
