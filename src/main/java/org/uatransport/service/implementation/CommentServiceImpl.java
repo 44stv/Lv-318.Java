@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -37,6 +38,10 @@ public class CommentServiceImpl implements CommentService {
         }
 
         BadWordFilter.loadConfigs();
+        Map<String, String[]> words = BadWordFilter.wordsToFilterMap;
+        for ( String s: words.keySet()) {
+            System.out.println(s);
+        }
         ArrayList<String> badWords = BadWordFilter.filterBadWords(comment.getCommentText());
         if(badWords.size() > 0) {
             throw new IllegalArgumentException("Comment includes bad words");
