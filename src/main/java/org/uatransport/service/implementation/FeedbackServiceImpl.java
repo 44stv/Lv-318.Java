@@ -201,47 +201,6 @@ public class FeedbackServiceImpl implements FeedbackService {
         return divided.doubleValue() / divider;
     }
 
-//    /**
-//     * Method to create specific form of list of data for heatmap.
-//     */
-//    private List<HeatMapDTO> valueToReturn(List<Stop> stopList,
-//                                           Map<Integer, Double> hourCapacityMap,
-//                                           Map<Stop, Double> stopCapacityMap) {
-//        List<HeatMapDTO> valueToReturn = new ArrayList<>();
-//        int averageHourCapacity = hourCapacityMap.values().stream().mapToInt(Number::intValue).sum();
-//
-//        for (int i = 0; i < 24; i++) {
-//            HeatMapDTO heatMapDTO = new HeatMapDTO();
-//
-//            Double capacityFromHourCapacityMap = hourCapacityMap.get(i);
-//
-//            heatMapDTO.setName(i);
-//            heatMapDTO.setSeries(mapGeneration(stopList, stopCapacityMap, averageHourCapacity, capacityFromHourCapacityMap));
-//
-//            valueToReturn.add(heatMapDTO);
-//        }
-//
-//        return valueToReturn;
-//    }
-
-//    /**
-//     * Method to write proper data to the capacity map
-//     */
-//    private Map<String, Double> mapGeneration(List<Stop> stopList,
-//                                              Map<Stop, Double> stopCapacityMap,
-//                                              int averageHourCapacity,
-//                                              Double capacityFromHourCapacityMap) {
-//        Map<String, Double> capacityMap = new TreeMap<>();
-//        for (Stop stop : stopList) {
-//            Double valueToSaveInMap = stopCapacityMap.get(stop)
-//                * safeDivision(capacityFromHourCapacityMap, averageHourCapacity);
-//
-//            capacityMap.put(stop.getStreet(), valueToSaveInMap);
-//        }
-//
-//        return capacityMap;
-//    }
-
     private Double getAverageCapacityByHour(Integer feedbackHour, List<CapacityHourFeedback> capacityHourFeedbackList) {
 
         return capacityHourFeedbackList.stream()
