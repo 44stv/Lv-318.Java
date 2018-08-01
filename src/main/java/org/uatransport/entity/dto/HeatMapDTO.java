@@ -2,40 +2,31 @@ package org.uatransport.entity.dto;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.uatransport.entity.Stop;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 @Data
 @Accessors(chain = true)
 public class HeatMapDTO {
+    private Map<String, Double> stopCapacityMap;
+    private Map<String, Double> hourCapacityMap;
 
-    private String name;
-    private List<SeriesItem> series = new ArrayList<>();
+    public HeatMapDTO(Map<Stop, Double> stopCapacityMap, Map<Integer, Double> hourCapacityMap) {
+        this.stopCapacityMap = new TreeMap<>();
+        this.hourCapacityMap = new TreeMap<>();
 
-    public void setName(int intHourName) {
+        stopCapacityMap.forEach((stop, value) -> this.stopCapacityMap.put(stop.getStreet(), value));
+        hourCapacityMap.forEach((hour, value) -> this.hourCapacityMap.put(setProperHourName(hour),value));
+    }
+
+    private String setProperHourName(Integer name) {
         // 10 is the first two-digit number
-        if (intHourName < 10) {
-            this.name = "0" + intHourName + ":00";
+        if (name < 10) {
+            return  "0" + name + ":00";
         } else {
-            this.name = intHourName + ":00";
+            return name + ":00";
         }
-    }
-
-    public void setSeries(Map<String, Double> series) {
-        series.forEach((key, value) -> this.series.add(new SeriesItem(key, value)));
-    }
-}
-
-@Data
-@Accessors(chain = true)
-class SeriesItem {
-    private String name;
-    private Double value;
-
-    SeriesItem(String name, Double value) {
-        this.name = name;
-        this.value = value;
     }
 }
