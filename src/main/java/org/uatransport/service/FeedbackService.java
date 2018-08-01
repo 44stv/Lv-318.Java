@@ -27,11 +27,9 @@ public interface FeedbackService {
 
     List<Feedback> getByTransitIdAndFeedbackCriteriaType(Integer transitId, FeedbackCriteria.FeedbackType feedbackType);
 
-    List<Feedback> getByTransitCategoryIdAndFeedbackCriteriaType(Integer transitCategoryId,
-            FeedbackCriteria.FeedbackType feedbackType);
+    List<Feedback> getByTransitCategoryIdAndFeedbackCriteriaType(Integer transitCategoryId, FeedbackCriteria.FeedbackType feedbackType);
 
-    List<Feedback> getByTransitIdAndFeedbackCriteriaTypeAndUserId(Integer transitId,
-            FeedbackCriteria.FeedbackType feedbackType, Integer userId);
+    List<Feedback> getByTransitIdAndFeedbackCriteriaTypeAndUserId(Integer transitId, FeedbackCriteria.FeedbackType feedbackType, Integer userId);
 
     Double getRatingByTransitId(Integer transitId);
 
@@ -45,6 +43,6 @@ public interface FeedbackService {
 
     EnumMap<SimpleFeedback, Double> getSimpleAnswerPercentageMap(Integer transitId);
 
-    List<HeatMapDTO> getHeatMap(Integer transitId, Stop... stops);
+    HeatMapDTO getHeatMap(Integer transitId, Stop... stops);
 
 }
