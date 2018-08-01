@@ -11,8 +11,8 @@ import javax.persistence.*;
 @EqualsAndHashCode(of = "id")
 @Accessors(chain = true)
 @Entity
-@Table(name = "comment_ratings",
-       uniqueConstraints = @UniqueConstraint(columnNames = {"comment_id", "user_id"}))
+@Table(name = "comment_ratings"/*,
+       uniqueConstraints = @UniqueConstraint(columnNames = {"comment_id", "user_id"})*/)
 public class CommentRating {
 
     public static final short LIKE_VALUE = 1;

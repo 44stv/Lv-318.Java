@@ -8,4 +8,6 @@ import java.util.List;
 public interface CommentRatingRepository extends JpaRepository<CommentRating, Integer> {
 
     List<CommentRating> findCommentRatingByCommentIdAndUserId(Integer commentId, Integer userId);
+
+    List<CommentRating> findAllByCommentId(Integer commentId);
 }

@@ -2,11 +2,13 @@ package org.uatransport.service;
 
 import org.uatransport.entity.Comment;
 import org.uatransport.entity.CommentRating;
+import org.uatransport.entity.User;
 import org.uatransport.exception.AlreadyVotedException;
 import org.uatransport.exception.ForbiddenException;
 import org.uatransport.exception.TimeExpiredException;
 
 import java.util.List;
+import java.util.Set;
 
 public interface CommentService {
 
@@ -19,6 +21,8 @@ public interface CommentService {
     List<Comment> getAllTopLevel(Integer transitId);
 
     List<Comment> getAllByParentId(Integer parentId);
+
+    Set<User> getAllByVotedComment(Integer commentId);
 
     CommentRating vote(Integer commentId, Integer userId, boolean like) throws AlreadyVotedException, ForbiddenException;
 
