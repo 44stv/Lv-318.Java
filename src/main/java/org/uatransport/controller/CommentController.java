@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.uatransport.entity.Comment;
 import org.uatransport.entity.dto.CommentDTO;
 import org.uatransport.entity.dto.CommentRatingDTO;
+import org.uatransport.entity.dto.UserInfo;
 import org.uatransport.service.CommentService;
 
 import java.util.List;
@@ -54,6 +55,12 @@ public class CommentController {
                 .collect(Collectors.toList());
     }
 
+    @GetMapping("/{commentId}/voted")
+    public List<UserInfo> getVotedUsers(@PathVariable Integer commentId) {
+        return commentService.getAllByVotedComment(commentId).stream().map(user -> modelMapper.map(user, UserInfo.class))
+            .collect(Collectors.toList());
+    }
+
     @PostMapping("/{commentId}/like/{userId}")
     public ResponseEntity<CommentRatingDTO> like(@PathVariable Integer commentId,
                                                  @PathVariable Integer userId) {
@@ -63,7 +70,7 @@ public class CommentController {
 
     @PostMapping("/{commentId}/dislike/{userId}")
     public ResponseEntity<CommentRatingDTO> dislike(@PathVariable Integer commentId,
-                                                 @PathVariable Integer userId) {
+                                                    @PathVariable Integer userId) {
         CommentRatingDTO rating = modelMapper.map(commentService.vote(commentId, userId, false), CommentRatingDTO.class);
         return new ResponseEntity<>(rating, HttpStatus.OK);
     }

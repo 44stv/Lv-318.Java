@@ -16,7 +16,9 @@ import org.uatransport.service.CommentService;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -81,6 +83,16 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public List<Comment> getAllByParentId(Integer parentId) {
         return commentRepository.findByParentCommentIdOrderByCreatedDateAsc(parentId);
+    }
+
+    public Set<User> getAllByVotedComment(Integer commentId) {
+        List<CommentRating> commentRatings = commentRatingRepository.findAllByCommentId(commentId);
+        Set<User> users = new HashSet<>();
+        for(CommentRating commentRating: commentRatings) {
+            users.add(userRepository.getOne(commentRating.getUser().getId()));
+        }
+
+        return users;
     }
 
     @Override
