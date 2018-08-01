@@ -2,6 +2,7 @@ package org.uatransport.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -59,6 +60,7 @@ public class TransitController {
     }
 
     @PostMapping
+    @CacheEvict(value = {"categoryTransits", "cityTransits"}, allEntries = true)
     public ResponseEntity<Transit> addTransit(@RequestBody TransitDTO transitDTO) {
         Transit transit = modelMapper.map(transitDTO, Transit.class);
         return new ResponseEntity<>(transitService.add(transit), HttpStatus.CREATED);
@@ -70,6 +72,7 @@ public class TransitController {
     }
 
     @PutMapping("/{id}")
+    @CacheEvict(value = {"categoryTransits", "cityTransits"}, allEntries = true)
     public ResponseEntity<Transit> updateTransit(@RequestBody TransitDTO transitDTO, @PathVariable Integer id) {
         Transit updatedTransit = transitService.update(modelMapper.map(transitDTO, Transit.class).setId(id));
         return new ResponseEntity<>(updatedTransit, HttpStatus.OK);
