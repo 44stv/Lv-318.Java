@@ -24,7 +24,7 @@ public class Comment {
     private static final long MAX_EDIT_TIME_MINUTES = 60;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(nullable = false, columnDefinition = "TEXT")
@@ -59,6 +59,9 @@ public class Comment {
     @OrderBy("created_date ASC")
     private List<Comment> childrenComments;
 
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL)
+    private List<CommentRating> commentRatings;
+
     @Column(columnDefinition = "TEXT")
     private String images;
 
@@ -66,7 +69,7 @@ public class Comment {
         return LocalDateTime.now().isBefore(maxDeleteTime());
     }
 
-    public LocalDateTime maxDeleteTime() {
+    private LocalDateTime maxDeleteTime() {
         return createdDate.plusMinutes(MAX_DELETE_TIME_MINUTES);
     }
 
@@ -74,8 +77,12 @@ public class Comment {
         return LocalDateTime.now().isBefore(maxEditTime());
     }
 
-    public LocalDateTime maxEditTime() {
+    private LocalDateTime maxEditTime() {
         return createdDate.plusMinutes(MAX_EDIT_TIME_MINUTES);
+    }
+
+    public int getRatingSum() {
+        return commentRatings.stream().mapToInt(CommentRating::getValue).sum();
     }
 
 }

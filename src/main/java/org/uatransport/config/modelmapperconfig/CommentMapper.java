@@ -25,6 +25,8 @@ public class CommentMapper implements Converter<Comment, CommentDTO> {
         destination.setImages(source.getImages());
         destination.setLevel(source.getLevel());
 
+        destination.setRating(source.getRatingSum());
+
         try {
             if (source.getChildrenComments().isEmpty()) {
                 destination.setParent(false);
