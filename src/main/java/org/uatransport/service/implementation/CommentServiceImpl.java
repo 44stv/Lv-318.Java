@@ -2,6 +2,7 @@ package org.uatransport.service.implementation;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.uatransport.entity.Comment;
@@ -9,14 +10,20 @@ import org.uatransport.entity.CommentRating;
 import org.uatransport.entity.User;
 import org.uatransport.exception.*;
 import org.uatransport.repository.CommentRatingRepository;
+import org.uatransport.exception.BadWordFoundException;
+import org.uatransport.exception.MaxLevelCommentException;
+import org.uatransport.exception.ResourceNotFoundException;
+import org.uatransport.exception.TimeExpiredException;
 import org.uatransport.repository.CommentRepository;
 import org.uatransport.repository.TransitRepository;
 import org.uatransport.repository.UserRepository;
 import org.uatransport.service.CommentService;
+import org.uatransport.service.commentutil.BadWordFilter;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.HashSet;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Set;
 
@@ -36,6 +43,11 @@ public class CommentServiceImpl implements CommentService {
     public Comment add(Comment comment, Integer transitId, Integer userId, Integer parentId) {
         if (comment == null) {
             throw new IllegalArgumentException("Comment object should not be null");
+        }
+
+        List<String> wordsToFilterOut = BadWordFilter.filterBadWords(comment.getCommentText());
+        if (wordsToFilterOut.size() > 0) {
+            throw new BadWordFoundException("Comment includes bad word", HttpStatus.UNAVAILABLE_FOR_LEGAL_REASONS);
         }
 
         comment.setLevel(1);

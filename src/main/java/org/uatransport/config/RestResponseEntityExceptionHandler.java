@@ -13,6 +13,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import org.uatransport.exception.*;
+import java.io.IOException;
 
 @ControllerAdvice(annotations = RestController.class)
 @Slf4j
@@ -115,6 +116,21 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     @ExceptionHandler(value = UserValidationException.class)
     protected ResponseEntity<Object> handleConflict(UserValidationException ex, WebRequest request) {
         final ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex);
+        apiError.setMessage(ex.getMessage());
+        return handleExceptionInternal(ex, apiError, HTTP_HEADERS, apiError.getStatus(), request);
+    }
+
+    @ExceptionHandler(value = IOException.class)
+    protected ResponseEntity<Object> handleConflict(IOException ex, WebRequest request) {
+        final ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex);
+        apiError.setMessage(ex.getMessage());
+        return handleExceptionInternal(ex, apiError, HTTP_HEADERS, apiError.getStatus(), request);
+    }
+
+    @ExceptionHandler(value = BadWordFoundException.class)
+    protected ResponseEntity<Object> handleConflict(BadWordFoundException ex, WebRequest request) {
+        log.error(ex.getMessage(), ex);
+        final ApiError apiError = new ApiError(ex.getHttpStatus(), ex);
         apiError.setMessage(ex.getMessage());
         return handleExceptionInternal(ex, apiError, HTTP_HEADERS, apiError.getStatus(), request);
     }

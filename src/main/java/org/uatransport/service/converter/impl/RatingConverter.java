@@ -23,17 +23,11 @@ public class RatingConverter implements ConversionStrategy<Double> {
     }
 
     private Double calculateMaxValue(List<RatingFeedback> answers) {
-        return answers.stream()
-            .mapToInt(answer -> MAX_ANSWER_VALUE * answer.getWeight())
-            .average()
-            .orElse(0.0);
+        return answers.stream().mapToInt(answer -> MAX_ANSWER_VALUE * answer.getWeight()).average().orElse(0.0);
     }
 
     private Double calculateValue(List<RatingFeedback> answers) {
-        return answers.stream()
-            .mapToInt(answer -> answer.getAnswer() * answer.getWeight())
-            .average()
-            .orElse(0.0);
+        return answers.stream().mapToInt(answer -> answer.getAnswer() * answer.getWeight()).average().orElse(0.0);
     }
 
     private Double calculateRating(List<RatingFeedback> answers) {
