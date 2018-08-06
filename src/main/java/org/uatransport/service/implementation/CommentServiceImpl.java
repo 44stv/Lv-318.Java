@@ -6,6 +6,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.uatransport.entity.Comment;
+import org.uatransport.entity.CommentRating;
+import org.uatransport.entity.User;
+import org.uatransport.exception.*;
+import org.uatransport.repository.CommentRatingRepository;
 import org.uatransport.exception.BadWordFoundException;
 import org.uatransport.exception.MaxLevelCommentException;
 import org.uatransport.exception.ResourceNotFoundException;
@@ -18,13 +22,17 @@ import org.uatransport.service.commentutil.BadWordFilter;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.HashSet;
+import java.time.ZoneOffset;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
+    private final CommentRatingRepository commentRatingRepository;
     private final TransitRepository transitRepository;
     private final UserRepository userRepository;
 
@@ -89,6 +97,16 @@ public class CommentServiceImpl implements CommentService {
         return commentRepository.findByParentCommentIdOrderByCreatedDateAsc(parentId);
     }
 
+    public Set<User> getAllByVotedComment(Integer commentId) {
+        List<CommentRating> commentRatings = commentRatingRepository.findAllByCommentId(commentId);
+        Set<User> users = new HashSet<>();
+        for(CommentRating commentRating: commentRatings) {
+            users.add(userRepository.getOne(commentRating.getUser().getId()));
+        }
+
+        return users;
+    }
+
     @Override
     @Transactional
     public Comment update(Comment newComment, Integer commentId) {
@@ -112,6 +130,28 @@ public class CommentServiceImpl implements CommentService {
         comment.setModifiedDate(LocalDateTime.now());
 
         return commentRepository.save(comment);
+    }
+
+    @Override
+    public CommentRating vote(Integer commentId, Integer userId, boolean like) throws AlreadyVotedException, ForbiddenException {
+        Comment comment = getById(commentId);
+        User user = userRepository.getOne(userId);
+        if (userId.intValue() == comment.getUser().getId().intValue() && !user.getRole().getAuthority().equalsIgnoreCase("ADMIN")) {
+            throw new ForbiddenException("Cannot vote for own comment");
+        }
+
+        List<CommentRating> rating = commentRatingRepository.findCommentRatingByCommentIdAndUserId(commentId, userId);
+
+        if (rating != null && !user.getRole().getAuthority().equalsIgnoreCase("ADMIN")) {
+            throw new AlreadyVotedException("Cannot vote for one comment more than once");
+        }
+
+        CommentRating newRating = new CommentRating();
+        newRating.setUser(user);
+        newRating.setComment(comment);
+        newRating.setValue(like ? CommentRating.LIKE_VALUE : CommentRating.DISLIKE_VALUE);
+
+        return commentRatingRepository.save(newRating);
     }
 
     @Override

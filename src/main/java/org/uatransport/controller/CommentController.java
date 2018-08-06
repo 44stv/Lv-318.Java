@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.uatransport.entity.Comment;
 import org.uatransport.entity.dto.CommentDTO;
+import org.uatransport.entity.dto.CommentRatingDTO;
+import org.uatransport.entity.dto.UserInfo;
 import org.uatransport.service.CommentService;
 
 import java.util.List;
@@ -51,6 +53,26 @@ public class CommentController {
     public List<CommentDTO> getUserComments(@RequestParam(value = "userId") Integer userId) {
         return commentService.getAllByUserId(userId).stream().map(comment -> modelMapper.map(comment, CommentDTO.class))
                 .collect(Collectors.toList());
+    }
+
+    @GetMapping("/{commentId}/voted")
+    public List<UserInfo> getVotedUsers(@PathVariable Integer commentId) {
+        return commentService.getAllByVotedComment(commentId).stream().map(user -> modelMapper.map(user, UserInfo.class))
+            .collect(Collectors.toList());
+    }
+
+    @PostMapping("/{commentId}/like/{userId}")
+    public ResponseEntity<CommentRatingDTO> like(@PathVariable Integer commentId,
+                                                 @PathVariable Integer userId) {
+        CommentRatingDTO rating = modelMapper.map(commentService.vote(commentId, userId, true), CommentRatingDTO.class);
+        return new ResponseEntity<>(rating, HttpStatus.OK);
+    }
+
+    @PostMapping("/{commentId}/dislike/{userId}")
+    public ResponseEntity<CommentRatingDTO> dislike(@PathVariable Integer commentId,
+                                                    @PathVariable Integer userId) {
+        CommentRatingDTO rating = modelMapper.map(commentService.vote(commentId, userId, false), CommentRatingDTO.class);
+        return new ResponseEntity<>(rating, HttpStatus.OK);
     }
 
     @PutMapping("/{commentId}")

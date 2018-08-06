@@ -92,6 +92,20 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return handleExceptionInternal(ex, apiError, HTTP_HEADERS, apiError.getStatus(), request);
     }
 
+    @ExceptionHandler(value = AlreadyVotedException.class)
+    protected ResponseEntity<Object> handleConflict(AlreadyVotedException ex, WebRequest request) {
+        log.error("User already voted", ex);
+        final ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex);
+        return handleExceptionInternal(ex, apiError, HTTP_HEADERS, apiError.getStatus(), request);
+    }
+
+    @ExceptionHandler(value = ForbiddenException.class)
+    protected ResponseEntity<Object> handleConflict(ForbiddenException ex, WebRequest request) {
+        log.error("Voting is forbidden", ex);
+        final ApiError apiError = new ApiError(HttpStatus.FORBIDDEN, ex);
+        return handleExceptionInternal(ex, apiError, HTTP_HEADERS, apiError.getStatus(), request);
+    }
+
     @ExceptionHandler(value = EmailSendException.class)
     protected ResponseEntity<Object> handleConflict(EmailSendException ex, WebRequest request) {
         final ApiError apiError = new ApiError(ex.getHttpStatus(), ex);
