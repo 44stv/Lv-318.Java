@@ -19,14 +19,12 @@ public class BadWordFilter {
 
         ArrayList<String> badWords = new ArrayList<>();
         input = input.toLowerCase().replaceAll("[^a-zA-Zа-яА-ЯёЁіІ]", "");
-        System.out.println(input);
 
         // iterate over each letter in the word
         for (int start = 0; start < input.length(); start++) {
             // from each letter, keep going to find bad words until either the end of the sentence is reached, or the max word length is reached.
             for (int offset = 1; offset < (input.length() + 1 - start) && offset <= largestWordLength; offset++) {
                 String wordToCheck = input.substring(start, start + offset);
-                System.out.println(wordToCheck);
                 if (wordsToFilterMap.containsKey(wordToCheck)) {
                     // for example, if you want to say the word bass, that should be possible.
                     String[] ignoreCheck = wordsToFilterMap.get(wordToCheck);

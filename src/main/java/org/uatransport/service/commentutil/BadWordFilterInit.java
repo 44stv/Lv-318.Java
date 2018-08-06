@@ -23,7 +23,7 @@ public class BadWordFilterInit {
 
     @PostConstruct
     public static void loadConfigs() throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(new ClassPathResource("files/badWords.txt").getInputStream()));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(new ClassPathResource("files/bad_words.txt").getInputStream()));
         BufferedReader transliterationReader = new BufferedReader(new InputStreamReader(new ClassPathResource("files/transliteration.txt").getInputStream()));
         String line;
         int counter = 0;
