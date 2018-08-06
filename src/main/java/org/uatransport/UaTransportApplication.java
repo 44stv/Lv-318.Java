@@ -9,8 +9,6 @@ import org.springframework.cache.annotation.EnableCaching;
 @EnableCaching
 @Slf4j
 public class UaTransportApplication {
-//    @Autowired
-//    private static  ConfigurableApplicationContext appContext;
 
     public static void main(String[] args) {
         SpringApplication.run(UaTransportApplication.class, args);
